@@ -1,0 +1,8 @@
+import { createStyles } from "@mantine/core";
+
+import { ICustomBadgeProps } from "./CustomBadge.interfaces";
+
+export const useBadgeStyles = (props: ICustomBadgeProps) =>
+  createStyles(() => ({
+    customBadge: props.capitalize ? {} : { textTransform: "none" },
+  }));
