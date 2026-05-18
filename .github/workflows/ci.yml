@@ -1,0 +1,56 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["staging", "alpha", "sandbox"]
+
+env:
+  GCR_REGISTRY: "${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCR_REPOSITORY }}/frontend"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to GCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.GCP_REGION }}-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GOOGLE_CREDENTIALS }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.GCR_REGISTRY }}
+          tags: |
+            type=raw,value={{branch}}-{{date 'YYYYMMDDHHmmss'}}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: /root/.cache/npm # Directory to cache
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        timeout-minutes: 12
+        env:
+          GCR_REGISTRY: ${{ env.GCR_REGISTRY }}
+        with:
+          context: .
+          push: true
+          file: infra/dockerfiles/Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            npm_cache_dir=/root/.cache/npm
