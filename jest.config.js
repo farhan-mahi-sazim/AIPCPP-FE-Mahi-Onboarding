@@ -6,5 +6,8 @@ module.exports = {
     "@/(.*)": "<rootDir>/$1",
     uuid: require.resolve("uuid"),
   },
-  testMatch: ["**/*.spec.ts", "**/*.test.ts"],
+  testMatch: ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"],
+  transform: {
+    "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: { jsx: "react-jsx" } }],
+  },
 };

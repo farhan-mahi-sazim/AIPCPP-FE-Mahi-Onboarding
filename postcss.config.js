@@ -1,5 +1,6 @@
 module.exports = {
   plugins: {
+    tailwindcss: {},
     "postcss-preset-mantine": {},
     "postcss-simple-vars": {
       variables: {
@@ -12,3 +13,4 @@ module.exports = {
     },
   },
 };
+

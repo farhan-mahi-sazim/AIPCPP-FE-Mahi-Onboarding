@@ -1,5 +1,6 @@
-import { Center, Title, Text, Stack, Button } from "@mantine/core";
 import { useRouter } from "next/router";
+
+import { Center, Title, Text, Stack, Button } from "@mantine/core";
 
 const NotFound = () => {
   const router = useRouter();
