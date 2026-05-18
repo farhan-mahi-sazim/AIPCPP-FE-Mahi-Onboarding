@@ -1,7 +1,4 @@
-import {
-  PROPERTIES_ROUTE,
-  SUPER_USER_DASHBOARD_ROUTE,
-} from "@/shared/constants/route.constants";
+import { PROPERTIES_ROUTE, SUPER_USER_DASHBOARD_ROUTE } from "@/shared/constants/route.constants";
 import { EUserRole } from "@/shared/redux/rtk-apis/modules/auth/auth.types";
 
 export const getLoginUrlWithRedirectParam = (redirectTo: string) => {

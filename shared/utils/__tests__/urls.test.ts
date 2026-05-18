@@ -3,27 +3,21 @@ import { appendQueryParamsToUrl, getFileNameFromUrl } from "../urls";
 describe("urls", () => {
   describe("getFileNameFromUrl", () => {
     it("should return the file name from a URL", () => {
-      expect(getFileNameFromUrl("https://example.com/file.pdf")).toBe(
-        "file.pdf",
-      );
+      expect(getFileNameFromUrl("https://example.com/file.pdf")).toBe("file.pdf");
     });
 
     it("should return the file name from a URL with query parameters", () => {
-      expect(getFileNameFromUrl("https://example.com/file.pdf?token=123")).toBe(
-        "file.pdf",
-      );
+      expect(getFileNameFromUrl("https://example.com/file.pdf?token=123")).toBe("file.pdf");
     });
 
     it("should return the file name from a URL with a path", () => {
-      expect(getFileNameFromUrl("https://example.com/path/to/file.pdf")).toBe(
-        "file.pdf",
-      );
+      expect(getFileNameFromUrl("https://example.com/path/to/file.pdf")).toBe("file.pdf");
     });
 
     it("should return the file name with spaces from a URL", () => {
-      expect(
-        getFileNameFromUrl("https://example.com/file%20with%20spaces.pdf"),
-      ).toBe("file with spaces.pdf");
+      expect(getFileNameFromUrl("https://example.com/file%20with%20spaces.pdf")).toBe(
+        "file with spaces.pdf",
+      );
     });
   });
 
@@ -49,8 +43,7 @@ describe("urls", () => {
         param1: "value1",
         param2: "value2",
       };
-      const expectedUrl =
-        "/test/?existingParam=existingValue&param1=value1&param2=value2";
+      const expectedUrl = "/test/?existingParam=existingValue&param1=value1&param2=value2";
       expect(appendQueryParamsToUrl(urlPath, params)).toBe(expectedUrl);
     });
 

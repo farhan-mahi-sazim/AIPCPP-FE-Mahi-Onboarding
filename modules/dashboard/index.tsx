@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-import { useGetSummariesQuery } from "@/shared/redux/rtk-apis/documents.api";
+import {
+  useGetSummariesQuery,
+  useDeleteDocumentMutation,
+} from "@/shared/redux/rtk-apis/documents.api";
+import { notifications } from "@mantine/notifications";
+import { Pagination } from "@mantine/core";
 
 import DocumentGrid from "./components/DocumentGrid/DocumentGrid";
 import SearchHeader from "./components/SearchHeader/SearchHeader";
+import UploadSection from "./components/UploadSection/UploadSection";
 
 const DashboardFooter: React.FC = () => (
   <footer className="mt-section-gap pt-gutter border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-gutter">
@@ -28,10 +34,78 @@ const DashboardFooter: React.FC = () => (
 
 const Dashboard: React.FC = () => {
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [showUpload, setShowUpload] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
-  const { data: response, isLoading, error } = useGetSummariesQuery({ search });
+  const [deleteDocument] = useDeleteDocumentMutation();
+
+  // Debounce search
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); // Reset to page 1 on search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  const offset = (page - 1) * limit;
+
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useGetSummariesQuery({
+    search: debouncedSearch,
+    limit,
+    offset,
+  });
 
   const documents = response?.data ?? [];
+  const totalPages = response?.total_pages ?? 1;
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this document?")) {
+      try {
+        await deleteDocument(id).unwrap();
+        notifications.show({
+          title: "Deleted",
+          message: "Document deleted successfully.",
+          color: "teal",
+        });
+        refetch();
+      } catch (err) {
+        console.error("Delete failed", err);
+        notifications.show({
+          title: "Error",
+          message: "Failed to delete document.",
+          color: "red",
+        });
+      }
+    }
+  };
+
+  // Client-side filtering
+  let processedDocuments = [...documents];
+  if (filterType) {
+    processedDocuments = processedDocuments.filter((doc) => doc.file_type === filterType);
+  }
+
+  // Client-side sorting
+  processedDocuments.sort((a, b) => {
+    const dateA = new Date(a.created_at).getTime();
+    const dateB = new Date(b.created_at).getTime();
+    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+  });
+
+  const handleUploadSuccess = () => {
+    refetch();
+    setShowUpload(false);
+  };
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
@@ -39,12 +113,33 @@ const Dashboard: React.FC = () => {
         <SearchHeader
           search={search}
           onSearchChange={setSearch}
+          onFilterSelect={(type) => {
+            setFilterType(type);
+          }}
+          onSort={() => {
+            const nextOrder = sortOrder === "desc" ? "asc" : "desc";
+            setSortOrder(nextOrder);
+          }}
+          // @ts-ignore - Adding extra props for now
+          filterType={filterType}
+          sortOrder={sortOrder}
         />
+
+        {showUpload && <UploadSection onUploadSuccess={handleUploadSuccess} />}
+
         <DocumentGrid
-          documents={documents}
+          documents={processedDocuments}
           isLoading={isLoading}
           error={error}
+          onUploadClick={() => setShowUpload(true)}
+          onDocumentMenuClick={handleDelete}
         />
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-8">
+          <Pagination total={totalPages} value={page} onChange={setPage} radius="xl" color="blue" />
+        </div>
+
         <DashboardFooter />
       </main>
     </div>

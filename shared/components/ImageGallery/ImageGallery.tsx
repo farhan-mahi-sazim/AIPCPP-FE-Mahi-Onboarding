@@ -1,5 +1,6 @@
-import Image from "next/image";
 import { useState } from "react";
+
+import Image from "next/image";
 
 import { Container, Modal, Text } from "@mantine/core";
 
@@ -59,9 +60,7 @@ const ImageGallery: React.FC<IImageGalleryProps> = ({ images, height }) => {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={
-                    index === currentImageIndex ? "" : classes.unselectedImage
-                  }
+                  className={index === currentImageIndex ? "" : classes.unselectedImage}
                 >
                   <Image
                     className={classes.image}

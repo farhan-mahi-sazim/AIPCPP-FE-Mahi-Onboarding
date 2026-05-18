@@ -11,9 +11,9 @@ module.exports = {
       colors: {
         "on-error": "#690005",
         "surface-container-low": "#131b2e",
-        "surface": "#0b1326",
+        surface: "#0b1326",
         "surface-dim": "#0b1326",
-        "background": "#0b1326",
+        background: "#0b1326",
         "on-primary": "#1000a9",
         "on-secondary-container": "#003f38",
         "surface-container": "#171f33",
@@ -24,10 +24,10 @@ module.exports = {
         "on-tertiary-fixed-variant": "#92002a",
         "surface-container-high": "#222a3d",
         "on-background": "#dae2fd",
-        "error": "#ffb4ab",
+        error: "#ffb4ab",
         "surface-bright": "#31394d",
         "surface-variant": "#2d3449",
-        "secondary": "#4fdbc8",
+        secondary: "#4fdbc8",
         "outline-variant": "#464554",
         "tertiary-fixed": "#ffdadb",
         "primary-fixed-dim": "#c0c1ff",
@@ -37,11 +37,11 @@ module.exports = {
         "error-container": "#93000a",
         "primary-container": "#8083ff",
         "on-tertiary-fixed": "#40000d",
-        "outline": "#908fa0",
+        outline: "#908fa0",
         "on-primary-fixed-variant": "#2f2ebe",
         "tertiary-fixed-dim": "#ffb2b7",
         "on-tertiary-container": "#5b0017",
-        "primary": "#c0c1ff",
+        primary: "#c0c1ff",
         "inverse-on-surface": "#283044",
         "on-primary-fixed": "#07006c",
         "surface-tint": "#c0c1ff",
@@ -50,12 +50,12 @@ module.exports = {
         "secondary-fixed-dim": "#4fdbc8",
         "secondary-container": "#04b4a2",
         "surface-container-lowest": "#060e20",
-        "tertiary": "#ffb2b7",
+        tertiary: "#ffb2b7",
         "on-tertiary": "#67001b",
         "on-surface-variant": "#c7c4d7",
         "on-primary-container": "#0d0096",
         "on-secondary-fixed": "#00201c",
-        "on-secondary-fixed-variant": "#005048"
+        "on-secondary-fixed-variant": "#005048",
       },
       fontFamily: {
         "label-sm": ["Inter"],
@@ -65,7 +65,7 @@ module.exports = {
         "headline-lg-mobile": ["Outfit"],
         "body-lg": ["Inter"],
         "headline-xl": ["Outfit"],
-        "headline-lg": ["Outfit"]
+        "headline-lg": ["Outfit"],
       },
       fontSize: {
         "label-sm": ["12px", { lineHeight: "1.2", fontWeight: "600" }],
@@ -75,11 +75,10 @@ module.exports = {
         "headline-lg-mobile": ["24px", { lineHeight: "1.2", fontWeight: "600" }],
         "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
         "headline-xl": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "600" }],
-        "headline-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "600" }]
-      }
+        "headline-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "600" }],
+      },
     },
   },
 
-
   plugins: [],
-}
+};

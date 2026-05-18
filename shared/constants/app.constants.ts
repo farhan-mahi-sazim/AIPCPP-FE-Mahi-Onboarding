@@ -11,8 +11,16 @@ export const DATE_AND_TIME_FORMAT = "D MMM, YYYY [at] h:mma";
 
 export const MONTH_DATE_YEAR_FORMAT = "MMM DD, YYYY";
 
-export const DISMISS_RENT_RECEIPT_BANNER_LOCAL_STORAGE_KEY =
-  "dismissRentReceiptBanner";
+export const DISMISS_RENT_RECEIPT_BANNER_LOCAL_STORAGE_KEY = "dismissRentReceiptBanner";
 
-export const LEASE_DETAILS_PAGE_OPEN_CONTRACT_FORM_QUERY_TEXT =
-  "openContractForm";
+export const LEASE_DETAILS_PAGE_OPEN_CONTRACT_FORM_QUERY_TEXT = "openContractForm";
+
+export const FILE_TYPES = {
+  PDF: "PDF",
+  IMAGE: "IMAGE",
+  TEXT: "TEXT",
+  DOCX: "DOCX",
+  DOC: "DOC",
+} as const;
+
+export const FILE_TYPE_OPTIONS = Object.values(FILE_TYPES);

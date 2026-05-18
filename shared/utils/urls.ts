@@ -25,9 +25,7 @@ export const appendQueryParamsToUrl = (
   const urlParams = new URLSearchParams();
 
   const hasExistingQueryParams = urlPath.includes("?");
-  const urlPathWithoutQueryParamsAndTrailingSlash = urlPath
-    .split("?")[0]
-    ?.replace(/[?/]+$/, "");
+  const urlPathWithoutQueryParamsAndTrailingSlash = urlPath.split("?")[0]?.replace(/[?/]+$/, "");
 
   if (hasExistingQueryParams) {
     const [, existingQueryParams] = urlPath.split("?");
@@ -41,10 +39,7 @@ export const appendQueryParamsToUrl = (
   Object.entries(params).forEach(([key, value]) => {
     if (!value) return;
 
-    urlParams.append(
-      encodeURIComponent(key),
-      encodeURIComponent(value.toString()),
-    );
+    urlParams.append(encodeURIComponent(key), encodeURIComponent(value.toString()));
   });
 
   return `${urlPathWithoutQueryParamsAndTrailingSlash?.concat("/")}?${urlParams.toString()}`;

@@ -42,3 +42,34 @@ export interface IDocumentGridProps {
   onUploadClick?: () => void;
   onDocumentMenuClick?: (documentId: string) => void;
 }
+
+export interface TUploadDocumentResponse {
+  document: {
+    id: string;
+    filename: string;
+    file_type: string;
+    created_at: string;
+  };
+  job: {
+    id: string;
+    status: "PENDING" | "EXTRACTING" | "ANALYZING" | "PERSISTING" | "COMPLETED" | "FAILED";
+  };
+  message: string;
+}
+
+export interface TJobStatusResponse {
+  id: string;
+  status: "PENDING" | "EXTRACTING" | "ANALYZING" | "PERSISTING" | "COMPLETED" | "FAILED";
+}
+
+export interface TTimelineItem {
+  id: string;
+  version_number: number;
+  source: "AI" | "HUMAN";
+  data: {
+    summary?: string;
+    tags?: string[];
+    category?: string;
+  };
+  created_at: string;
+}

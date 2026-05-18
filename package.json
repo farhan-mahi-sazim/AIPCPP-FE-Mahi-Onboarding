@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "eslint:lint": "eslint \"{pages,modules,shared}/**/*.{ts,tsx}\" --fix --max-warnings=0",
     "prettier:format": "npx prettier --write ./",
     "prepare": "husky",

@@ -1,14 +1,22 @@
 import React from "react";
 
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
 import { useGetSummariesQuery } from "@/shared/redux/rtk-apis/documents.api";
+import { MantineProvider } from "@mantine/core";
 
 import Dashboard from "../index";
 
 jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
   useGetSummariesQuery: jest.fn(),
+  useDeleteDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
+}));
+
+jest.mock("next/router", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
 }));
 
 const MOCK_DOCUMENT = {
@@ -22,6 +30,14 @@ const MOCK_DOCUMENT = {
   updated_at: "2024-05-15T12:00:00Z",
 };
 
+const renderWithMantine = (ui: React.ReactElement) => {
+  return render(
+    <MantineProvider>
+      {ui}
+    </MantineProvider>
+  );
+};
+
 describe("Dashboard", () => {
   it("renders the search bar", () => {
     (useGetSummariesQuery as jest.Mock).mockReturnValue({
@@ -29,8 +45,10 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
-    expect(screen.getByPlaceholderText("Search files by name, type, or tag...")).toBeInTheDocument();
+    renderWithMantine(<Dashboard />);
+    expect(
+      screen.getByPlaceholderText("Search files by name, type, or tag..."),
+    ).toBeInTheDocument();
   });
 
   it("shows loading spinner while fetching", () => {
@@ -39,7 +57,7 @@ describe("Dashboard", () => {
       isLoading: true,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithMantine(<Dashboard />);
     expect(screen.getByText("Loading documents...")).toBeInTheDocument();
   });
 
@@ -49,7 +67,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: { status: 500 },
     });
-    render(<Dashboard />);
+    renderWithMantine(<Dashboard />);
     expect(screen.getByText("Failed to load documents.")).toBeInTheDocument();
   });
 
@@ -59,7 +77,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithMantine(<Dashboard />);
     expect(screen.getByText("No documents found.")).toBeInTheDocument();
   });
 
@@ -69,7 +87,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithMantine(<Dashboard />);
     expect(screen.getByText("test_report.pdf")).toBeInTheDocument();
     expect(screen.getByText("Finance")).toBeInTheDocument();
     expect(screen.getByText("#revenue")).toBeInTheDocument();
@@ -82,19 +100,34 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithMantine(<Dashboard />);
     expect(screen.getByText("Process new document")).toBeInTheDocument();
   });
 
   it("passes search value to the query hook", () => {
+    jest.useFakeTimers();
     (useGetSummariesQuery as jest.Mock).mockReturnValue({
       data: { data: [], total: 0, page: 1, page_size: 20, total_pages: 0 },
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithMantine(<Dashboard />);
     const searchInput = screen.getByPlaceholderText("Search files by name, type, or tag...");
-    fireEvent.change(searchInput, { target: { value: "annual" } });
-    expect(useGetSummariesQuery).toHaveBeenLastCalledWith({ search: "annual" });
+    
+    act(() => {
+      fireEvent.change(searchInput, { target: { value: "annual" } });
+    });
+    
+    // Fast-forward time for debounce
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+    
+    expect(useGetSummariesQuery).toHaveBeenLastCalledWith({
+      search: "annual",
+      limit: 10,
+      offset: 0,
+    });
+    jest.useRealTimers();
   });
 });

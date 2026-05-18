@@ -1,15 +1,8 @@
-import { useRouter } from "next/router";
 import React, { PropsWithChildren, useEffect, useState } from "react";
 
-import {
-  AppShell,
-  Box,
-  Burger,
-  Flex,
-  Header,
-  Progress,
-  Title,
-} from "@mantine/core";
+import { useRouter } from "next/router";
+
+import { AppShell, Box, Burger, Flex, Header, Progress, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 import RentReceiptsBanner from "@/shared/components/RentReceiptsBanner/RentReceiptsBanner";
@@ -19,9 +12,7 @@ import { useAppLayoutStyles } from "./AppLayout.styles";
 import SideBar from "./components/SideBar";
 import { NAV_LINKS } from "./components/SideBar/SideBar.constants";
 
-const AppLayout = ({
-  children,
-}: PropsWithChildren<Record<string, unknown>>) => {
+const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { classes } = useAppLayoutStyles(isLoading);

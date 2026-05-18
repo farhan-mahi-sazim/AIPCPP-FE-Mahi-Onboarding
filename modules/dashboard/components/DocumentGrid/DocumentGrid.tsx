@@ -6,7 +6,6 @@ import { IDocumentGridProps } from "@/shared/typedefs/dashboard.types";
 
 import DocumentCard from "../DocumentCard/DocumentCard";
 
-
 const LoadingState: React.FC = () => (
   <div className="text-center col-span-full py-12">
     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto" />

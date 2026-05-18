@@ -4,7 +4,6 @@ import { execSync } from "child_process";
 
 // configureRuntimeEnv();
 
-
 const env = process.env.NEXT_PUBLIC_STAGE_ENV;
 
 const getConnectSrcCSPConfig = () => {

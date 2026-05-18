@@ -24,10 +24,7 @@ export function convertDataToMantineSelectData<
   return convertedData;
 }
 
-export function getNestedObjectValue<
-  T extends Record<string, unknown>,
-  U extends keyof T,
->(
+export function getNestedObjectValue<T extends Record<string, unknown>, U extends keyof T>(
   obj: T,
   path: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

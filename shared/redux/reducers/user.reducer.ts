@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+
 import { TRootState } from "@/shared/redux/store";
 
 interface IAuthenticatedUser {
@@ -34,7 +35,6 @@ export const authenticatedUserSlice = createSlice({
 
 export const { setUser, clearUser } = authenticatedUserSlice.actions;
 
-export const selectUserId = (state: TRootState) =>
-  state.authenticatedUser.userId;
+export const selectUserId = (state: TRootState) => state.authenticatedUser.userId;
 
 export default authenticatedUserSlice.reducer;

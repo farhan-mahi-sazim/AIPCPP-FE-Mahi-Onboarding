@@ -1,5 +1,4 @@
-export const capitalize = (str: string) =>
-  str.charAt(0).toUpperCase() + str.slice(1);
+export const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 export function getInitials(name: string): string {
   let initials: string = "";

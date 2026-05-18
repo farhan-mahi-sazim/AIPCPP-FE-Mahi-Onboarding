@@ -1,7 +1,4 @@
-import {
-  convertDataToMantineSelectData,
-  getNestedObjectValue,
-} from "../objects";
+import { convertDataToMantineSelectData, getNestedObjectValue } from "../objects";
 
 // @see https://github.com/jsdom/jsdom/issues/3363
 global.structuredClone = (val) => JSON.parse(JSON.stringify(val));
@@ -23,11 +20,7 @@ describe("objects", () => {
           value: "[object Object]",
         },
       ];
-      const actualResult = convertDataToMantineSelectData(
-        testInput,
-        "attr1",
-        "attr2",
-      );
+      const actualResult = convertDataToMantineSelectData(testInput, "attr1", "attr2");
       expect(actualResult).toEqual(expectedResult);
     });
 
@@ -53,11 +46,7 @@ describe("objects", () => {
         },
       ];
 
-      const actualResult = convertDataToMantineSelectData(
-        testInput,
-        "nested.attr2",
-        "id",
-      );
+      const actualResult = convertDataToMantineSelectData(testInput, "nested.attr2", "id");
       expect(actualResult).toEqual(expectedResult);
     });
 
@@ -120,10 +109,7 @@ describe("objects", () => {
         nested: { attr1: 123, attr2: { test: { test2: { test3: 1 } } } },
       };
       const expectedResult = 1;
-      const actualResult = getNestedObjectValue(
-        testInput,
-        "nested.attr2.test.test2.test3",
-      );
+      const actualResult = getNestedObjectValue(testInput, "nested.attr2.test.test2.test3");
       expect(actualResult).toEqual(expectedResult);
     });
   });

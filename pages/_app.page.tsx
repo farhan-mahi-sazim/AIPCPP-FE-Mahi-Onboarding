@@ -19,7 +19,6 @@ import "@mantine/dates/styles.css";
 import "@mantine/nprogress/styles.css";
 import "@/styles/globals.css";
 
-
 export type NextApplicationPage<P = unknown, IP = P> = NextPage<P, IP> & {
   Guard?: (props: PropsWithChildren) => JSX.Element;
   Layout?: (props: PropsWithChildren) => JSX.Element;
@@ -32,7 +31,6 @@ type TCustomAppProps<P = unknown> = AppProps & {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const theme = createTheme(blcTheme as any);
-
 
 export default function App(props: TCustomAppProps) {
   const { Component, pageProps } = props;
@@ -51,11 +49,7 @@ export default function App(props: TCustomAppProps) {
         <ModalsProvider>
           <AppInitializer>
             <Notifications />
-            {Component.Guard ? (
-              <Component.Guard>{component}</Component.Guard>
-            ) : (
-              component
-            )}
+            {Component.Guard ? <Component.Guard>{component}</Component.Guard> : component}
           </AppInitializer>
         </ModalsProvider>
       </MantineProvider>
