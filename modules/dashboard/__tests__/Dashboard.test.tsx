@@ -31,11 +31,7 @@ const MOCK_DOCUMENT = {
 };
 
 const renderWithMantine = (ui: React.ReactElement) => {
-  return render(
-    <MantineProvider>
-      {ui}
-    </MantineProvider>
-  );
+  return render(<MantineProvider>{ui}</MantineProvider>);
 };
 
 describe("Dashboard", () => {
@@ -113,16 +109,16 @@ describe("Dashboard", () => {
     });
     renderWithMantine(<Dashboard />);
     const searchInput = screen.getByPlaceholderText("Search files by name, type, or tag...");
-    
+
     act(() => {
       fireEvent.change(searchInput, { target: { value: "annual" } });
     });
-    
+
     // Fast-forward time for debounce
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    
+
     expect(useGetSummariesQuery).toHaveBeenLastCalledWith({
       search: "annual",
       limit: 10,

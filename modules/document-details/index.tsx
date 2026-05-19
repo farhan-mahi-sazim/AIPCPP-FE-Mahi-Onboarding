@@ -1,13 +1,16 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { notifications } from "@mantine/notifications";
-import { MdDelete, MdArrowBack } from "react-icons/md";
+import { MdArrowBack } from "react-icons/md";
 import {
   useGetDocumentTimelineQuery,
   useDeleteDocumentMutation,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
 import { STRINGS } from "@/shared/constants/strings.constants";
+
+import DocumentHeader from "./components/DocumentHeader";
+import DocumentInfo from "./components/DocumentInfo";
+import DocumentTimeline from "./components/DocumentTimeline";
 
 const DocumentDetails: React.FC = () => {
   const router = useRouter();
@@ -63,64 +66,22 @@ const DocumentDetails: React.FC = () => {
         </button>
 
         <div className="bg-surface-container/50 rounded-2xl p-6 border border-white/5 backdrop-blur-md">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h1 className="text-2xl font-semibold text-on-surface">{STRINGS.details.title}</h1>
-              <p className="text-sm text-outline mt-1">ID: {id}</p>
-            </div>
-            <button
-              className="bg-red-500/10 text-red-500 hover:bg-red-500/20 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
-              <MdDelete /> {isDeleting ? "Deleting..." : "Delete"}
-            </button>
-          </div>
+          <DocumentHeader
+            id={id as string}
+            filename={documentData?.filename}
+            isDeleting={isDeleting}
+            onDelete={handleDelete}
+          />
 
-          {documentData ? (
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-outline">Category</h3>
-                <p className="text-on-surface">{documentData.category || "N/A"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-outline">Summary</h3>
-                <p className="text-on-surface">{documentData.summary || "N/A"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-outline">Tags</h3>
-                <div className="flex gap-2 mt-1">
-                  {documentData.tags?.map((tag: string) => (
-                    <span key={tag} className="bg-white/5 text-outline text-xs px-2 py-1 rounded">
-                      {tag}
-                    </span>
-                  )) || "N/A"}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-outline">{STRINGS.details.noData}</div>
-          )}
+          <DocumentInfo
+            category={documentData?.category}
+            summary={documentData?.summary}
+            tags={documentData?.tags}
+          />
 
           <hr className="my-6 border-white/5" />
 
-          <h2 className="text-lg font-semibold mb-4 text-on-surface">{STRINGS.details.timeline}</h2>
-          <div className="flex flex-col gap-4">
-            {timelineData?.items?.map((item: TTimelineItem) => (
-              <div key={item.id} className="border-l-2 border-white/10 pl-4 relative">
-                <div className="absolute w-2 h-2 bg-primary rounded-full -left-[5px] top-1.5" />
-                <div className="flex justify-between items-center">
-                  <p className="text-sm font-medium text-on-surface">
-                    Version {item.version_number} ({item.source})
-                  </p>
-                  <p className="text-xs text-outline">
-                    {new Date(item.created_at).toLocaleString()}
-                  </p>
-                </div>
-                <p className="text-sm text-outline-variant mt-1">{item.data?.summary}</p>
-              </div>
-            )) || <div className="text-outline">{STRINGS.details.noTimeline}</div>}
-          </div>
+          <DocumentTimeline timelineItems={timelineData?.items} />
         </div>
       </div>
     </div>

@@ -67,6 +67,7 @@ export interface TTimelineItem {
   version_number: number;
   source: "AI" | "HUMAN";
   data: {
+    filename?: string;
     summary?: string;
     tags?: string[];
     category?: string;
