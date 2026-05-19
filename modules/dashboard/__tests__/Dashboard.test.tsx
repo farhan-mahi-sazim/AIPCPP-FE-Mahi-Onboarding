@@ -30,7 +30,9 @@ describe("Dashboard", () => {
       error: null,
     });
     render(<Dashboard />);
-    expect(screen.getByPlaceholderText("Search files by name, type, or tag...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Search files by name, type, or tag..."),
+    ).toBeInTheDocument();
   });
 
   it("shows loading spinner while fetching", () => {

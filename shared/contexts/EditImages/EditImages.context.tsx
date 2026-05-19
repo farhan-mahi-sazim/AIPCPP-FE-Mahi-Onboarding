@@ -1,10 +1,6 @@
 import { createContext, PropsWithChildren, useCallback, useState } from "react";
 
-import {
-  TEditImageActions,
-  TEditImageState,
-  TExistingImage,
-} from "./EditImages.types";
+import { TEditImageActions, TEditImageState, TExistingImage } from "./EditImages.types";
 
 const initialEditImagesState: TEditImageState = {
   existingImages: [],
@@ -23,9 +19,7 @@ export const EditImagesContext = createContext<{
 });
 
 const EditImagesContextProvider = ({ children }: PropsWithChildren) => {
-  const [EditImagesState, setEditImagesState] = useState<TEditImageState>(
-    initialEditImagesState,
-  );
+  const [EditImagesState, setEditImagesState] = useState<TEditImageState>(initialEditImagesState);
 
   const setExistingImages: TEditImageActions["setExistingImages"] = useCallback(
     (images: TExistingImage[]) => {
@@ -37,15 +31,11 @@ const EditImagesContextProvider = ({ children }: PropsWithChildren) => {
     [],
   );
 
-  const setImageIdsToRemove: TEditImageActions["setImageIdsToRemove"] = (
-    id: number,
-  ) => {
+  const setImageIdsToRemove: TEditImageActions["setImageIdsToRemove"] = (id: number) => {
     setEditImagesState((prevState) => ({
       ...prevState,
       imageIdsToRemove: [...prevState.imageIdsToRemove, id],
-      existingImages: prevState.existingImages.filter(
-        (image) => image.id !== id,
-      ),
+      existingImages: prevState.existingImages.filter((image) => image.id !== id),
     }));
   };
 

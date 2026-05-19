@@ -1,6 +1,7 @@
+import React, { useEffect } from "react";
+
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
 
 import { Navbar as Sidebar, Button, Flex, Divider } from "@mantine/core";
 
@@ -29,9 +30,7 @@ const SideBar: React.FC<ISideBarProps> = ({ isOpen, setIsOpen }) => {
   }, [isOpen, router.events, setIsOpen]);
 
   const getClassName = (href: string) =>
-    router.pathname.includes(href)
-      ? classes.activeButton
-      : classes.inactiveButton;
+    router.pathname.includes(href) ? classes.activeButton : classes.inactiveButton;
 
   return (
     <Sidebar p="md" hidden={!isOpen} width={{ sm: 250, lg: 300 }}>

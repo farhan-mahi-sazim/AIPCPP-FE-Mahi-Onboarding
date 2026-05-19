@@ -1,4 +1,4 @@
-import { createStyles } from "@mantine/core";
+import { createStyles } from "@/shared/utils/createStyles";
 
 export const useNotesListStyles = createStyles((theme) => ({
   note: {

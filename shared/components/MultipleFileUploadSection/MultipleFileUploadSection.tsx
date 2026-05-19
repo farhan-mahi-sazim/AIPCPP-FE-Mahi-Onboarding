@@ -37,10 +37,7 @@ const MultipleFileUploadSection = ({
             const newDocuments = documents ? documents : [];
             setUploadedFiles(newDocuments);
           } else if (documents) {
-            setUploadedFiles((prevDocuments) => [
-              ...prevDocuments,
-              ...documents,
-            ]);
+            setUploadedFiles((prevDocuments) => [...prevDocuments, ...documents]);
           }
 
           uploadButtonOnChangeHandler(documents);
@@ -56,17 +53,11 @@ const MultipleFileUploadSection = ({
       </FileButton>
       {showImages ? (
         <Container m={10}>
-          <ImageGalleryHorizontal
-            files={uploadedFiles}
-            canDelete
-            onRemove={handleRemove}
-          />
+          <ImageGalleryHorizontal files={uploadedFiles} canDelete onRemove={handleRemove} />
         </Container>
       ) : (
         uploadedFiles.length > 0 && (
-          <Text>
-            File name: {uploadedFiles.map((file) => file.name).join(", ")}
-          </Text>
+          <Text>File name: {uploadedFiles.map((file) => file.name).join(", ")}</Text>
         )
       )}
     </>

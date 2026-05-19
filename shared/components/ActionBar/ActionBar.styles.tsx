@@ -1,4 +1,4 @@
-import { createStyles } from "@mantine/core";
+import { createStyles } from "@/shared/utils/createStyles";
 
 export const useActionBarStyles = createStyles((theme) => ({
   menuButton: {
@@ -29,17 +29,13 @@ export const useActionBarStyles = createStyles((theme) => ({
 
     "&:hover": {
       backgroundColor:
-        theme.colors &&
-        theme.colors["secondary"] &&
-        theme.colors["secondary"][0]
+        theme.colors && theme.colors["secondary"] && theme.colors["secondary"][0]
           ? theme.colors["secondary"][0]
           : theme.white,
     },
     "&:active": {
       backgroundColor:
-        theme.colors &&
-        theme.colors["secondary"] &&
-        theme.colors["secondary"][0]
+        theme.colors && theme.colors["secondary"] && theme.colors["secondary"][0]
           ? theme.colors["secondary"][0]
           : theme.white,
     },

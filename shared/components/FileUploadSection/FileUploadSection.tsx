@@ -30,9 +30,7 @@ const FileUploadSection = ({
           </Button>
         )}
       </FileButton>
-      {uploadedFileName.length > 0 && (
-        <Text>File name: {uploadedFileName}</Text>
-      )}
+      {uploadedFileName.length > 0 && <Text>File name: {uploadedFileName}</Text>}
     </>
   );
 };

@@ -1,5 +1,6 @@
-import Image from "next/image";
 import React, { useContext } from "react";
+
+import Image from "next/image";
 
 import { CloseButton } from "@mantine/core";
 

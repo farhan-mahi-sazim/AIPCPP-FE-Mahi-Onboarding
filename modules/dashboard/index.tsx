@@ -36,15 +36,8 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-on-surface">
       <main className="pt-24 px-container-margin pb-12 max-w-[1440px] mx-auto">
-        <SearchHeader
-          search={search}
-          onSearchChange={setSearch}
-        />
-        <DocumentGrid
-          documents={documents}
-          isLoading={isLoading}
-          error={error}
-        />
+        <SearchHeader search={search} onSearchChange={setSearch} />
+        <DocumentGrid documents={documents} isLoading={isLoading} error={error} />
         <DashboardFooter />
       </main>
     </div>

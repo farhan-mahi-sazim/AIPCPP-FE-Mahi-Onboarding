@@ -3,9 +3,7 @@ import React from "react";
 import { MdPictureAsPdf, MdDescription, MdMoreVert } from "react-icons/md";
 
 import { Card } from "@/shared/components/ui/card";
-
 import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
-
 
 const FILE_TYPE_STYLES: Record<string, { bg: string; text: string }> = {
   PDF: { bg: "bg-red-500/10", text: "text-red-400" },
@@ -24,7 +22,9 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
     <Card className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4">
       <div className="flex items-center gap-4">
         {/* File Type Icon */}
-        <div className={`w-12 h-12 flex-shrink-0 ${fileStyle.bg} ${fileStyle.text} rounded-lg flex items-center justify-center`}>
+        <div
+          className={`w-12 h-12 flex-shrink-0 ${fileStyle.bg} ${fileStyle.text} rounded-lg flex items-center justify-center`}
+        >
           <FileIcon className="text-[28px]" />
         </div>
 
@@ -45,7 +45,10 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
             </span>
             <div className="flex gap-1.5 overflow-hidden">
               {(tags ?? []).map((tag) => (
-                <span key={tag} className="text-[10px] text-outline bg-white/5 px-1.5 rounded truncate">
+                <span
+                  key={tag}
+                  className="text-[10px] text-outline bg-white/5 px-1.5 rounded truncate"
+                >
                   #{tag}
                 </span>
               ))}
