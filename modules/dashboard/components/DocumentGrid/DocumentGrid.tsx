@@ -56,8 +56,12 @@ const DocumentGrid: React.FC<IDocumentGridProps> = ({
     if (error) return <ErrorState error={error} />;
     if (documents.length === 0) return <EmptyState />;
 
-    return documents.map((doc) => (
-      <DocumentCard key={doc.document_id} document={doc} onMenuClick={onDocumentMenuClick} />
+    return documents.map((doc, index) => (
+      <DocumentCard
+        key={`${doc.document_id}-${index}`}
+        document={doc}
+        onMenuClick={onDocumentMenuClick}
+      />
     ));
   };
 

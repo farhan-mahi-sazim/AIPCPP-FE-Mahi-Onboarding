@@ -74,3 +74,26 @@ export interface TTimelineItem {
   };
   created_at: string;
 }
+
+export interface TVectorSearchArg {
+  query: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface TVectorSearchResult {
+  document_id: string;
+  filename: string;
+  chunk_content: string;
+  similarity_score: number;
+  summary: string;
+  created_at: string;
+}
+
+export interface TVectorSearchResponse {
+  results: TVectorSearchResult[];
+  total: number;
+  query: string;
+  limit: number;
+  offset: number;
+}

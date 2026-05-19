@@ -18,16 +18,28 @@ const DEFAULT_FILE_STYLE = { bg: "bg-surface-container", text: "text-outline" };
 const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) => {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const { document_id, filename, file_type, category, tags, created_at } = document;
+
+  // Cast to any to handle both TDocumentSummary and TVectorSearchResult
+  const {
+    document_id,
+    filename,
+    file_type,
+    category,
+    tags,
+    created_at,
+    chunk_content,
+    similarity_score,
+  } = document as any;
+
   const fileStyle = FILE_TYPE_STYLES[file_type] ?? DEFAULT_FILE_STYLE;
   const FileIcon = file_type === "PDF" ? MdPictureAsPdf : MdDescription;
 
   return (
     <Card
-      className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4"
+      className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4 h-full flex flex-col justify-between"
       onClick={() => router.push(`/document/${document_id}`)}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-4">
         {/* File Type Icon */}
         <div
           className={`w-12 h-12 flex-shrink-0 ${fileStyle.bg} ${fileStyle.text} rounded-lg flex items-center justify-center`}
@@ -38,25 +50,41 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
         {/* Document Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-body-md text-on-surface font-semibold">{filename}</h3>
-            {category && (
-              <span className="text-[10px] font-bold text-tertiary bg-tertiary/10 border border-tertiary/20 px-2 py-0.5 rounded uppercase flex-shrink-0">
-                {category}
-              </span>
-            )}
+            <h3 className="text-body-md text-on-surface font-semibold truncate">{filename}</h3>
+            <div className="flex gap-2 flex-shrink-0">
+              {similarity_score !== undefined && (
+                <span className="text-[10px] font-bold text-teal-400 bg-teal-400/10 border border-teal-400/20 px-2 py-0.5 rounded uppercase">
+                  Match: {Math.round(similarity_score * 100)}%
+                </span>
+              )}
+              {category && (
+                <span className="text-[10px] font-bold text-tertiary bg-tertiary/10 border border-tertiary/20 px-2 py-0.5 rounded uppercase">
+                  {category}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-2 mt-1">
             <span className="text-label-sm text-on-surface-variant opacity-60 flex-shrink-0">
               {new Date(created_at).toLocaleDateString()}
             </span>
-            <div className="flex gap-1.5 flex-wrap">
-              {(tags ?? []).map((tag) => (
-                <span key={tag} className="text-xs text-outline bg-white/5 px-2 py-0.5 rounded">
-                  #{tag}
-                </span>
-              ))}
-            </div>
+
+            {tags && tags.length > 0 && (
+              <div className="flex gap-1.5 flex-wrap">
+                {tags.map((tag: string) => (
+                  <span key={tag} className="text-xs text-outline bg-white/5 px-2 py-0.5 rounded">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {chunk_content && (
+              <p className="text-sm text-outline-variant mt-2 line-clamp-3 bg-white/5 p-2 rounded-lg text-sm">
+                "{chunk_content}"
+              </p>
+            )}
           </div>
         </div>
 

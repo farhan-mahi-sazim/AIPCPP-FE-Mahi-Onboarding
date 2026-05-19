@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import {
   useGetSummariesQuery,
   useDeleteDocumentMutation,
+  useVectorSearchQuery,
 } from "@/shared/redux/rtk-apis/documents.api";
 import { notifications } from "@mantine/notifications";
 import { Pagination } from "@mantine/core";
@@ -38,6 +39,7 @@ const Dashboard: React.FC = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [filterType, setFilterType] = useState<string | null>(null);
+  const [isSemantic, setIsSemantic] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -54,19 +56,44 @@ const Dashboard: React.FC = () => {
 
   const offset = (page - 1) * limit;
 
+  // Normal Search / All Documents
   const {
-    data: response,
-    isLoading,
-    error,
+    data: normalResponse,
+    isLoading: isLoadingNormal,
+    error: errorNormal,
     refetch,
-  } = useGetSummariesQuery({
-    search: debouncedSearch,
-    limit,
-    offset,
-  });
+  } = useGetSummariesQuery(
+    {
+      search: debouncedSearch,
+      limit,
+      offset,
+    },
+    { skip: isSemantic },
+  );
 
-  const documents = response?.data ?? [];
-  const totalPages = response?.total_pages ?? 1;
+  // Semantic Search
+  const {
+    data: semanticResponse,
+    isLoading: isLoadingSemantic,
+    error: errorSemantic,
+  } = useVectorSearchQuery(
+    {
+      query: debouncedSearch,
+      limit,
+      offset,
+    },
+    { skip: !isSemantic || !debouncedSearch },
+  );
+
+  const isLoading = isSemantic ? isLoadingSemantic : isLoadingNormal;
+  const error = isSemantic ? errorSemantic : errorNormal;
+
+  const documents = isSemantic
+    ? ((semanticResponse?.results as any) ?? [])
+    : (normalResponse?.data ?? []);
+  const totalPages = isSemantic
+    ? Math.ceil((semanticResponse?.total ?? 0) / limit) || 1
+    : (normalResponse?.total_pages ?? 1);
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this document?")) {
@@ -123,6 +150,11 @@ const Dashboard: React.FC = () => {
           // @ts-ignore - Adding extra props for now
           filterType={filterType}
           sortOrder={sortOrder}
+          isSemantic={isSemantic}
+          onToggleSemantic={() => {
+            setIsSemantic(!isSemantic);
+            setPage(1);
+          }}
         />
 
         {showUpload && <UploadSection onUploadSuccess={handleUploadSuccess} />}

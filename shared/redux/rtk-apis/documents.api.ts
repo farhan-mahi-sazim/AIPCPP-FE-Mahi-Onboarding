@@ -6,6 +6,8 @@ import {
   TUploadDocumentResponse,
   TJobStatusResponse,
   TTimelineItem,
+  TVectorSearchArg,
+  TVectorSearchResponse,
 } from "@/shared/typedefs/dashboard.types";
 
 import { baseQuery } from "./baseQuery";
@@ -54,6 +56,13 @@ export const documentsApi = createApi({
         url: `versions/${id}/timeline`,
       }),
     }),
+    vectorSearch: builder.query<TVectorSearchResponse, TVectorSearchArg>({
+      query: (body) => ({
+        url: "search",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -63,4 +72,5 @@ export const {
   useGetJobStatusQuery,
   useDeleteDocumentMutation,
   useGetDocumentTimelineQuery,
+  useVectorSearchQuery,
 } = documentsApi;

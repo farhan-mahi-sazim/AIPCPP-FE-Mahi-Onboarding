@@ -3,13 +3,14 @@ import React from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
-import { useGetSummariesQuery } from "@/shared/redux/rtk-apis/documents.api";
+import { useGetSummariesQuery, useVectorSearchQuery } from "@/shared/redux/rtk-apis/documents.api";
 import { MantineProvider } from "@mantine/core";
 
 import Dashboard from "../index";
 
 jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
   useGetSummariesQuery: jest.fn(),
+  useVectorSearchQuery: jest.fn(),
   useDeleteDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
 }));
 
@@ -35,6 +36,13 @@ const renderWithMantine = (ui: React.ReactElement) => {
 };
 
 describe("Dashboard", () => {
+  beforeEach(() => {
+    (useVectorSearchQuery as jest.Mock).mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    });
+  });
   it("renders the search bar", () => {
     (useGetSummariesQuery as jest.Mock).mockReturnValue({
       data: { data: [MOCK_DOCUMENT], total: 1, page: 1, page_size: 20, total_pages: 1 },
@@ -119,11 +127,72 @@ describe("Dashboard", () => {
       jest.advanceTimersByTime(500);
     });
 
-    expect(useGetSummariesQuery).toHaveBeenLastCalledWith({
-      search: "annual",
-      limit: 10,
-      offset: 0,
+    expect(useGetSummariesQuery).toHaveBeenLastCalledWith(
+      {
+        search: "annual",
+        limit: 10,
+        offset: 0,
+      },
+      expect.anything(),
+    );
+    jest.useRealTimers();
+  });
+
+  it("toggles semantic search mode and calls vector search API", () => {
+    jest.useFakeTimers();
+    (useGetSummariesQuery as jest.Mock).mockReturnValue({
+      data: { data: [], total: 0, page: 1, page_size: 20, total_pages: 0 },
+      isLoading: false,
+      error: null,
     });
+    (useVectorSearchQuery as jest.Mock).mockReturnValue({
+      data: {
+        results: [
+          {
+            document_id: "uuid-2",
+            filename: "semantic_match.pdf",
+            chunk_content: "This is a semantic chunk.",
+            similarity_score: 0.95,
+            summary: "Semantic summary",
+            created_at: "2024-05-15T10:00:00Z",
+          },
+        ],
+        total: 1,
+        query: "annual",
+        limit: 10,
+        offset: 0,
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    renderWithMantine(<Dashboard />);
+
+    // Toggle Semantic Search
+    const semanticButton = screen.getByRole("button", { name: "Toggle semantic search" });
+    fireEvent.click(semanticButton);
+
+    const searchInput = screen.getByPlaceholderText("Ask a question about your documents...");
+
+    act(() => {
+      fireEvent.change(searchInput, { target: { value: "annual" } });
+    });
+
+    // Fast-forward time for debounce
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    expect(useVectorSearchQuery).toHaveBeenCalledWith(
+      { query: "annual", limit: 10, offset: 0 },
+      expect.anything(),
+    );
+
+    // Check if the semantic result is rendered
+    expect(screen.getByText("semantic_match.pdf")).toBeInTheDocument();
+    expect(screen.getByText("Match: 95%")).toBeInTheDocument();
+    expect(screen.getByText(/"This is a semantic chunk."/)).toBeInTheDocument();
+
     jest.useRealTimers();
   });
 });
