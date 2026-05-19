@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 
+import { Pagination } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+
 import {
   useGetSummariesQuery,
   useDeleteDocumentMutation,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { notifications } from "@mantine/notifications";
-import { Pagination } from "@mantine/core";
 
 import DocumentGrid from "./components/DocumentGrid/DocumentGrid";
 import SearchHeader from "./components/SearchHeader/SearchHeader";
@@ -120,7 +121,6 @@ const Dashboard: React.FC = () => {
             const nextOrder = sortOrder === "desc" ? "asc" : "desc";
             setSortOrder(nextOrder);
           }}
-          // @ts-ignore - Adding extra props for now
           filterType={filterType}
           sortOrder={sortOrder}
         />

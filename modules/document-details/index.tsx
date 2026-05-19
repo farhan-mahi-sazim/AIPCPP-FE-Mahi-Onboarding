@@ -1,12 +1,15 @@
 import React from "react";
+
 import { useRouter } from "next/router";
+
 import { notifications } from "@mantine/notifications";
 import { MdArrowBack } from "react-icons/md";
+
+import { STRINGS } from "@/shared/constants/strings.constants";
 import {
   useGetDocumentTimelineQuery,
   useDeleteDocumentMutation,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { STRINGS } from "@/shared/constants/strings.constants";
 
 import DocumentHeader from "./components/DocumentHeader";
 import DocumentInfo from "./components/DocumentInfo";

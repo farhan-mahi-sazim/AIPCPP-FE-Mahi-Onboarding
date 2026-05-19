@@ -2,8 +2,8 @@ import { createContext, useContext } from "react";
 
 type TSessionContext = {
   isLoading: boolean;
-  error: any;
-  user: any;
+  error: unknown;
+  user: unknown | null;
   getMe: () => void;
 };
 

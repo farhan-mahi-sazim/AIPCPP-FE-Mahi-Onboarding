@@ -1,16 +1,19 @@
 import React from "react";
-import { MdSearch, MdFilterList, MdSort } from "react-icons/md";
-import { ISearchHeaderProps } from "@/shared/typedefs/dashboard.types";
-import { Menu } from "@mantine/core";
-import { FILE_TYPE_OPTIONS } from "@/shared/constants/app.constants";
 
-const SearchHeader: React.FC<
-  Omit<ISearchHeaderProps, "onFilter"> & {
-    onFilterSelect: (value: string | null) => void;
-    filterType?: string | null;
-    sortOrder?: "asc" | "desc";
-  }
-> = ({ search, onSearchChange, onFilterSelect, onSort, filterType, sortOrder }) => (
+import { Menu } from "@mantine/core";
+import { MdSearch, MdFilterList, MdSort } from "react-icons/md";
+
+import { FILE_TYPE_OPTIONS } from "@/shared/constants/app.constants";
+import { ISearchHeaderProps } from "@/shared/typedefs/dashboard.types";
+
+const SearchHeader: React.FC<ISearchHeaderProps> = ({
+  search,
+  onSearchChange,
+  onFilterSelect,
+  onSort,
+  filterType,
+  sortOrder,
+}) => (
   <section className="mb-8">
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-gutter">
       {/* Search Input */}
@@ -43,7 +46,7 @@ const SearchHeader: React.FC<
 
           <Menu.Dropdown className="bg-surface-container border border-white/10">
             <Menu.Item
-              onClick={() => onFilterSelect(null)}
+              onClick={() => onFilterSelect?.(null)}
               className="text-on-surface hover:bg-white/5"
             >
               All
@@ -51,7 +54,7 @@ const SearchHeader: React.FC<
             {FILE_TYPE_OPTIONS.map((type) => (
               <Menu.Item
                 key={type}
-                onClick={() => onFilterSelect(type)}
+                onClick={() => onFilterSelect?.(type)}
                 className="text-on-surface hover:bg-white/5"
               >
                 {type}

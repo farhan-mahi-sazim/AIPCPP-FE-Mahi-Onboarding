@@ -32,7 +32,10 @@ export interface ISearchHeaderProps {
   search: string;
   onSearchChange: (value: string) => void;
   onFilter?: () => void;
+  onFilterSelect?: (value: string | null) => void;
   onSort?: () => void;
+  filterType?: string | null;
+  sortOrder?: "asc" | "desc";
 }
 
 export interface IDocumentGridProps {
