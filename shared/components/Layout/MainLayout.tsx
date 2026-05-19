@@ -1,6 +1,8 @@
 import React, { PropsWithChildren, useState } from "react";
-import SideNavBar from "../SideNavBar/SideNavBar";
+
 import clsx from "clsx";
+
+import SideNavBar from "../SideNavBar/SideNavBar";
 
 const MainLayout: React.FC<PropsWithChildren> = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);

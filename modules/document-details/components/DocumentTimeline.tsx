@@ -1,4 +1,5 @@
 import React from "react";
+
 import { STRINGS } from "@/shared/constants/strings.constants";
 import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
 

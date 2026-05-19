@@ -19,25 +19,19 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
 
-  // Cast to any to handle both TDocumentSummary and TVectorSearchResult
-  const {
-    document_id,
-    filename,
-    file_type,
-    category,
-    tags,
-    created_at,
-    chunk_content,
-    similarity_score,
-  } = document as any;
+  const fileType = "file_type" in document ? document.file_type : "TXT";
+  const category = "category" in document ? document.category : null;
+  const tags = "tags" in document ? document.tags : [];
+  const chunkContent = "chunk_content" in document ? document.chunk_content : null;
+  const similarityScore = "similarity_score" in document ? document.similarity_score : undefined;
 
-  const fileStyle = FILE_TYPE_STYLES[file_type] ?? DEFAULT_FILE_STYLE;
-  const FileIcon = file_type === "PDF" ? MdPictureAsPdf : MdDescription;
+  const fileStyle = FILE_TYPE_STYLES[fileType] ?? DEFAULT_FILE_STYLE;
+  const FileIcon = fileType === "PDF" ? MdPictureAsPdf : MdDescription;
 
   return (
     <Card
       className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4 h-full flex flex-col justify-between"
-      onClick={() => router.push(`/document/${document_id}`)}
+      onClick={() => router.push(`/document/${document.document_id}`)}
     >
       <div className="flex items-start gap-4">
         {/* File Type Icon */}
@@ -50,11 +44,13 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
         {/* Document Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-body-md text-on-surface font-semibold truncate">{filename}</h3>
+            <h3 className="text-body-md text-on-surface font-semibold truncate">
+              {document.filename}
+            </h3>
             <div className="flex gap-2 flex-shrink-0">
-              {similarity_score !== undefined && (
+              {similarityScore !== undefined && (
                 <span className="text-[10px] font-bold text-teal-400 bg-teal-400/10 border border-teal-400/20 px-2 py-0.5 rounded uppercase">
-                  Match: {Math.round(similarity_score * 100)}%
+                  Match: {Math.round(similarityScore * 100)}%
                 </span>
               )}
               {category && (
@@ -67,7 +63,7 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
 
           <div className="flex flex-col gap-2 mt-1">
             <span className="text-label-sm text-on-surface-variant opacity-60 flex-shrink-0">
-              {new Date(created_at).toLocaleDateString()}
+              {new Date(document.created_at).toLocaleDateString()}
             </span>
 
             {tags && tags.length > 0 && (
@@ -80,9 +76,9 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
               </div>
             )}
 
-            {chunk_content && (
-              <p className="text-sm text-outline-variant mt-2 line-clamp-3 bg-white/5 p-2 rounded-lg text-sm">
-                "{chunk_content}"
+            {chunkContent && (
+              <p className="text-sm text-outline-variant mt-2 line-clamp-3 bg-white/5 p-2 rounded-lg">
+                &quot;{chunkContent}&quot;
               </p>
             )}
           </div>
@@ -107,7 +103,7 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
                 className="w-full text-left px-4 py-2 text-sm text-on-surface hover:bg-white/5 transition-colors first:rounded-t-lg"
                 onClick={(e) => {
                   e.stopPropagation();
-                  router.push(`/document/${document_id}`);
+                  router.push(`/document/${document.document_id}`);
                   setShowMenu(false);
                 }}
               >
@@ -117,7 +113,7 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
                 className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors last:rounded-b-lg"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onMenuClick?.(document_id);
+                  onMenuClick?.(document.document_id);
                   setShowMenu(false);
                 }}
               >

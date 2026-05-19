@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 
+import { Pagination } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+
 import {
   useGetSummariesQuery,
   useDeleteDocumentMutation,
   useVectorSearchQuery,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { notifications } from "@mantine/notifications";
-import { Pagination } from "@mantine/core";
+import { TDashboardDocument } from "@/shared/typedefs/dashboard.types";
 
 import DocumentGrid from "./components/DocumentGrid/DocumentGrid";
 import SearchHeader from "./components/SearchHeader/SearchHeader";
@@ -88,8 +90,8 @@ const Dashboard: React.FC = () => {
   const isLoading = isSemantic ? isLoadingSemantic : isLoadingNormal;
   const error = isSemantic ? errorSemantic : errorNormal;
 
-  const documents = isSemantic
-    ? ((semanticResponse?.results as any) ?? [])
+  const documents: TDashboardDocument[] = isSemantic
+    ? (semanticResponse?.results ?? [])
     : (normalResponse?.data ?? []);
   const totalPages = isSemantic
     ? Math.ceil((semanticResponse?.total ?? 0) / limit) || 1
@@ -119,7 +121,9 @@ const Dashboard: React.FC = () => {
   // Client-side filtering
   let processedDocuments = [...documents];
   if (filterType) {
-    processedDocuments = processedDocuments.filter((doc) => doc.file_type === filterType);
+    processedDocuments = processedDocuments.filter(
+      (doc) => "file_type" in doc && doc.file_type === filterType,
+    );
   }
 
   // Client-side sorting
@@ -147,7 +151,6 @@ const Dashboard: React.FC = () => {
             const nextOrder = sortOrder === "desc" ? "asc" : "desc";
             setSortOrder(nextOrder);
           }}
-          // @ts-ignore - Adding extra props for now
           filterType={filterType}
           sortOrder={sortOrder}
           isSemantic={isSemantic}

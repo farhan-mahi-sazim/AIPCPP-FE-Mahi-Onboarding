@@ -1,15 +1,17 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+
 import "@testing-library/jest-dom";
 import { MantineProvider } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
+import { STRINGS } from "@/shared/constants/strings.constants";
 import {
   useUploadDocumentMutation,
   useGetJobStatusQuery,
 } from "@/shared/redux/rtk-apis/documents.api";
+
 import UploadSection from "../UploadSection";
-import { STRINGS } from "@/shared/constants/strings.constants";
 
 // Mock the API hooks
 jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
@@ -24,9 +26,7 @@ jest.mock("@mantine/notifications", () => ({
   },
 }));
 
-const renderWithMantine = (ui: React.ReactElement) => {
-  return render(<MantineProvider>{ui}</MantineProvider>);
-};
+const renderWithMantine = (ui: React.ReactElement) => render(<MantineProvider>{ui}</MantineProvider>);
 
 describe("UploadSection", () => {
   const mockUploadDocument = jest.fn();

@@ -1,5 +1,7 @@
 import React from "react";
+
 import { MdDelete } from "react-icons/md";
+
 import { STRINGS } from "@/shared/constants/strings.constants";
 
 interface IDocumentHeaderProps {

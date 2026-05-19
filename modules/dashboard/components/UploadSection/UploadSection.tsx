@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { MdCloudUpload, MdCheck, MdError, MdHourglassEmpty } from "react-icons/md";
 
+import { STRINGS } from "@/shared/constants/strings.constants";
 import {
   useUploadDocumentMutation,
   useGetJobStatusQuery,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { STRINGS } from "@/shared/constants/strings.constants";
 
 export interface IUploadSectionProps {
   onUploadSuccess?: () => void;

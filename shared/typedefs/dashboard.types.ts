@@ -23,24 +23,16 @@ export interface TGetSummariesArg {
   search?: string;
 }
 
-export interface IDocumentCardProps {
-  document: TDocumentSummary;
-  onMenuClick?: (documentId: string) => void;
-}
-
 export interface ISearchHeaderProps {
   search: string;
   onSearchChange: (value: string) => void;
   onFilter?: () => void;
+  onFilterSelect?: (value: string | null) => void;
   onSort?: () => void;
-}
-
-export interface IDocumentGridProps {
-  documents: TDocumentSummary[];
-  isLoading: boolean;
-  error: unknown;
-  onUploadClick?: () => void;
-  onDocumentMenuClick?: (documentId: string) => void;
+  filterType?: string | null;
+  sortOrder?: "asc" | "desc";
+  isSemantic?: boolean;
+  onToggleSemantic?: () => void;
 }
 
 export interface TUploadDocumentResponse {
@@ -96,4 +88,19 @@ export interface TVectorSearchResponse {
   query: string;
   limit: number;
   offset: number;
+}
+
+export type TDashboardDocument = TDocumentSummary | TVectorSearchResult;
+
+export interface IDocumentCardProps {
+  document: TDashboardDocument;
+  onMenuClick?: (documentId: string) => void;
+}
+
+export interface IDocumentGridProps {
+  documents: TDashboardDocument[];
+  isLoading: boolean;
+  error: unknown;
+  onUploadClick?: () => void;
+  onDocumentMenuClick?: (documentId: string) => void;
 }

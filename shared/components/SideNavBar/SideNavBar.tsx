@@ -1,5 +1,8 @@
 import React from "react";
+
 import { useRouter } from "next/router";
+
+import clsx from "clsx";
 import {
   MdDashboard,
   MdFolder,
@@ -8,7 +11,7 @@ import {
   MdChevronLeft,
   MdChevronRight,
 } from "react-icons/md";
-import clsx from "clsx";
+
 import { STRINGS } from "@/shared/constants/strings.constants";
 
 interface ISideNavBarProps {

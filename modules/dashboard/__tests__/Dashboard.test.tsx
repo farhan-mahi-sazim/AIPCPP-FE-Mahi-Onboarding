@@ -1,10 +1,10 @@
 import React from "react";
 
+import { MantineProvider } from "@mantine/core";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
 import { useGetSummariesQuery, useVectorSearchQuery } from "@/shared/redux/rtk-apis/documents.api";
-import { MantineProvider } from "@mantine/core";
 
 import Dashboard from "../index";
 
@@ -31,9 +31,8 @@ const MOCK_DOCUMENT = {
   updated_at: "2024-05-15T12:00:00Z",
 };
 
-const renderWithMantine = (ui: React.ReactElement) => {
-  return render(<MantineProvider>{ui}</MantineProvider>);
-};
+const renderWithMantine = (ui: React.ReactElement) =>
+  render(<MantineProvider>{ui}</MantineProvider>);
 
 describe("Dashboard", () => {
   beforeEach(() => {
