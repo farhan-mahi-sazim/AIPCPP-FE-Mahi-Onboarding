@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { FaExclamationCircle } from "react-icons/fa";
-import { IoTimeOutline } from "react-icons/io5";
 
 import { Alert, Card, Text } from "@mantine/core";
 import dayjs from "dayjs";
+import { FaExclamationCircle } from "react-icons/fa";
+import { IoTimeOutline } from "react-icons/io5";
 
 import LoadingComponent from "@/shared/components/LoadingComponent";
 import NoData from "@/shared/components/NoData";
@@ -12,13 +12,7 @@ import { DATE_AND_TIME_FORMAT } from "@/shared/constants/app.constants";
 import { TNotesListProps } from "../../Notes.types";
 import { useNotesListStyles } from "./NotesList.styles";
 
-const NotesList: React.FC<TNotesListProps> = ({
-  entityId,
-  fetchNotes,
-  data,
-  isLoading,
-  error,
-}) => {
+const NotesList: React.FC<TNotesListProps> = ({ entityId, fetchNotes, data, isLoading, error }) => {
   const { classes } = useNotesListStyles();
 
   useEffect(() => {
@@ -39,11 +33,7 @@ const NotesList: React.FC<TNotesListProps> = ({
 
   if (error) {
     return (
-      <Alert
-        icon={<FaExclamationCircle size="1rem" />}
-        title="Something went wrong"
-        color="red"
-      >
+      <Alert icon={<FaExclamationCircle size="1rem" />} title="Something went wrong" color="red">
         Could not fetch notes.
       </Alert>
     );

@@ -1,5 +1,6 @@
-import { useRouter } from "next/router";
 import { useEffect } from "react";
+
+import { useRouter } from "next/router";
 
 import LoadingComponent from "../../LoadingComponent";
 import Unauthorized from "../../Unauthorized";
@@ -19,8 +20,7 @@ const AuthGuard = ({ children, allowedRoles }: TAuthGuardProps) => {
   const router = useRouter();
   const { isLoading, error, user } = useSessionContext();
   const isUnauthenticated = !isLoading && (error || !user);
-  const isUnauthorized =
-    !isLoading && !error && user && !allowedRoles.includes(user.claim);
+  const isUnauthorized = !isLoading && !error && user && !allowedRoles.includes(user.claim);
 
   useEffect(() => {
     if (isLoading || typeof location === "undefined") return;
@@ -34,10 +34,7 @@ const AuthGuard = ({ children, allowedRoles }: TAuthGuardProps) => {
       router.push(getRoleBasedDefaultRouteAfterLogin(user.claim));
     }
 
-    if (
-      !isLoading &&
-      (user?.userFirstName === null || user?.userLastName === null)
-    ) {
+    if (!isLoading && (user?.userFirstName === null || user?.userLastName === null)) {
       router.push("/onboarding");
     }
   }, [isLoading, isUnauthenticated, isUnauthorized, router, user, user?.claim]);

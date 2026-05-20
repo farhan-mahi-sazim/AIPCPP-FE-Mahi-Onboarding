@@ -13,13 +13,7 @@ const ErrorComponent: React.FC<IErrorComponentProps> = ({ error }) => {
   return (
     <Box mt="2rem" ml="2rem">
       <BackButton />
-      <Flex
-        h="75vh"
-        w="100%"
-        align="center"
-        justify="center"
-        direction="column"
-      >
+      <Flex h="75vh" w="100%" align="center" justify="center" direction="column">
         <Title align="center" color="dimmed" fw="bold">
           {errorMessage ?? defaultErrorMessage}
         </Title>

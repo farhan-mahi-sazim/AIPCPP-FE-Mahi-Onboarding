@@ -1,8 +1,8 @@
 import React from "react";
-import { CiCirclePlus } from "react-icons/ci";
-import { FaAngleDown } from "react-icons/fa";
 
 import { Menu, Button, Flex } from "@mantine/core";
+import { CiCirclePlus } from "react-icons/ci";
+import { FaAngleDown } from "react-icons/fa";
 
 import { useIsPortrait } from "@/shared/hooks/useIsPortrait";
 

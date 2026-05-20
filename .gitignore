@@ -44,4 +44,9 @@ next-env.d.ts
 /playwright/.cache/
 
 .auth-test
+
+# dev folders
+/design_assets
+/docs
+
 .next

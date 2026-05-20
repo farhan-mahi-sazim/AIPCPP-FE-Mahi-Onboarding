@@ -1,8 +1,8 @@
-import { configureRuntimeEnv } from "next-runtime-env/build/configure.js";
+// import { configureRuntimeEnv } from "next-runtime-env/build/configure.js";
 
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 
-configureRuntimeEnv();
+// configureRuntimeEnv();
 
 const env = process.env.NEXT_PUBLIC_STAGE_ENV;
 
@@ -31,9 +31,25 @@ const cspHeader = `
     connect-src 'self' ${getConnectSrcCSPConfig()};
 `;
 
+const getBuildId = () => {
+  if (process.env.GITHUB_SHA) {
+    return process.env.GITHUB_SHA;
+  }
+
+  if (process.env.VERCEL_GIT_COMMIT_SHA) {
+    return process.env.VERCEL_GIT_COMMIT_SHA;
+  }
+
+  try {
+    return execFileSync("git", ["rev-parse", "HEAD"]).toString().trim();
+  } catch {
+    return "development";
+  }
+};
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  generateBuildId: () => execSync("git rev-parse HEAD").toString().trim(),
+  generateBuildId: getBuildId,
 
   webpack: (config, { buildId }) => {
     // append build id to all the generated files
@@ -68,6 +84,15 @@ const nextConfig = {
             value: cspHeader.replace(/\n/g, ""),
           },
         ],
+      },
+    ];
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: "http://localhost:8000/api/v1/:path*",
       },
     ];
   },

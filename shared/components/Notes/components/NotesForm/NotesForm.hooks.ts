@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
 
 import { showNotification } from "@mantine/notifications";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import { NOTIFICATION_AUTO_CLOSE_TIMEOUT_IN_MILLISECONDS } from "@/shared/constants/app.constants";
 import { parseApiErrorMessage } from "@/shared/utils/errors";
@@ -24,9 +24,7 @@ const useNotesForm = ({ entityId, createNote }: TNotesFormProps) => {
 
   const [isError, setIsError] = useState(false);
 
-  const onSubmit: SubmitHandler<TNotesFormValidationSchema> = async (
-    values,
-  ) => {
+  const onSubmit: SubmitHandler<TNotesFormValidationSchema> = async (values) => {
     try {
       await createNote({
         body: values,

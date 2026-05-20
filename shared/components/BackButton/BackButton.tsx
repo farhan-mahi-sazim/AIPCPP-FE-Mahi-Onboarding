@@ -1,6 +1,5 @@
-import { FaArrowLeft } from "react-icons/fa";
-
 import { Button } from "@mantine/core";
+import { FaArrowLeft } from "react-icons/fa";
 
 import { useBackButtonStyles } from "./BackButton.style";
 

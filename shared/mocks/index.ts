@@ -52,24 +52,21 @@ export const MOCK_PROPERTY_IMAGES = [
     id: 33,
     createdAt: "asd",
     updatedAt: "asd",
-    imageUrl:
-      "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png",
+    imageUrl: "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png",
     baseProperty: { id: "22d92b34-6d4d-4b01-94c6-ca5b7fe0dadb" },
   },
   {
     id: 44,
     createdAt: "asd",
     updatedAt: "asd",
-    imageUrl:
-      "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png",
+    imageUrl: "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png",
     baseProperty: { id: "22d92b34-6d4d-4b01-94c6-ca5b7fe0dadb" },
   },
   {
     id: 55,
     createdAt: "asd",
     updatedAt: "asd",
-    imageUrl:
-      "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png",
+    imageUrl: "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png",
     baseProperty: { id: "22d92b34-6d4d-4b01-94c6-ca5b7fe0dadb" },
   },
 ];

@@ -1,8 +1,7 @@
+import { Alert, Button } from "@mantine/core";
 import { TextInput } from "react-hook-form-mantine";
 import { FaExclamationCircle } from "react-icons/fa";
 import { RxPlusCircled } from "react-icons/rx";
-
-import { Alert, Button } from "@mantine/core";
 
 import { TNotesFormProps } from "../../Notes.types";
 import useNotesForm from "./NotesForm.hooks";
@@ -27,11 +26,7 @@ const Notes: React.FC<TNotesFormProps> = ({ createNote, entityId }) => {
   return (
     <>
       {isError ? (
-        <Alert
-          icon={<FaExclamationCircle size="1rem" />}
-          title="Something went wrong"
-          color="red"
-        >
+        <Alert icon={<FaExclamationCircle size="1rem" />} title="Something went wrong" color="red">
           Could not create the note
         </Alert>
       ) : null}
@@ -45,11 +40,7 @@ const Notes: React.FC<TNotesFormProps> = ({ createNote, entityId }) => {
           placeholder="Add a note"
           disabled={isSubmitting}
           rightSection={
-            <Button
-              type="submit"
-              className={classes.button}
-              disabled={isSubmitting}
-            >
+            <Button type="submit" className={classes.button} disabled={isSubmitting}>
               <RxPlusCircled size={20} />
             </Button>
           }

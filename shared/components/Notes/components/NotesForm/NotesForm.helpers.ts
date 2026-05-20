@@ -13,8 +13,6 @@ export const notesFormValidationSchema: z.ZodType<{ note: string }> = z.object({
     .max(1024, { message: "Your note must be less than 1024 characters" }),
 });
 
-export type TNotesFormValidationSchema = z.infer<
-  typeof notesFormValidationSchema
->;
+export type TNotesFormValidationSchema = z.infer<typeof notesFormValidationSchema>;
 
 export const notesFormZodResolver = zodResolver(notesFormValidationSchema);

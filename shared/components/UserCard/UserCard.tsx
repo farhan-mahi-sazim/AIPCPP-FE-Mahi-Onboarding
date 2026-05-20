@@ -1,9 +1,10 @@
-import { useRouter } from "next/router";
 import React from "react";
-import { MdLogout } from "react-icons/md";
-import { RxAvatar, RxGear } from "react-icons/rx";
+
+import { useRouter } from "next/router";
 
 import { ActionIcon, Box, Flex, Paper, Text } from "@mantine/core";
+import { MdLogout } from "react-icons/md";
+import { RxAvatar, RxGear } from "react-icons/rx";
 
 import { useSignOut } from "@/shared/hooks/useSignOut";
 
@@ -24,20 +25,10 @@ const UserCard = () => {
           </Text>
         </Box>
         <Flex>
-          <ActionIcon
-            color="green.8"
-            radius="md"
-            onClick={() => router.push("/user-profile")}
-          >
+          <ActionIcon color="green.8" radius="md" onClick={() => router.push("/user-profile")}>
             <RxGear size={20} />
           </ActionIcon>
-          <ActionIcon
-            color="red"
-            onClick={() => signOut()}
-            radius="md"
-            ml="auto"
-            my="auto"
-          >
+          <ActionIcon color="red" onClick={() => signOut()} radius="md" ml="auto" my="auto">
             <MdLogout size={20} />
           </ActionIcon>
         </Flex>

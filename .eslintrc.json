@@ -17,12 +17,7 @@
       "env": {
         "jest": true
       },
-      "files": [
-        "**/*.spec.js",
-        "**/*.spec.jsx",
-        "**/*.test.js",
-        "**/*.test.jsx"
-      ]
+      "files": ["**/*.spec.js", "**/*.spec.jsx", "**/*.test.js", "**/*.test.jsx"]
     }
   ],
   "parser": "@typescript-eslint/parser",
@@ -40,52 +35,25 @@
   ],
   "root": true,
   "rules": {
-    "arrow-body-style": [
-      "warn",
-      "as-needed"
-    ],
-    "eqeqeq": [
-      "warn",
-      "always"
-    ],
+    "arrow-body-style": ["warn", "as-needed"],
+    "eqeqeq": ["warn", "always"],
     "import-helpers/order-imports": [
       "warn",
       {
         "newlinesBetween": "always",
-        "groups": [
-          "/^react$/",
-          "/next.*/",
-          [
-            "module"
-          ],
-          "/@/.*/",
-          [
-            "absolute"
-          ]
-        ],
+        "groups": ["/^react$/", "/next.*/", ["module"], "/@/.*/", ["absolute"]],
         "alphabetize": {
           "order": "asc",
           "ignoreCase": true
         }
       }
     ],
-    "linebreak-style": [
-      "warn",
-      "unix"
-    ],
-    "eol-last": [
-      "warn",
-      "always"
-    ],
+    "linebreak-style": ["warn", "unix"],
+    "eol-last": ["warn", "always"],
     "no-restricted-imports": [
       "warn",
       {
-        "patterns": [
-          "../../../*",
-          "!../*",
-          "!../../*",
-          "!test/**/*"
-        ]
+        "patterns": ["../../../*", "!../*", "!../../*", "!test/**/*"]
       }
     ],
     "react/self-closing-comp": [
@@ -119,25 +87,16 @@
     "no-unreachable": "warn",
     "no-var": "warn",
     "prefer-const": "warn",
-    "quotes": [
-      "off",
-      "double"
-    ],
+    "quotes": ["off", "double"],
     "react-hooks/exhaustive-deps": "warn",
     "react/prop-types": "off",
     "require-await": "warn",
-    "semi": [
-      "warn",
-      "always"
-    ],
+    "semi": ["warn", "always"],
     "spaced-comment": [
       "warn",
       "always",
       {
-        "exceptions": [
-          "-",
-          "+"
-        ]
+        "exceptions": ["-", "+"]
       }
     ]
   }
