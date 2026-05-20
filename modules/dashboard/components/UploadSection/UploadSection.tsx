@@ -116,11 +116,11 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
                 </p>
               </div>
             )}
-            {uploadError && (
+            {uploadError ? (
               <div className="mt-4 text-red-500 text-sm font-medium">
                 Upload failed. Please try again.
               </div>
-            )}
+            ) : null}
           </div>
         )}
 

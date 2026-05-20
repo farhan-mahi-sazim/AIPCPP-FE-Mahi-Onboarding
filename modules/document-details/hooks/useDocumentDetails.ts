@@ -9,13 +9,17 @@ import {
 } from "@/shared/redux/rtk-apis/documents.api";
 import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
 
+export interface IDocumentData {
+  filename?: string;
+  summary?: string;
+  summary_title?: string;
+  tags?: string[];
+  category?: string;
+}
+
 export interface IUseDocumentDetailsReturn {
   id: string;
-  documentData: ReturnType<typeof useGetDocumentTimelineQuery>["data"]["items"] extends Array<
-    infer T
-  >
-    ? T["data"]
-    : never;
+  documentData: IDocumentData | undefined;
   timelineItems: TTimelineItem[] | undefined;
   isLoading: boolean;
   error: unknown;
