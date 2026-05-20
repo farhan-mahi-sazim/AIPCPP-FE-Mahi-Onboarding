@@ -2,7 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 
 import { notifications } from "@mantine/notifications";
 
-import { useGetSummariesQuery, useDeleteDocumentMutation } from "@/shared/redux/rtk-apis/documents.api";
+import {
+  useGetSummariesQuery,
+  useDeleteDocumentMutation,
+} from "@/shared/redux/rtk-apis/documents.api";
 
 export interface IUseDashboardReturn {
   search: string;
@@ -43,7 +46,12 @@ export const useDashboard = (): IUseDashboardReturn => {
 
   const offset = (page - 1) * limit;
 
-  const { data: response, isLoading, error, refetch } = useGetSummariesQuery({
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useGetSummariesQuery({
     search: debouncedSearch,
     limit,
     offset,

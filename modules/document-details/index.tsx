@@ -4,15 +4,22 @@ import { MdArrowBack } from "react-icons/md";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 
-
 import DocumentHeader from "./components/DocumentHeader";
 import DocumentInfo from "./components/DocumentInfo";
 import DocumentTimeline from "./components/DocumentTimeline";
 import { useDocumentDetails } from "./hooks/useDocumentDetails";
 
 const DocumentDetails: React.FC = () => {
-  const { id, documentData, timelineItems, isLoading, error, isDeleting, handleDelete, handleBack } =
-    useDocumentDetails();
+  const {
+    id,
+    documentData,
+    timelineItems,
+    isLoading,
+    error,
+    isDeleting,
+    handleDelete,
+    handleBack,
+  } = useDocumentDetails();
 
   if (isLoading) return <div className="text-center py-12">Loading details...</div>;
   if (error) return <div className="text-center py-12 text-error">Failed to load details.</div>;

@@ -11,7 +11,11 @@ import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
 
 export interface IUseDocumentDetailsReturn {
   id: string;
-  documentData: ReturnType<typeof useGetDocumentTimelineQuery>["data"]["items"] extends Array<infer T> ? T["data"] : never;
+  documentData: ReturnType<typeof useGetDocumentTimelineQuery>["data"]["items"] extends Array<
+    infer T
+  >
+    ? T["data"]
+    : never;
   timelineItems: TTimelineItem[] | undefined;
   isLoading: boolean;
   error: unknown;

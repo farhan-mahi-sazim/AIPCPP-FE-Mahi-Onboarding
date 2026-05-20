@@ -8,8 +8,14 @@ import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
 import { useDocumentCard } from "./useDocumentCard";
 
 const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) => {
-  const { showMenu, handleCardClick, handleMenuToggle, handleViewDetails, handleDelete, fileConfig } =
-    useDocumentCard(document, onMenuClick);
+  const {
+    showMenu,
+    handleCardClick,
+    handleMenuToggle,
+    handleViewDetails,
+    handleDelete,
+    fileConfig,
+  } = useDocumentCard(document, onMenuClick);
 
   const { filename, category, tags, created_at, summary_title } = document;
   const FileIcon = fileConfig.icon;

@@ -50,7 +50,6 @@ export const useDocumentCard = (
   const [showMenu, setShowMenu] = useState(false);
   const { document_id, file_type } = document;
 
-  console.log({ file_type });
   const fileConfig = FILE_TYPE_CONFIG[file_type?.toUpperCase()] ?? DEFAULT_FILE_CONFIG;
 
   const handleCardClick = () => {

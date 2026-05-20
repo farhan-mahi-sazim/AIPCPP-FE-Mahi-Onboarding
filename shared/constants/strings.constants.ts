@@ -13,11 +13,10 @@ export const STRINGS = {
     procFailedMsg: "Failed to process the document.",
     trackerTitle: "Live Pipeline Tracker",
     steps: {
+      UPLOADING: "Uploading file",
       PENDING: "Verified & queued",
-      EXTRACTING: "Content parsing",
-      ANALYZING: "Neural mapping",
-      PERSISTING: "Saving to DB",
-      COMPLETED: "Intelligence ready",
+      PROCESSING: "AI analysis",
+      COMPLETED: "Summary generation completed",
     },
   },
   sidebar: {
