@@ -48,3 +48,5 @@ next-env.d.ts
 # dev folders
 /design_assets
 /docs
+
+.next

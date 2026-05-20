@@ -26,7 +26,8 @@ jest.mock("@mantine/notifications", () => ({
   },
 }));
 
-const renderWithMantine = (ui: React.ReactElement) => render(<MantineProvider>{ui}</MantineProvider>);
+const renderWithMantine = (ui: React.ReactElement) =>
+  render(<MantineProvider>{ui}</MantineProvider>);
 
 describe("UploadSection", () => {
   const mockUploadDocument = jest.fn();
