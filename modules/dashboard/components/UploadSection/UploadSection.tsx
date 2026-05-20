@@ -1,119 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-import { notifications } from "@mantine/notifications";
 import { MdCloudUpload, MdCheck, MdError, MdHourglassEmpty } from "react-icons/md";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
-import {
-  useUploadDocumentMutation,
-  useGetJobStatusQuery,
-} from "@/shared/redux/rtk-apis/documents.api";
+
+import { useUploadSection } from "./useUploadSection";
 
 export interface IUploadSectionProps {
   onUploadSuccess?: () => void;
 }
 
 const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
-  const [file, setFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [jobId, setJobId] = useState<string | null>(null);
-
-  const [uploadDocument, { isLoading: isUploading, error: uploadError }] =
-    useUploadDocumentMutation();
-
-  // Only query when jobId is present and pollingInterval stops when jobId is null
-  const { data: jobStatus } = useGetJobStatusQuery(jobId ?? "", {
-    skip: !jobId,
-    pollingInterval: jobId ? 2000 : undefined,
-  });
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      setFile(droppedFile);
-      handleUpload(droppedFile);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      handleUpload(selectedFile);
-    }
-  };
-
-  const handleUpload = async (fileToUpload: File) => {
-    try {
-      const response = await uploadDocument(fileToUpload).unwrap();
-      setJobId(response.job.id);
-      notifications.show({
-        title: STRINGS.upload.started,
-        message: STRINGS.upload.startedMsg,
-        color: "blue",
-      });
-    } catch (err) {
-      console.error("Upload failed", err);
-      notifications.show({
-        title: STRINGS.upload.failed,
-        message: STRINGS.upload.failedMsg,
-        color: "red",
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (jobStatus?.status === "COMPLETED") {
-      notifications.show({
-        title: STRINGS.upload.success,
-        message: STRINGS.upload.successMsg,
-        color: "teal",
-      });
-      onUploadSuccess?.();
-      setJobId(null); // Stop polling
-      setFile(null);
-    } else if (jobStatus?.status === "FAILED") {
-      notifications.show({
-        title: STRINGS.upload.procFailed,
-        message: STRINGS.upload.procFailedMsg,
-        color: "red",
-      });
-      setJobId(null); // Stop polling
-    }
-  }, [jobStatus, onUploadSuccess]);
-
-  const steps = [
-    { key: "PENDING", label: STRINGS.upload.steps.PENDING },
-    { key: "EXTRACTING", label: STRINGS.upload.steps.EXTRACTING },
-    { key: "ANALYZING", label: STRINGS.upload.steps.ANALYZING },
-    { key: "PERSISTING", label: STRINGS.upload.steps.PERSISTING },
-    { key: "COMPLETED", label: STRINGS.upload.steps.COMPLETED },
-  ];
-
-  const getStepStatus = (stepKey: string) => {
-    if (!jobStatus) return "idle";
-    const currentStatus = jobStatus.status;
-    const currentIndex = steps.findIndex((s) => s.key === currentStatus);
-    const stepIndex = steps.findIndex((s) => s.key === stepKey);
-
-    if (currentStatus === "FAILED" && stepIndex >= currentIndex) {
-      return "failed";
-    }
-    if (stepIndex < currentIndex) return "completed";
-    if (stepIndex === currentIndex) return "active";
-    return "idle";
-  };
+  const {
+    file,
+    isDragging,
+    isUploading,
+    uploadError,
+    jobStatus,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    handleFileChange,
+    getStepStatus,
+    steps,
+  } = useUploadSection({ onUploadSuccess });
 
   return (
     <div className="bg-surface-container/50 rounded-2xl p-6 border border-white/5 backdrop-blur-md mb-8">
@@ -127,7 +37,6 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Upload Area */}
         <div
           className={`col-span-2 border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors cursor-pointer ${
             isDragging
@@ -163,7 +72,6 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
           )}
         </div>
 
-        {/* Pipeline Tracker */}
         <div className="bg-white/[0.02] rounded-xl p-4 border border-white/5">
           <h3 className="text-sm font-medium text-on-surface-variant mb-4">
             {STRINGS.upload.trackerTitle}

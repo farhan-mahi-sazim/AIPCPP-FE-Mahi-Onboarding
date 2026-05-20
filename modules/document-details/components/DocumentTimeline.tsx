@@ -17,7 +17,7 @@ const DocumentTimeline: React.FC<IDocumentTimelineProps> = ({ timelineItems }) =
             <div className="absolute w-2 h-2 bg-primary rounded-full -left-[5px] top-1.5" />
             <div className="flex justify-between items-center">
               <p className="text-sm font-medium text-on-surface">
-                Version {item.version_number} ({item.source})
+                {item.data?.summary_title ?? `Version ${item.version_number} (${item.source})`}
               </p>
               <p className="text-xs text-outline">{new Date(item.created_at).toLocaleString()}</p>
             </div>

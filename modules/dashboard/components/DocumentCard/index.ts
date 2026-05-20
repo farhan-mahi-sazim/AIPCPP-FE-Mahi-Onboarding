@@ -1,1 +1,1 @@
-export { default } from "./DocumentCard";
+export { useDocumentCard } from "./useDocumentCard";

@@ -11,6 +11,8 @@ import Dashboard from "../index";
 jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
   useGetSummariesQuery: jest.fn(),
   useDeleteDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
+  useUploadDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false, error: null }]),
+  useGetJobStatusQuery: jest.fn(() => ({ data: null })),
 }));
 
 jest.mock("next/router", () => ({

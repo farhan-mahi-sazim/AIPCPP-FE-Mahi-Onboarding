@@ -5,16 +5,23 @@ import { STRINGS } from "@/shared/constants/strings.constants";
 interface IDocumentInfoProps {
   category?: string;
   summary?: string;
+  summary_title?: string;
   tags?: string[];
 }
 
-const DocumentInfo: React.FC<IDocumentInfoProps> = ({ category, summary, tags }) => {
-  if (!category && !summary && (!tags || tags.length === 0)) {
+const DocumentInfo: React.FC<IDocumentInfoProps> = ({ category, summary, summary_title, tags }) => {
+  if (!category && !summary && !summary_title && (!tags || tags.length === 0)) {
     return <div className="text-outline">{STRINGS.details.noData}</div>;
   }
 
   return (
     <div className="space-y-4">
+      {summary_title && (
+        <div>
+          <h3 className="text-sm font-medium text-outline">Title</h3>
+          <p className="text-on-surface font-medium">{summary_title}</p>
+        </div>
+      )}
       <div>
         <h3 className="text-sm font-medium text-outline">Category</h3>
         <p className="text-on-surface">{category || "N/A"}</p>
