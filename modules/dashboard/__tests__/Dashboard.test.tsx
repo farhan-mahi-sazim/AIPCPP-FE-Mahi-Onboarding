@@ -1,9 +1,10 @@
 import React from "react";
 
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
 import { useGetSummariesQuery } from "@/shared/redux/rtk-apis/documents.api";
+import { renderWithProviders } from "@/shared/utils/test-utils";
 
 import Dashboard from "../index";
 
@@ -29,7 +30,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(
       screen.getByPlaceholderText("Search files by name, type, or tag..."),
     ).toBeInTheDocument();
@@ -41,7 +42,7 @@ describe("Dashboard", () => {
       isLoading: true,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("Loading documents...")).toBeInTheDocument();
   });
 
@@ -51,7 +52,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: { status: 500 },
     });
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("Failed to load documents.")).toBeInTheDocument();
   });
 
@@ -61,7 +62,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("No documents found.")).toBeInTheDocument();
   });
 
@@ -71,7 +72,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("test_report.pdf")).toBeInTheDocument();
     expect(screen.getByText("Finance")).toBeInTheDocument();
     expect(screen.getByText("#revenue")).toBeInTheDocument();
@@ -84,7 +85,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("Process new document")).toBeInTheDocument();
   });
 
@@ -94,7 +95,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     const searchInput = screen.getByPlaceholderText("Search files by name, type, or tag...");
     fireEvent.change(searchInput, { target: { value: "annual" } });
     expect(useGetSummariesQuery).toHaveBeenLastCalledWith({ search: "annual" });
