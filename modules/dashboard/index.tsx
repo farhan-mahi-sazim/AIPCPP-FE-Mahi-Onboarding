@@ -11,6 +11,7 @@ import { useDashboard } from "./hooks/useDashboard";
 
 const Dashboard: React.FC = () => {
   const [showUpload, setShowUpload] = React.useState(false);
+  const uploadRef = React.useRef<HTMLDivElement>(null);
 
   const {
     search,
@@ -36,6 +37,12 @@ const Dashboard: React.FC = () => {
     },
   });
 
+  React.useEffect(() => {
+    if (showUpload && uploadRef.current) {
+      uploadRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showUpload]);
+
   return (
     <div className="min-h-screen bg-background text-on-surface">
       <main className="pt-24 px-container-margin pb-12 max-w-[1440px] mx-auto">
@@ -51,7 +58,11 @@ const Dashboard: React.FC = () => {
           sortOrder={sortOrder}
         />
 
-        {showUpload && <UploadSection onUploadSuccess={onUploadSuccess} />}
+        {showUpload && (
+          <div ref={uploadRef}>
+            <UploadSection onUploadSuccess={onUploadSuccess} />
+          </div>
+        )}
 
         <DocumentGrid
           documents={processedDocuments}
