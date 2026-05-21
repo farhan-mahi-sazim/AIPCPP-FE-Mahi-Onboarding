@@ -1,7 +1,13 @@
-import React from "react";
+import { useEffect } from "react";
 
-import Dashboard from "@/modules/dashboard";
+import { useRouter } from "next/router";
 
 export default function HomePage() {
-  return <Dashboard />;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
+  return null;
 }

@@ -3,6 +3,7 @@ export interface TDocumentSummary {
   filename: string;
   file_type: "PDF" | "DOCX" | "TXT" | string;
   summary: string | null;
+  summary_title?: string | null;
   category: string | null;
   tags: string[];
   created_at: string;
@@ -61,6 +62,7 @@ export interface TTimelineItem {
   data: {
     filename?: string;
     summary?: string;
+    summary_title?: string;
     tags?: string[];
     category?: string;
   };

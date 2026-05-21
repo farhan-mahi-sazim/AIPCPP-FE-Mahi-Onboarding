@@ -1,55 +1,51 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { useRouter } from "next/router";
-
-import { MdPictureAsPdf, MdDescription, MdMoreVert } from "react-icons/md";
+import { MdMoreVert } from "react-icons/md";
 
 import { Card } from "@/shared/components/ui/card";
-import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
+import { IDocumentCardProps, TVectorSearchResult } from "@/shared/typedefs/dashboard.types";
 
-const FILE_TYPE_STYLES: Record<string, { bg: string; text: string }> = {
-  PDF: { bg: "bg-red-500/10", text: "text-red-400" },
-  DOCX: { bg: "bg-blue-500/10", text: "text-blue-400" },
-  TXT: { bg: "bg-green-500/10", text: "text-green-400" },
-};
-
-const DEFAULT_FILE_STYLE = { bg: "bg-surface-container", text: "text-outline" };
+import { useDocumentCard } from "./useDocumentCard";
 
 const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) => {
-  const router = useRouter();
-  const [showMenu, setShowMenu] = useState(false);
+  const {
+    showMenu,
+    handleCardClick,
+    handleMenuToggle,
+    handleViewDetails,
+    handleDelete,
+    fileConfig,
+  } = useDocumentCard(document, onMenuClick);
 
-  const fileType = "file_type" in document ? document.file_type : "TXT";
-  const category = "category" in document ? document.category : null;
-  const tags = "tags" in document ? document.tags : [];
-  const chunkContent = "chunk_content" in document ? document.chunk_content : null;
-  const similarityScore = "similarity_score" in document ? document.similarity_score : undefined;
+  const filename = document.filename;
+  const category = "category" in document ? document.category : undefined;
+  const tags = "tags" in document ? document.tags : undefined;
+  const summary_title = "summary_title" in document ? document.summary_title : undefined;
+  const similarityScore =
+    "similarity_score" in document ? (document as TVectorSearchResult).similarity_score : undefined;
+  const chunkContent =
+    "chunk_content" in document ? (document as TVectorSearchResult).chunk_content : undefined;
 
-  const fileStyle = FILE_TYPE_STYLES[fileType] ?? DEFAULT_FILE_STYLE;
-  const FileIcon = fileType === "PDF" ? MdPictureAsPdf : MdDescription;
+  const FileIcon = fileConfig.icon;
 
   return (
     <Card
-      className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4 h-full flex flex-col justify-between"
-      onClick={() => router.push(`/document/${document.document_id}`)}
+      className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4"
+      onClick={handleCardClick}
     >
-      <div className="flex items-start gap-4">
-        {/* File Type Icon */}
+      <div className="flex items-center gap-4">
         <div
-          className={`w-12 h-12 flex-shrink-0 ${fileStyle.bg} ${fileStyle.text} rounded-lg flex items-center justify-center`}
+          className={`w-12 h-12 flex-shrink-0 ${fileConfig.bg} ${fileConfig.text} rounded-lg flex items-center justify-center`}
         >
           <FileIcon className="text-[28px]" />
         </div>
 
-        {/* Document Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-body-md text-on-surface font-semibold truncate">
-              {document.filename}
-            </h3>
-            <div className="flex gap-2 flex-shrink-0">
+            <h3 className="text-body-md text-on-surface font-semibold">{filename}</h3>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
               {similarityScore !== undefined && (
-                <span className="text-[10px] font-bold text-teal-400 bg-teal-400/10 border border-teal-400/20 px-2 py-0.5 rounded uppercase">
+                <span className="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded uppercase">
                   Match: {Math.round(similarityScore * 100)}%
                 </span>
               )}
@@ -60,6 +56,10 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
               )}
             </div>
           </div>
+
+          {summary_title && (
+            <p className="text-sm text-on-surface-variant mt-1 line-clamp-1">{summary_title}</p>
+          )}
 
           <div className="flex flex-col gap-2 mt-1">
             <span className="text-label-sm text-on-surface-variant opacity-60 flex-shrink-0">
@@ -84,14 +84,10 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
           </div>
         </div>
 
-        {/* Menu Button with Dropdown */}
         <div className="relative flex-shrink-0">
           <button
             className="text-outline hover:text-primary transition-colors p-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowMenu(!showMenu);
-            }}
+            onClick={handleMenuToggle}
             aria-label="Document options"
           >
             <MdMoreVert className="text-xl" />
@@ -101,21 +97,13 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
             <div className="absolute right-0 mt-2 w-36 bg-surface-container border border-white/10 rounded-lg shadow-xl z-20">
               <button
                 className="w-full text-left px-4 py-2 text-sm text-on-surface hover:bg-white/5 transition-colors first:rounded-t-lg"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push(`/document/${document.document_id}`);
-                  setShowMenu(false);
-                }}
+                onClick={handleViewDetails}
               >
                 View Details
               </button>
               <button
                 className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors last:rounded-b-lg"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMenuClick?.(document.document_id);
-                  setShowMenu(false);
-                }}
+                onClick={handleDelete}
               >
                 Delete
               </button>

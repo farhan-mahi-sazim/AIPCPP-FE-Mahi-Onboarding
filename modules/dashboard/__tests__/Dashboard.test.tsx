@@ -1,10 +1,10 @@
 import React from "react";
 
-import { MantineProvider } from "@mantine/core";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { screen, fireEvent, act } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
 import { useGetSummariesQuery, useVectorSearchQuery } from "@/shared/redux/rtk-apis/documents.api";
+import { renderWithProviders } from "@/shared/utils/test-utils";
 
 import Dashboard from "../index";
 
@@ -12,6 +12,8 @@ jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
   useGetSummariesQuery: jest.fn(),
   useVectorSearchQuery: jest.fn(),
   useDeleteDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
+  useUploadDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false, error: null }]),
+  useGetJobStatusQuery: jest.fn(() => ({ data: null })),
 }));
 
 jest.mock("next/router", () => ({
@@ -31,9 +33,6 @@ const MOCK_DOCUMENT = {
   updated_at: "2024-05-15T12:00:00Z",
 };
 
-const renderWithMantine = (ui: React.ReactElement) =>
-  render(<MantineProvider>{ui}</MantineProvider>);
-
 describe("Dashboard", () => {
   beforeEach(() => {
     (useVectorSearchQuery as jest.Mock).mockReturnValue({
@@ -48,7 +47,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(
       screen.getByPlaceholderText("Search files by name, type, or tag..."),
     ).toBeInTheDocument();
@@ -60,7 +59,7 @@ describe("Dashboard", () => {
       isLoading: true,
       error: null,
     });
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("Loading documents...")).toBeInTheDocument();
   });
 
@@ -70,7 +69,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: { status: 500 },
     });
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("Failed to load documents.")).toBeInTheDocument();
   });
 
@@ -80,7 +79,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("No documents found.")).toBeInTheDocument();
   });
 
@@ -90,7 +89,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("test_report.pdf")).toBeInTheDocument();
     expect(screen.getByText("Finance")).toBeInTheDocument();
     expect(screen.getByText("#revenue")).toBeInTheDocument();
@@ -103,7 +102,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(screen.getByText("Process new document")).toBeInTheDocument();
   });
 
@@ -114,7 +113,7 @@ describe("Dashboard", () => {
       isLoading: false,
       error: null,
     });
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     const searchInput = screen.getByPlaceholderText("Search files by name, type, or tag...");
 
     act(() => {
@@ -165,7 +164,7 @@ describe("Dashboard", () => {
       error: null,
     });
 
-    renderWithMantine(<Dashboard />);
+    renderWithProviders(<Dashboard />);
 
     // Toggle Semantic Search
     const semanticButton = screen.getByRole("button", { name: "Toggle semantic search" });

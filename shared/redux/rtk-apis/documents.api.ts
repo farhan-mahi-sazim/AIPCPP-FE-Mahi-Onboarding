@@ -38,6 +38,14 @@ export const documentsApi = createApi({
           body: formData,
         };
       },
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(documentsApi.util.invalidateTags(["Documents"]));
+        } catch {
+          // Upload failed, no invalidation needed
+        }
+      },
     }),
     getJobStatus: builder.query<TJobStatusResponse, string>({
       query: (id) => ({
