@@ -18,12 +18,14 @@ export const documentsApi = createApi({
   tagTypes: ["Documents"],
   endpoints: (builder) => ({
     getSummaries: builder.query<TGetSummariesResponse, TGetSummariesArg>({
-      query: ({ limit = 10, offset = 0, search }) => ({
+      query: ({ limit = 10, offset = 0, search, file_type, sort_order }) => ({
         url: "content/summaries",
         params: {
           limit,
           offset,
           ...(search ? { search } : {}),
+          ...(file_type ? { file_type } : {}),
+          ...(sort_order ? { sort_order } : {}),
         },
       }),
       providesTags: ["Documents"],
@@ -63,7 +65,7 @@ export const documentsApi = createApi({
       query: (id) => ({
         url: `versions/${id}/timeline`,
       }),
-      providesTags: (result, error, id) => [{ type: "Documents", id }],
+      providesTags: (_result, _error, id) => [{ type: "Documents", id }],
     }),
     vectorSearch: builder.query<TVectorSearchResponse, TVectorSearchArg>({
       query: (body) => ({
@@ -81,7 +83,7 @@ export const documentsApi = createApi({
         method: "POST",
         body: { data },
       }),
-      invalidatesTags: (result, error, { documentId }) => [
+      invalidatesTags: (_result, _error, { documentId }) => [
         { type: "Documents", id: documentId },
         "Documents",
       ],
@@ -95,21 +97,23 @@ export const documentsApi = createApi({
         method: "PATCH",
         body: { data },
       }),
-      invalidatesTags: (result, error, { documentId }) => [
+      invalidatesTags: (_result, _error, { documentId }) => [
         { type: "Documents", id: documentId },
         "Documents",
       ],
     }),
-    deleteVersion: builder.mutation<{ message: string }, { versionId: string; documentId: string }>({
-      query: ({ versionId }) => ({
-        url: `versions/version/${versionId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: (result, error, { documentId }) => [
-        { type: "Documents", id: documentId },
-        "Documents",
-      ],
-    }),
+    deleteVersion: builder.mutation<{ message: string }, { versionId: string; documentId: string }>(
+      {
+        query: ({ versionId }) => ({
+          url: `versions/version/${versionId}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: (_result, _error, { documentId }) => [
+          { type: "Documents", id: documentId },
+          "Documents",
+        ],
+      },
+    ),
   }),
 });
 
@@ -124,4 +128,3 @@ export const {
   useUpdateHumanVersionMutation,
   useDeleteVersionMutation,
 } = documentsApi;
-

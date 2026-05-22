@@ -71,4 +71,3 @@ const DocumentHeader: React.FC<IDocumentHeaderProps> = ({
 );
 
 export default DocumentHeader;
-

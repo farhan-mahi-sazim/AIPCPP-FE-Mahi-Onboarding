@@ -49,7 +49,8 @@ export const useDocumentCard = (
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const { document_id } = document;
-  const file_type = "file_type" in document ? document.file_type : document.filename?.split(".").pop();
+  const file_type =
+    "file_type" in document ? document.file_type : document.filename?.split(".").pop();
 
   const fileConfig = FILE_TYPE_CONFIG[file_type?.toUpperCase() || ""] ?? DEFAULT_FILE_CONFIG;
 

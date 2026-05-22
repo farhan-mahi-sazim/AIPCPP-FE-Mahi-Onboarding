@@ -22,6 +22,8 @@ export interface TGetSummariesArg {
   limit?: number;
   offset?: number;
   search?: string;
+  file_type?: string | null;
+  sort_order?: "asc" | "desc";
 }
 
 export interface ISearchHeaderProps {

@@ -12,7 +12,7 @@ interface State {
 }
 
 class LocalizedErrorBoundary extends Component<Props, State> {
-  public state: State = {
+  public override state: State = {
     hasError: false,
   };
 
@@ -20,11 +20,11 @@ class LocalizedErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Uncaught error in DocumentDetails:", error, errorInfo);
   }
 
-  public render() {
+  public override render() {
     if (this.state.hasError) {
       return (
         <div className="p-6 bg-surface-container rounded-2xl border border-error/20 text-center glass-card">

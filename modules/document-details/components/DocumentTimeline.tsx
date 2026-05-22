@@ -92,4 +92,3 @@ const DocumentTimeline: React.FC<IDocumentTimelineProps> = ({
 );
 
 export default DocumentTimeline;
-

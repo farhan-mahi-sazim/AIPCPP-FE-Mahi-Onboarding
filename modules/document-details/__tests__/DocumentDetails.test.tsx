@@ -86,7 +86,9 @@ const MOCK_TIMELINE_DATA = {
 // Helpers
 // ──────────────────────────────────────────────
 
-const mockTimelineQuery = (overrides: Partial<ReturnType<typeof useGetDocumentTimelineQuery>> = {}) => {
+const mockTimelineQuery = (
+  overrides: Partial<ReturnType<typeof useGetDocumentTimelineQuery>> = {},
+) => {
   (useGetDocumentTimelineQuery as jest.Mock).mockReturnValue({
     data: null,
     isLoading: false,
@@ -122,7 +124,10 @@ describe("DocumentDetails", () => {
       mockUpdateVersion,
       { isLoading: false },
     ]);
-    (useDeleteVersionMutation as jest.Mock).mockReturnValue([mockDeleteVersion, { isLoading: false }]);
+    (useDeleteVersionMutation as jest.Mock).mockReturnValue([
+      mockDeleteVersion,
+      { isLoading: false },
+    ]);
   });
 
   // ──────────────────────────────────────────
@@ -306,7 +311,7 @@ describe("DocumentDetails", () => {
     const submitButton = screen.getByText("Create Override");
     expect(submitButton).toBeInTheDocument();
 
-    await act(async () => {
+    act(() => {
       fireEvent.click(submitButton);
     });
 
@@ -341,7 +346,7 @@ describe("DocumentDetails", () => {
     const submitButton = screen.getByText("Save Changes");
     expect(submitButton).toBeInTheDocument();
 
-    await act(async () => {
+    act(() => {
       fireEvent.click(submitButton);
     });
 
@@ -380,7 +385,7 @@ describe("DocumentDetails", () => {
 
     const deleteButton = screen.getByTitle("Delete version override");
 
-    await act(async () => {
+    act(() => {
       fireEvent.click(deleteButton);
     });
 
@@ -434,7 +439,7 @@ describe("DocumentDetails", () => {
     fireEvent.change(summaryInput, { target: { value: "" } });
     fireEvent.change(tagsInput, { target: { value: "" } });
 
-    await act(async () => {
+    act(() => {
       fireEvent.click(screen.getByText("Create Override"));
     });
 

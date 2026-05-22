@@ -1,8 +1,10 @@
-import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { useForm, UseFormReturn } from "react-hook-form";
 
+import { useRouter } from "next/router";
+
+import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
+import { useForm, UseFormReturn } from "react-hook-form";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 import {
@@ -14,10 +16,7 @@ import {
 } from "@/shared/redux/rtk-apis/documents.api";
 import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
 
-import {
-  documentDetailsZodResolver,
-  TDocumentDetailsForm,
-} from "../document-details.schema";
+import { documentDetailsZodResolver, TDocumentDetailsForm } from "../document-details.schema";
 
 export interface IDocumentData {
   filename?: string;
@@ -34,7 +33,7 @@ export interface IUseDocumentDetailsReturn {
   isLoading: boolean;
   error: unknown;
   isDeleting: boolean;
-  handleDelete: () => Promise<void>;
+  handleDelete: () => void;
   handleBack: () => void;
   // VCS features
   selectedVersionId: string | null;
@@ -113,26 +112,32 @@ export const useDocumentDetails = (): IUseDocumentDetailsReturn => {
     }
   }, [isSelectedVersionAI]);
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!id) return;
-    if (confirm(STRINGS.details.deleteConfirm)) {
-      try {
-        await deleteDocument(id as string).unwrap();
-        notifications.show({
-          title: STRINGS.details.deleted,
-          message: STRINGS.details.deletedMsg,
-          color: "teal",
-        });
-        router.push("/dashboard");
-      } catch (err) {
-        console.error("Delete failed", err);
-        notifications.show({
-          title: STRINGS.details.error,
-          message: STRINGS.details.errorMsg,
-          color: "red",
-        });
-      }
-    }
+    modals.openConfirmModal({
+      title: "Delete Document",
+      children: STRINGS.details.deleteConfirm,
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: async () => {
+        try {
+          await deleteDocument(id as string).unwrap();
+          notifications.show({
+            title: STRINGS.details.deleted,
+            message: STRINGS.details.deletedMsg,
+            color: "teal",
+          });
+          router.push("/dashboard");
+        } catch (err) {
+          console.error("Delete failed", err);
+          notifications.show({
+            title: STRINGS.details.error,
+            message: STRINGS.details.errorMsg,
+            color: "red",
+          });
+        }
+      },
+    });
   };
 
   const handleBack = () => {
@@ -247,4 +252,3 @@ export const useDocumentDetails = (): IUseDocumentDetailsReturn => {
     onSubmit,
   };
 };
-

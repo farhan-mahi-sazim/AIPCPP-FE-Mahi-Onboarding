@@ -1,7 +1,7 @@
 import React from "react";
-import { MdArrowBack } from "react-icons/md";
 
 import { Grid, Skeleton } from "@mantine/core";
+import { MdArrowBack } from "react-icons/md";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 
@@ -83,7 +83,7 @@ const DocumentDetails: React.FC = () => {
         <div className="max-w-md bg-surface-container/50 rounded-2xl p-8 border border-red-500/20 backdrop-blur-md">
           <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Document</h2>
           <p className="text-sm text-outline mb-6">
-            We couldn't retrieve the details for this document. It may have been deleted.
+            We couldn&apos;t retrieve the details for this document. It may have been deleted.
           </p>
           <button
             onClick={handleBack}
@@ -149,7 +149,7 @@ const DocumentDetails: React.FC = () => {
               <div className="bg-surface-container/50 rounded-2xl p-6 border border-white/5 backdrop-blur-md shadow-xl inner-glow">
                 <DocumentTimeline
                   timelineItems={timelineItems}
-                  selectedVersionId={selectedVersionId}
+                  selectedVersionId={selectedVersionId ?? undefined}
                   onSelectVersion={onSelectVersion}
                   onDeleteVersion={onDeleteVersion}
                 />
@@ -163,4 +163,3 @@ const DocumentDetails: React.FC = () => {
 };
 
 export default DocumentDetails;
-

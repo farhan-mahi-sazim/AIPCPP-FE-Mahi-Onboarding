@@ -1,7 +1,7 @@
 import React from "react";
-import { Controller } from "react-hook-form";
 
 import { TextInput, Textarea, Checkbox, Button, Group, Stack } from "@mantine/core";
+import { Controller } from "react-hook-form";
 
 import { IDocumentEditFormProps } from "../document-details.types";
 
@@ -30,7 +30,8 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
               error={error?.message}
               disabled={isSubmitting}
               classNames={{
-                input: "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
+                input:
+                  "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
                 label: "text-outline font-medium text-xs mb-1",
               }}
             />
@@ -48,7 +49,8 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
               error={error?.message}
               disabled={isSubmitting}
               classNames={{
-                input: "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
+                input:
+                  "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
                 label: "text-outline font-medium text-xs mb-1",
               }}
             />
@@ -68,7 +70,8 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
               error={error?.message}
               disabled={isSubmitting}
               classNames={{
-                input: "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
+                input:
+                  "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
                 label: "text-outline font-medium text-xs mb-1",
               }}
             />
@@ -87,7 +90,8 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
               disabled={isSubmitting}
               description="Separate tags with commas"
               classNames={{
-                input: "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
+                input:
+                  "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
                 label: "text-outline font-medium text-xs mb-1",
                 description: "text-outline/70 text-xs mt-1",
               }}
