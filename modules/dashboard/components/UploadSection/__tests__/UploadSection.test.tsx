@@ -32,10 +32,10 @@ describe("UploadSection", () => {
 
   it("renders all pipeline steps", () => {
     renderWithProviders(<UploadSection />);
-    expect(screen.getByText("Uploading file")).toBeInTheDocument();
-    expect(screen.getByText("Verified & queued")).toBeInTheDocument();
-    expect(screen.getByText("AI analysis")).toBeInTheDocument();
-    expect(screen.getByText("Summary generation completed")).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.UPLOADING)).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.PENDING)).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.PROCESSING)).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.COMPLETED)).toBeInTheDocument();
   });
 
   it("renders file input", () => {

@@ -119,6 +119,8 @@ describe("Dashboard", () => {
 
     expect(useGetSummariesQuery).toHaveBeenLastCalledWith({
       search: "annual",
+      file_type: null,
+      sort_order: "desc",
       limit: 10,
       offset: 0,
     });

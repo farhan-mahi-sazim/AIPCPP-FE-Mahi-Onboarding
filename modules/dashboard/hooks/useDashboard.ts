@@ -1,7 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 
+import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 
+import { STRINGS } from "@/shared/constants/strings.constants";
 import {
   useGetSummariesQuery,
   useDeleteDocumentMutation,
@@ -22,7 +24,7 @@ export interface IUseDashboardReturn {
   setSortOrder: (order: "asc" | "desc") => void;
   setFilterType: (type: string | null) => void;
   setPage: (page: number) => void;
-  handleDelete: (id: string) => Promise<void>;
+  handleDelete: (id: string) => void;
   refetch: ReturnType<typeof useGetSummariesQuery>["refetch"];
 }
 
@@ -44,6 +46,10 @@ export const useDashboard = (): IUseDashboardReturn => {
     return () => clearTimeout(handler);
   }, [search]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [filterType]);
+
   const offset = (page - 1) * limit;
 
   const {
@@ -53,6 +59,8 @@ export const useDashboard = (): IUseDashboardReturn => {
     refetch,
   } = useGetSummariesQuery({
     search: debouncedSearch,
+    file_type: filterType,
+    sort_order: sortOrder,
     limit,
     offset,
   });
@@ -61,11 +69,7 @@ export const useDashboard = (): IUseDashboardReturn => {
   const totalPages = useMemo(() => response?.total_pages ?? 1, [response?.total_pages]);
 
   const processedDocuments = useMemo(() => {
-    let result = [...documents];
-
-    if (filterType) {
-      result = result.filter((doc) => doc.file_type === filterType);
-    }
+    const result = [...documents];
 
     result.sort((a, b) => {
       const dateA = new Date(a.created_at).getTime();
@@ -74,27 +78,33 @@ export const useDashboard = (): IUseDashboardReturn => {
     });
 
     return result;
-  }, [documents, filterType, sortOrder]);
+  }, [documents, sortOrder]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this document?")) {
-      try {
-        await deleteDocument(id).unwrap();
-        notifications.show({
-          title: "Deleted",
-          message: "Document deleted successfully.",
-          color: "teal",
-        });
-        refetch();
-      } catch (err) {
-        console.error("Delete failed", err);
-        notifications.show({
-          title: "Error",
-          message: "Failed to delete document.",
-          color: "red",
-        });
-      }
-    }
+  const handleDelete = (id: string) => {
+    modals.openConfirmModal({
+      title: "Delete Document",
+      children: STRINGS.details.deleteConfirm,
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: async () => {
+        try {
+          await deleteDocument(id).unwrap();
+          notifications.show({
+            title: STRINGS.details.deleted,
+            message: STRINGS.details.deletedMsg,
+            color: "teal",
+          });
+          refetch();
+        } catch (err) {
+          console.error("Delete failed", err);
+          notifications.show({
+            title: STRINGS.details.error,
+            message: STRINGS.details.errorMsg,
+            color: "red",
+          });
+        }
+      },
+    });
   };
 
   return {

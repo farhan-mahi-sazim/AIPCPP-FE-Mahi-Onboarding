@@ -16,12 +16,14 @@ export const documentsApi = createApi({
   tagTypes: ["Documents"],
   endpoints: (builder) => ({
     getSummaries: builder.query<TGetSummariesResponse, TGetSummariesArg>({
-      query: ({ limit = 10, offset = 0, search }) => ({
+      query: ({ limit = 10, offset = 0, search, file_type, sort_order }) => ({
         url: "content/summaries",
         params: {
           limit,
           offset,
           ...(search ? { search } : {}),
+          ...(file_type ? { file_type } : {}),
+          ...(sort_order ? { sort_order } : {}),
         },
       }),
       providesTags: ["Documents"],

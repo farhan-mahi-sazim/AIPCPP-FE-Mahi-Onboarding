@@ -22,15 +22,13 @@ export interface IUseUploadSectionReturn {
   file: File | null;
   isDragging: boolean;
   isUploading: boolean;
-  uploadError: unknown;
+  uploadError: Error | null;
   progress: number;
   uploadProgress: number;
   stage: string;
   stageLabel: string;
   uploadedDocId: string | null;
   uploadedDocData: { filename: string; file_type: string } | null;
-  setFile: (file: File | null) => void;
-  setIsDragging: (dragging: boolean) => void;
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: () => void;
   handleDrop: (e: React.DragEvent) => void;
@@ -59,7 +57,7 @@ export const useUploadSection = ({
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<unknown>(null);
+  const [uploadError, setUploadError] = useState<Error | null>(null);
   const [uploadedDocId, setUploadedDocId] = useState<string | null>(null);
   const [uploadedDocData, setUploadedDocData] = useState<{
     filename: string;
@@ -135,7 +133,13 @@ export const useUploadSection = ({
     if (stage === "completed" || progress >= 100) return { uiStage: "completed", stepIndex: 3 };
     if (stage === "uploading") return { uiStage: "uploading", stepIndex: 0 };
     if (stage === "pending" || stage === "queued") return { uiStage: "pending", stepIndex: 1 };
-    if (stage === "extraction" || stage === "ai_task" || stage === "embedding" || stage === "persistence" || stage === "processing") {
+    if (
+      stage === "extraction" ||
+      stage === "ai_task" ||
+      stage === "embedding" ||
+      stage === "persistence" ||
+      stage === "processing"
+    ) {
       return { uiStage: "processing", stepIndex: 2 };
     }
     if (progress > 0) return { uiStage: "processing", stepIndex: 2 };
@@ -268,7 +272,14 @@ export const useUploadSection = ({
         scheduleRetry();
       };
     },
-    [applyProgressUpdate, cleanupEventSource, cleanupPolling, parseProgressPayload, scheduleRetry, startPolling],
+    [
+      applyProgressUpdate,
+      cleanupEventSource,
+      cleanupPolling,
+      parseProgressPayload,
+      scheduleRetry,
+      startPolling,
+    ],
   );
 
   subscribeRef.current = subscribeToProgress;
@@ -343,7 +354,7 @@ export const useUploadSection = ({
       subscribeToProgress(document.id);
     } catch (err) {
       console.error("Upload failed", err);
-      setUploadError(err);
+      setUploadError(err instanceof Error ? err : new Error(String(err)));
       setIsUploading(false);
       notifications.show({
         title: STRINGS.upload.failed,
@@ -411,8 +422,6 @@ export const useUploadSection = ({
     stageLabel,
     uploadedDocId,
     uploadedDocData,
-    setFile,
-    setIsDragging,
     handleDragOver,
     handleDragLeave,
     handleDrop,
