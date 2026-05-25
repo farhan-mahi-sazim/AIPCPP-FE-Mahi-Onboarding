@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Menu } from "@mantine/core";
 import { MdMoreVert } from "react-icons/md";
 
 import { Card } from "@/shared/components/ui/card";
@@ -10,9 +11,7 @@ import { useDocumentCard } from "./useDocumentCard";
 
 const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) => {
   const {
-    showMenu,
     handleCardClick,
-    handleMenuToggle,
     handleViewDetails,
     handleDelete,
     fileConfig,
@@ -101,30 +100,37 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
         </div>
 
         <div className="relative flex-shrink-0">
-          <button
-            className="text-outline hover:text-primary transition-colors p-1"
-            onClick={handleMenuToggle}
-            aria-label={STRINGS.dashboard.documentOptions}
-          >
-            <MdMoreVert className="text-xl" />
-          </button>
-
-          {showMenu && (
-            <div className="absolute right-0 mt-2 w-36 bg-surface-container border border-white/10 rounded-lg shadow-xl z-20">
+          <Menu shadow="md" width={150} withinPortal>
+            <Menu.Target>
               <button
-                className="w-full text-left px-4 py-2 text-sm text-on-surface hover:bg-white/5 transition-colors first:rounded-t-lg"
-                onClick={handleViewDetails}
+                className="text-outline hover:text-primary transition-colors p-1"
+                onClick={(event) => event.stopPropagation()}
+                aria-label={STRINGS.dashboard.documentOptions}
+              >
+                <MdMoreVert className="text-xl" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown className="bg-surface-container border border-white/10">
+              <Menu.Item
+                className="text-on-surface hover:bg-white/5"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleViewDetails();
+                }}
               >
                 {STRINGS.dashboard.viewDetails}
-              </button>
-              <button
-                className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors last:rounded-b-lg"
-                onClick={handleDelete}
+              </Menu.Item>
+              <Menu.Item
+                className="text-red-500 hover:bg-red-500/10"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDelete();
+                }}
               >
                 {STRINGS.dashboard.delete}
-              </button>
-            </div>
-          )}
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </div>
       </div>
     </Card>

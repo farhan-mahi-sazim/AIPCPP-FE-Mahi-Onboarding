@@ -290,7 +290,6 @@ export const useUploadSection = ({
     }>((resolve, reject) => {
       const formData = new FormData();
       formData.append("file", fileToUpload);
-      formData.append("document_id", crypto.randomUUID());
 
       const request = new XMLHttpRequest();
       request.open("POST", "/api/v1/content/upload");

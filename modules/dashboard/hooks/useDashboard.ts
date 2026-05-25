@@ -9,7 +9,7 @@ import {
   useDeleteDocumentMutation,
   useVectorSearchQuery,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { TDashboardDocument, TDocumentSummary } from "@/shared/typedefs/dashboard.types";
+import { TDashboardDocument } from "@/shared/typedefs/dashboard.types";
 
 export interface IUseDashboardReturn {
   search: string;
@@ -119,19 +119,8 @@ export const useDashboard = (): IUseDashboardReturn => {
       return result;
     }
 
-    let result = [...documents] as TDocumentSummary[];
-    if (filterType) {
-      result = result.filter((doc) => doc.file_type === filterType);
-    }
-
-    result.sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
-    });
-
-    return result;
-  }, [documents, filterType, sortOrder, isSemantic]);
+    return documents;
+  }, [documents, filterType, isSemantic]);
 
   const isLoading = isSemantic
     ? showSemanticResults

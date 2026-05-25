@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { useRouter } from "next/router";
 
 import {
@@ -33,12 +31,9 @@ export const DEFAULT_FILE_CONFIG = {
 };
 
 export interface IUseDocumentCardReturn {
-  showMenu: boolean;
-  setShowMenu: (show: boolean) => void;
   handleCardClick: () => void;
-  handleMenuToggle: (e: React.MouseEvent) => void;
-  handleViewDetails: (e: React.MouseEvent) => void;
-  handleDelete: (e: React.MouseEvent) => void;
+  handleViewDetails: () => void;
+  handleDelete: () => void;
   fileConfig: { bg: string; text: string; icon: React.ElementType };
   filename: string;
   category?: string | null;
@@ -56,7 +51,6 @@ export const useDocumentCard = (
   onMenuClick?: (documentId: string) => void,
 ): IUseDocumentCardReturn => {
   const router = useRouter();
-  const [showMenu, setShowMenu] = useState(false);
   const { document_id } = document;
   const file_type = document.file_type || document.filename?.split(".").pop();
 
@@ -81,28 +75,16 @@ export const useDocumentCard = (
     router.push(`/document/${document_id}`);
   };
 
-  const handleMenuToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowMenu(!showMenu);
-  };
-
-  const handleViewDetails = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleViewDetails = () => {
     router.push(`/document/${document_id}`);
-    setShowMenu(false);
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = () => {
     onMenuClick?.(document_id);
-    setShowMenu(false);
   };
 
   return {
-    showMenu,
-    setShowMenu,
     handleCardClick,
-    handleMenuToggle,
     handleViewDetails,
     handleDelete,
     fileConfig,
