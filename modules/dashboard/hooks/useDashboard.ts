@@ -30,6 +30,7 @@ export interface IUseDashboardReturn {
   refetch: () => void;
   isSemantic: boolean;
   setIsSemantic: (value: boolean) => void;
+  synthesisAnswer: string | null;
 }
 
 export const useDashboard = (): IUseDashboardReturn => {
@@ -95,6 +96,13 @@ export const useDashboard = (): IUseDashboardReturn => {
     return response?.data ?? [];
   }, [isSemantic, response?.data, vectorSearchResponse?.results]);
 
+  const synthesisAnswer = useMemo(() => {
+    if (!showSemanticResults) {
+      return null;
+    }
+    return vectorSearchResponse?.synthesis_answer ?? null;
+  }, [showSemanticResults, vectorSearchResponse?.synthesis_answer]);
+
   const totalPages = useMemo(() => {
     if (isSemantic) {
       return showSemanticResults ? Math.ceil((vectorSearchResponse?.total ?? 0) / limit) || 1 : 1;
@@ -106,11 +114,7 @@ export const useDashboard = (): IUseDashboardReturn => {
     if (isSemantic) {
       let result = [...documents];
       if (filterType) {
-        result = result.filter((doc) => {
-          const fileType =
-            "file_type" in doc ? doc.file_type : doc.filename.split(".").pop()?.toUpperCase();
-          return fileType === filterType;
-        });
+        result = result.filter((doc) => doc.file_type === filterType);
       }
       return result;
     }
@@ -188,5 +192,6 @@ export const useDashboard = (): IUseDashboardReturn => {
     refetch,
     isSemantic,
     setIsSemantic,
+    synthesisAnswer,
   };
 };

@@ -18,20 +18,20 @@ const DocumentInfo: React.FC<IDocumentInfoProps> = ({ category, summary, summary
     <div className="space-y-4">
       {summary_title && (
         <div>
-          <h3 className="text-sm font-medium text-outline">Title</h3>
+          <h3 className="text-sm font-medium text-outline">{STRINGS.details.info.title}</h3>
           <p className="text-on-surface font-medium">{summary_title}</p>
         </div>
       )}
       <div>
-        <h3 className="text-sm font-medium text-outline">Category</h3>
-        <p className="text-on-surface">{category || "N/A"}</p>
+        <h3 className="text-sm font-medium text-outline">{STRINGS.details.info.category}</h3>
+        <p className="text-on-surface">{category || STRINGS.details.info.notAvailable}</p>
       </div>
       <div>
-        <h3 className="text-sm font-medium text-outline">Summary</h3>
-        <p className="text-on-surface">{summary || "N/A"}</p>
+        <h3 className="text-sm font-medium text-outline">{STRINGS.details.info.summary}</h3>
+        <p className="text-on-surface">{summary || STRINGS.details.info.notAvailable}</p>
       </div>
       <div>
-        <h3 className="text-sm font-medium text-outline">Tags</h3>
+        <h3 className="text-sm font-medium text-outline">{STRINGS.details.info.tags}</h3>
         <div className="flex gap-2 mt-1">
           {tags && tags.length > 0
             ? tags.map((tag: string) => (
@@ -39,7 +39,7 @@ const DocumentInfo: React.FC<IDocumentInfoProps> = ({ category, summary, summary
                   {tag}
                 </span>
               ))
-            : "N/A"}
+            : STRINGS.details.info.notAvailable}
         </div>
       </div>
     </div>

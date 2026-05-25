@@ -48,7 +48,7 @@ const DocumentTimeline: React.FC<IDocumentTimelineProps> = ({
                       isSelected ? "text-indigo-300" : "text-on-surface"
                     }`}
                   >
-                    Version {item.version_number}
+                    {STRINGS.details.timelineVersion} {item.version_number}
                   </p>
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full select-none ${
@@ -71,7 +71,7 @@ const DocumentTimeline: React.FC<IDocumentTimelineProps> = ({
                         onDeleteVersion(item.id);
                       }}
                       className="p-1 rounded-md text-outline hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                      title="Delete version override"
+                      title={STRINGS.details.timelineDeleteTitle}
                     >
                       <MdDelete size={16} />
                     </button>
@@ -79,7 +79,7 @@ const DocumentTimeline: React.FC<IDocumentTimelineProps> = ({
                 </div>
               </div>
               <p className="text-xs text-on-surface-variant mt-2 bg-white/5 p-3 rounded-lg border border-white/5 line-clamp-2 group-hover:line-clamp-none transition-all">
-                {item.data?.summary || "No summary text."}
+                {item.data?.summary || STRINGS.details.timelineNoSummary}
               </p>
             </div>
           );

@@ -151,10 +151,15 @@ describe("Dashboard", () => {
           {
             document_id: "uuid-2",
             filename: "semantic_match.pdf",
-            chunk_content: "This is a semantic chunk.",
-            similarity_score: 0.95,
             summary: "Semantic summary",
             created_at: "2024-05-15T10:00:00Z",
+            relevance: "high",
+            match_count: 1,
+            best_chunk: {
+              chunk_index: 0,
+              highlight: "This is a semantic chunk.",
+              similarity_score: 0.95,
+            },
           },
         ],
         total: 1,
@@ -190,8 +195,8 @@ describe("Dashboard", () => {
 
     // Check if the semantic result is rendered
     expect(screen.getByText("semantic_match.pdf")).toBeInTheDocument();
-    expect(screen.getByText("Match: 95%")).toBeInTheDocument();
-    expect(screen.getByText(/"This is a semantic chunk."/)).toBeInTheDocument();
+    expect(screen.getByText("Score 95%")).toBeInTheDocument();
+    expect(screen.getByText(/This is a semantic chunk\./)).toBeInTheDocument();
 
     jest.useRealTimers();
   });

@@ -35,13 +35,15 @@ export interface IUseDocumentDetailsReturn {
   isDeleting: boolean;
   handleDelete: () => void;
   handleBack: () => void;
-  // VCS features
   selectedVersionId: string | null;
   selectedVersion: TTimelineItem | undefined;
   onSelectVersion: (versionId: string) => void;
   onDeleteVersion: (versionId: string) => Promise<void>;
+  isSelectedVersionAI: boolean;
   isEditing: boolean;
   setIsEditing: (val: boolean) => void;
+  startEditCurrent: () => void;
+  startOverride: () => void;
   isCreateNewVersion: boolean;
   setIsCreateNewVersion: (val: boolean) => void;
   showCreateNewOption: boolean;
@@ -111,6 +113,16 @@ export const useDocumentDetails = (): IUseDocumentDetailsReturn => {
       setIsCreateNewVersion(true);
     }
   }, [isSelectedVersionAI]);
+
+  const startEditCurrent = () => {
+    setIsCreateNewVersion(false);
+    setIsEditing(true);
+  };
+
+  const startOverride = () => {
+    setIsCreateNewVersion(true);
+    setIsEditing(true);
+  };
 
   const handleDelete = () => {
     if (!id) return;
@@ -242,8 +254,11 @@ export const useDocumentDetails = (): IUseDocumentDetailsReturn => {
     selectedVersion,
     onSelectVersion,
     onDeleteVersion,
+    isSelectedVersionAI,
     isEditing,
     setIsEditing,
+    startEditCurrent,
+    startOverride,
     isCreateNewVersion,
     setIsCreateNewVersion,
     showCreateNewOption,

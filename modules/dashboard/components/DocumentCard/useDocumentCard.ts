@@ -10,7 +10,7 @@ import {
   MdInsertDriveFile,
 } from "react-icons/md";
 
-import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
+import { IDocumentCardProps, TVectorSearchResult } from "@/shared/typedefs/dashboard.types";
 
 export const FILE_TYPE_CONFIG: Record<
   string,
@@ -40,6 +40,15 @@ export interface IUseDocumentCardReturn {
   handleViewDetails: (e: React.MouseEvent) => void;
   handleDelete: (e: React.MouseEvent) => void;
   fileConfig: { bg: string; text: string; icon: React.ElementType };
+  filename: string;
+  category?: string | null;
+  tags?: string[] | null;
+  summaryTitle?: string | null;
+  summaryText?: string | null;
+  relevance?: string;
+  matchCount?: number;
+  bestHighlight?: string;
+  highlightScore?: number;
 }
 
 export const useDocumentCard = (
@@ -49,10 +58,24 @@ export const useDocumentCard = (
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const { document_id } = document;
-  const file_type =
-    "file_type" in document ? document.file_type : document.filename?.split(".").pop();
+  const file_type = document.file_type || document.filename?.split(".").pop();
 
   const fileConfig = FILE_TYPE_CONFIG[file_type?.toUpperCase() || ""] ?? DEFAULT_FILE_CONFIG;
+  const filename = document.filename;
+  const category = "category" in document ? document.category : undefined;
+  const tags = "tags" in document ? document.tags : undefined;
+  const summaryTitle = "summary_title" in document ? document.summary_title : undefined;
+  const summaryText = "summary" in document ? document.summary : undefined;
+  const relevance =
+    "relevance" in document ? (document as TVectorSearchResult).relevance : undefined;
+  const matchCount =
+    "match_count" in document ? (document as TVectorSearchResult).match_count : undefined;
+  const bestHighlight =
+    "best_chunk" in document ? (document as TVectorSearchResult).best_chunk.highlight : undefined;
+  const highlightScore =
+    "best_chunk" in document
+      ? (document as TVectorSearchResult).best_chunk.similarity_score
+      : undefined;
 
   const handleCardClick = () => {
     router.push(`/document/${document_id}`);
@@ -83,5 +106,14 @@ export const useDocumentCard = (
     handleViewDetails,
     handleDelete,
     fileConfig,
+    filename,
+    category,
+    tags,
+    summaryTitle,
+    summaryText,
+    relevance,
+    matchCount,
+    bestHighlight,
+    highlightScore,
   };
 };

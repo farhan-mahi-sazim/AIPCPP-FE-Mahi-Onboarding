@@ -225,7 +225,7 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    expect(screen.getByText("Edit Details")).toBeInTheDocument();
+    expect(screen.getByLabelText("Edit Details")).toBeInTheDocument();
   });
 
   it("enters edit mode and displays the form when Edit Details is clicked", () => {
@@ -233,7 +233,7 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Edit Details"));
 
     // The form inputs should now be visible
     expect(screen.getByLabelText("Document Title")).toBeInTheDocument();
@@ -247,7 +247,7 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Edit Details"));
 
     // HUMAN v2 is selected by default
     expect(screen.getByLabelText("Document Title")).toHaveValue("Annual Report – Updated");
@@ -263,9 +263,9 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Edit Details"));
 
-    expect(screen.queryByText("Edit Details")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Edit Details")).not.toBeInTheDocument();
   });
 
   it("exits edit mode when Cancel is clicked", () => {
@@ -273,14 +273,14 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Edit Details"));
     expect(screen.getByLabelText("Document Title")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Cancel"));
 
     // Should be back to view mode
     expect(screen.queryByLabelText("Document Title")).not.toBeInTheDocument();
-    expect(screen.getByText("Edit Details")).toBeInTheDocument();
+    expect(screen.getByLabelText("Edit Details")).toBeInTheDocument();
   });
 
   // ──────────────────────────────────────────
@@ -293,7 +293,7 @@ describe("DocumentDetails", () => {
     renderWithProviders(<DocumentDetails />);
 
     // Default selected version is HUMAN v2 → showCreateNewOption = !isAI = true
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Edit Details"));
 
     expect(
       screen.getByLabelText("Save as new version (retains historical version)"),
@@ -305,7 +305,7 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Create Override"));
 
     // The checkbox is checked by default (isCreateNewVersion = true)
     const submitButton = screen.getByText("Create Override");
@@ -337,11 +337,7 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
-
-    // Uncheck the "Save as new version" checkbox
-    const checkbox = screen.getByLabelText("Save as new version (retains historical version)");
-    fireEvent.click(checkbox);
+    fireEvent.click(screen.getByLabelText("Edit Details"));
 
     const submitButton = screen.getByText("Save Changes");
     expect(submitButton).toBeInTheDocument();
@@ -409,7 +405,7 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Create Override"));
 
     // showCreateNewOption = !isSelectedVersionAI → false for AI, so checkbox is hidden
     expect(
@@ -426,7 +422,7 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    fireEvent.click(screen.getByText("Edit Details"));
+    fireEvent.click(screen.getByLabelText("Edit Details"));
 
     // Clear all fields
     const titleInput = screen.getByLabelText("Document Title");
@@ -440,7 +436,7 @@ describe("DocumentDetails", () => {
     fireEvent.change(tagsInput, { target: { value: "" } });
 
     act(() => {
-      fireEvent.click(screen.getByText("Create Override"));
+      fireEvent.click(screen.getByText("Save Changes"));
     });
 
     await waitFor(() => {

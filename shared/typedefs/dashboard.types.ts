@@ -80,18 +80,25 @@ export interface TVectorSearchArg {
 export interface TVectorSearchResult {
   document_id: string;
   filename: string;
-  chunk_content: string;
-  similarity_score: number;
-  summary: string;
+  file_type: "PDF" | "DOC" | "DOCX" | "TXT" | string;
+  summary: string | null;
   created_at: string;
+  relevance: "low" | "medium" | "high" | string;
+  match_count: number;
+  best_chunk: {
+    chunk_index: number;
+    highlight: string;
+    similarity_score: number;
+  };
 }
 
 export interface TVectorSearchResponse {
-  results: TVectorSearchResult[];
-  total: number;
   query: string;
+  synthesis_answer: string | null;
+  total: number;
   limit: number;
   offset: number;
+  results: TVectorSearchResult[];
 }
 
 export type TDashboardDocument = TDocumentSummary | TVectorSearchResult;
@@ -107,4 +114,5 @@ export interface IDocumentGridProps {
   error: unknown;
   onUploadClick?: () => void;
   onDocumentMenuClick?: (documentId: string) => void;
+  synthesisAnswer?: string | null;
 }

@@ -3,6 +3,8 @@ import React from "react";
 import { TextInput, Textarea, Checkbox, Button, Group, Stack } from "@mantine/core";
 import { Controller } from "react-hook-form";
 
+import { STRINGS } from "@/shared/constants/strings.constants";
+
 import { IDocumentEditFormProps } from "../document-details.types";
 
 const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
@@ -25,8 +27,8 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
           render={({ field, fieldState: { error } }) => (
             <TextInput
               {...field}
-              label="Document Title"
-              placeholder="e.g., Annual Financial Report 2024"
+              label={STRINGS.details.form.titleLabel}
+              placeholder={STRINGS.details.form.titlePlaceholder}
               error={error?.message}
               disabled={isSubmitting}
               classNames={{
@@ -44,8 +46,8 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
           render={({ field, fieldState: { error } }) => (
             <TextInput
               {...field}
-              label="Category"
-              placeholder="e.g., Finance, Legal, HR"
+              label={STRINGS.details.form.categoryLabel}
+              placeholder={STRINGS.details.form.categoryPlaceholder}
               error={error?.message}
               disabled={isSubmitting}
               classNames={{
@@ -63,10 +65,11 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
           render={({ field, fieldState: { error } }) => (
             <Textarea
               {...field}
-              label="Summary"
-              placeholder="Provide a comprehensive summary..."
-              minRows={5}
-              maxRows={12}
+              label={STRINGS.details.form.summaryLabel}
+              placeholder={STRINGS.details.form.summaryPlaceholder}
+              autosize
+              minRows={4}
+              maxRows={16}
               error={error?.message}
               disabled={isSubmitting}
               classNames={{
@@ -84,11 +87,11 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
           render={({ field, fieldState: { error } }) => (
             <TextInput
               {...field}
-              label="Tags (comma-separated)"
-              placeholder="e.g., revenue, growth, forecast"
+              label={STRINGS.details.form.tagsLabel}
+              placeholder={STRINGS.details.form.tagsPlaceholder}
               error={error?.message}
               disabled={isSubmitting}
-              description="Separate tags with commas"
+              description={STRINGS.details.form.tagsDescription}
               classNames={{
                 input:
                   "bg-surface-container/50 border-white/5 text-on-surface focus:border-indigo-500",
@@ -101,7 +104,7 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
 
         {showCreateNewOption && (
           <Checkbox
-            label="Save as new version (retains historical version)"
+            label={STRINGS.details.form.saveAsNewVersion}
             checked={isCreateNewVersion}
             onChange={(event) => setIsCreateNewVersion(event.currentTarget.checked)}
             disabled={isSubmitting}
@@ -121,14 +124,14 @@ const DocumentEditForm: React.FC<IDocumentEditFormProps> = ({
             disabled={isSubmitting}
             className="hover:bg-white/5 text-outline hover:text-on-surface"
           >
-            Cancel
+            {STRINGS.details.form.cancel}
           </Button>
           <Button
             type="submit"
             loading={isSubmitting}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6"
           >
-            {isCreateNewVersion ? "Create Override" : "Save Changes"}
+            {isCreateNewVersion ? STRINGS.details.createOverride : STRINGS.details.form.saveChanges}
           </Button>
         </Group>
       </Stack>

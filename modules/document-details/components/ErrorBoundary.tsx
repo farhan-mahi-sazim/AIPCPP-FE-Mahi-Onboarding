@@ -30,13 +30,13 @@ class LocalizedErrorBoundary extends Component<Props, State> {
         <div className="p-6 bg-surface-container rounded-2xl border border-error/20 text-center glass-card">
           <h2 className="text-xl font-bold text-error mb-2">{STRINGS.details.error}</h2>
           <p className="text-sm text-outline mb-4">
-            {this.state.error?.message || "An unexpected error occurred in this module."}
+            {this.state.error?.message || STRINGS.details.errorBoundaryMessage}
           </p>
           <button
             onClick={() => this.setState({ hasError: false })}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors"
           >
-            Retry
+            {STRINGS.details.errorBoundaryRetry}
           </button>
         </div>
       );

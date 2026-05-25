@@ -30,6 +30,7 @@ const Dashboard: React.FC = () => {
     refetch,
     isSemantic,
     setIsSemantic,
+    synthesisAnswer,
   } = useDashboard();
 
   const { onUploadSuccess } = useUploadSection({
@@ -77,6 +78,7 @@ const Dashboard: React.FC = () => {
           error={error}
           onUploadClick={() => setShowUpload(true)}
           onDocumentMenuClick={handleDelete}
+          synthesisAnswer={synthesisAnswer}
         />
 
         <div className="flex justify-center mt-8">
