@@ -1,4 +1,9 @@
 export const STRINGS = {
+  dashboard: {
+    documentOptions: "Document options",
+    viewDetails: "View Details",
+    delete: "Delete",
+  },
   upload: {
     title: "Document Intelligence Upload",
     dragDrop: "Drag and drop your document here, or click to browse",

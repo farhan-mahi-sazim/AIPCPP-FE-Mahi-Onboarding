@@ -68,17 +68,7 @@ export const useDashboard = (): IUseDashboardReturn => {
   const documents = useMemo(() => response?.data ?? [], [response?.data]);
   const totalPages = useMemo(() => response?.total_pages ?? 1, [response?.total_pages]);
 
-  const processedDocuments = useMemo(() => {
-    const result = [...documents];
-
-    result.sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
-    });
-
-    return result;
-  }, [documents, sortOrder]);
+  const processedDocuments = useMemo(() => documents, [documents]);
 
   const handleDelete = (id: string) => {
     modals.openConfirmModal({
