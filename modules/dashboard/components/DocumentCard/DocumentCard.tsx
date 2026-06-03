@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Menu } from "@mantine/core";
+import DOMPurify from "dompurify";
 import { MdMoreVert } from "react-icons/md";
 
 import { Card } from "@/shared/components/ui/card";
@@ -10,12 +11,28 @@ import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
 import { useDocumentCard } from "./useDocumentCard";
 
 const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) => {
-  const { handleCardClick, handleViewDetails, handleDelete, fileConfig } = useDocumentCard(
-    document,
-    onMenuClick,
-  );
+  const {
+    handleCardClick,
+    handleViewDetails,
+    handleDelete,
+    fileConfig,
+    filename,
+    category,
+    tags,
+    summaryTitle,
+    summaryText,
+    relevance,
+    matchCount,
+    bestHighlight,
+    highlightScore,
+  } = useDocumentCard(document, onMenuClick);
 
-  const { filename, category, tags, created_at, summary_title } = document;
+  const sanitizedHighlight = useMemo(() => {
+    if (!bestHighlight) return undefined;
+    if (typeof window === "undefined") return undefined;
+    return DOMPurify.sanitize(bestHighlight, { USE_PROFILES: { html: true } });
+  }, [bestHighlight]);
+
   const FileIcon = fileConfig.icon;
 
   return (
@@ -33,28 +50,59 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-body-md text-on-surface font-semibold">{filename}</h3>
-            {category && (
-              <span className="text-[10px] font-bold text-tertiary bg-tertiary/10 border border-tertiary/20 px-2 py-0.5 rounded uppercase flex-shrink-0">
-                {category}
-              </span>
-            )}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {relevance && (
+                <span className="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded uppercase">
+                  {relevance}
+                </span>
+              )}
+              {category && (
+                <span className="text-[10px] font-bold text-tertiary bg-tertiary/10 border border-tertiary/20 px-2 py-0.5 rounded uppercase">
+                  {category}
+                </span>
+              )}
+            </div>
           </div>
 
-          {summary_title && (
-            <p className="text-sm text-on-surface-variant mt-1 line-clamp-1">{summary_title}</p>
+          {summaryTitle && (
+            <p className="text-sm text-on-surface-variant mt-1 line-clamp-1">{summaryTitle}</p>
           )}
+          {summaryText && <p className="text-sm text-outline mt-1 line-clamp-2">{summaryText}</p>}
 
           <div className="flex flex-col gap-2 mt-1">
             <span className="text-label-sm text-on-surface-variant opacity-60 flex-shrink-0">
-              {new Date(created_at).toLocaleDateString()}
+              {new Date(document.created_at).toLocaleDateString()}
             </span>
-            <div className="flex gap-1.5 flex-wrap">
-              {(tags ?? []).map((tag) => (
-                <span key={tag} className="text-xs text-outline bg-white/5 px-2 py-0.5 rounded">
-                  #{tag}
-                </span>
-              ))}
-            </div>
+
+            {matchCount !== undefined && (
+              <span className="text-[11px] uppercase tracking-[0.2em] text-outline">
+                {matchCount} {STRINGS.dashboard.matches}
+              </span>
+            )}
+
+            {tags && tags.length > 0 && (
+              <div className="flex gap-1.5 flex-wrap">
+                {tags.map((tag: string) => (
+                  <span key={tag} className="text-xs text-outline bg-white/5 px-2 py-0.5 rounded">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {sanitizedHighlight && (
+              <div className="text-sm text-outline-variant mt-2 line-clamp-3 bg-white/5 p-2 rounded-lg">
+                <span
+                  className="leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: sanitizedHighlight }}
+                />
+              </div>
+            )}
+            {highlightScore !== undefined && (
+              <span className="text-[10px] text-outline/70 uppercase tracking-[0.3em]">
+                {STRINGS.dashboard.score} {Math.round(highlightScore * 100)}%
+              </span>
+            )}
           </div>
         </div>
 

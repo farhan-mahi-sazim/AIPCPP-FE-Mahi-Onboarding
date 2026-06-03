@@ -1,7 +1,8 @@
 import React from "react";
 
 import { Menu } from "@mantine/core";
-import { MdSearch, MdFilterList, MdSort } from "react-icons/md";
+import clsx from "clsx";
+import { MdSearch, MdFilterList, MdSort, MdPsychology } from "react-icons/md";
 
 import { FILE_TYPE_OPTIONS } from "@/shared/constants/app.constants";
 import { ISearchHeaderProps } from "@/shared/typedefs/dashboard.types";
@@ -13,6 +14,8 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
   onSort,
   filterType,
   sortOrder,
+  isSemantic,
+  onToggleSemantic,
 }) => (
   <section className="mb-8">
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-gutter">
@@ -22,7 +25,11 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
         <input
           id="document-search"
           className="w-full bg-surface-container border border-white/10 rounded-xl py-3 pl-12 pr-4 text-on-surface focus:border-primary focus:ring-0 transition-all"
-          placeholder="Search files by name, type, or tag..."
+          placeholder={
+            isSemantic
+              ? "Ask a question about your documents..."
+              : "Search files by name, type, or tag..."
+          }
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
@@ -32,6 +39,21 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
 
       {/* Action Buttons */}
       <div className="flex items-center gap-3">
+        {/* Semantic Toggle */}
+        <button
+          className={clsx(
+            "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-colors border",
+            isSemantic
+              ? "bg-primary/10 border-primary/30 text-primary"
+              : "bg-surface-container border-white/10 text-on-surface-variant hover:bg-surface-container-high",
+          )}
+          onClick={onToggleSemantic}
+          aria-label="Toggle semantic search"
+        >
+          <MdPsychology className="text-[20px]" />
+          <span className="text-label-md">Semantic</span>
+        </button>
+
         {/* Filter Dropdown */}
         <Menu shadow="md" width={150}>
           <Menu.Target>

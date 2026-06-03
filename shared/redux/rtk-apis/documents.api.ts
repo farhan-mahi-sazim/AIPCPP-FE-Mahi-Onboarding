@@ -6,6 +6,8 @@ import {
   TUploadDocumentResponse,
   TJobStatusResponse,
   TTimelineItem,
+  TVectorSearchArg,
+  TVectorSearchResponse,
 } from "@/shared/typedefs/dashboard.types";
 
 import { baseQuery } from "./baseQuery";
@@ -63,7 +65,55 @@ export const documentsApi = createApi({
       query: (id) => ({
         url: `versions/${id}/timeline`,
       }),
+      providesTags: (_result, _error, id) => [{ type: "Documents", id }],
     }),
+    vectorSearch: builder.query<TVectorSearchResponse, TVectorSearchArg>({
+      query: (body) => ({
+        url: "search",
+        method: "POST",
+        body,
+      }),
+    }),
+    createVersionOverride: builder.mutation<
+      TTimelineItem,
+      { documentId: string; data: Partial<TTimelineItem["data"]> }
+    >({
+      query: ({ documentId, data }) => ({
+        url: `versions/${documentId}/override`,
+        method: "POST",
+        body: { data },
+      }),
+      invalidatesTags: (_result, _error, { documentId }) => [
+        { type: "Documents", id: documentId },
+        "Documents",
+      ],
+    }),
+    updateHumanVersion: builder.mutation<
+      TTimelineItem,
+      { versionId: string; documentId: string; data: Partial<TTimelineItem["data"]> }
+    >({
+      query: ({ versionId, data }) => ({
+        url: `versions/version/${versionId}`,
+        method: "PATCH",
+        body: { data },
+      }),
+      invalidatesTags: (_result, _error, { documentId }) => [
+        { type: "Documents", id: documentId },
+        "Documents",
+      ],
+    }),
+    deleteVersion: builder.mutation<{ message: string }, { versionId: string; documentId: string }>(
+      {
+        query: ({ versionId }) => ({
+          url: `versions/version/${versionId}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: (_result, _error, { documentId }) => [
+          { type: "Documents", id: documentId },
+          "Documents",
+        ],
+      },
+    ),
   }),
 });
 
@@ -73,4 +123,8 @@ export const {
   useGetJobStatusQuery,
   useDeleteDocumentMutation,
   useGetDocumentTimelineQuery,
+  useVectorSearchQuery,
+  useCreateVersionOverrideMutation,
+  useUpdateHumanVersionMutation,
+  useDeleteVersionMutation,
 } = documentsApi;

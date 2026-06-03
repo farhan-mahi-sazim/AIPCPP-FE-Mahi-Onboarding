@@ -8,7 +8,11 @@ import {
   MdInsertDriveFile,
 } from "react-icons/md";
 
-import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
+import {
+  IDocumentCardProps,
+  TDashboardDocument,
+  TVectorSearchResult,
+} from "@/shared/typedefs/dashboard.types";
 
 export const FILE_TYPE_CONFIG: Record<
   string,
@@ -35,22 +39,42 @@ export interface IUseDocumentCardReturn {
   handleViewDetails: () => void;
   handleDelete: () => void;
   fileConfig: { bg: string; text: string; icon: React.ElementType };
+  filename: string;
+  category?: string | null;
+  tags?: string[] | null;
+  summaryTitle?: string | null;
+  summaryText?: string | null;
+  relevance?: string;
+  matchCount?: number;
+  bestHighlight?: string;
+  highlightScore?: number;
 }
+
+const isVectorSearchResult = (document: TDashboardDocument): document is TVectorSearchResult =>
+  "relevance" in document && "match_count" in document && "best_chunk" in document;
 
 export const useDocumentCard = (
   document: IDocumentCardProps["document"],
   onMenuClick?: (documentId: string) => void,
 ): IUseDocumentCardReturn => {
   const router = useRouter();
-  const { document_id, file_type } = document;
+  const { document_id } = document;
+  const file_type = document.file_type || document.filename?.split(".").pop();
 
-  const fileConfig = FILE_TYPE_CONFIG[file_type?.toUpperCase()] ?? DEFAULT_FILE_CONFIG;
+  const fileConfig = FILE_TYPE_CONFIG[file_type?.toUpperCase() || ""] ?? DEFAULT_FILE_CONFIG;
+  const filename = document.filename;
+  const category = "category" in document ? document.category : undefined;
+  const tags = "tags" in document ? document.tags : undefined;
+  const summaryTitle = "summary_title" in document ? document.summary_title : undefined;
+  const summaryText = "summary" in document ? document.summary : undefined;
+  const relevance = isVectorSearchResult(document) ? document.relevance : undefined;
+  const matchCount = isVectorSearchResult(document) ? document.match_count : undefined;
+  const bestHighlight = isVectorSearchResult(document) ? document.best_chunk.highlight : undefined;
+  const highlightScore = isVectorSearchResult(document)
+    ? document.best_chunk.similarity_score
+    : undefined;
 
-  const handleCardClick = () => {
-    router.push(`/document/${document_id}`);
-  };
-
-  const handleViewDetails = () => {
+  const handleNavigateToDetails = () => {
     router.push(`/document/${document_id}`);
   };
 
@@ -59,9 +83,18 @@ export const useDocumentCard = (
   };
 
   return {
-    handleCardClick,
-    handleViewDetails,
+    handleCardClick: handleNavigateToDetails,
+    handleViewDetails: handleNavigateToDetails,
     handleDelete,
     fileConfig,
+    filename,
+    category,
+    tags,
+    summaryTitle,
+    summaryText,
+    relevance,
+    matchCount,
+    bestHighlight,
+    highlightScore,
   };
 };
