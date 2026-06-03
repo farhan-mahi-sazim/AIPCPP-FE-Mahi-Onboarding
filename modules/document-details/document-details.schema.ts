@@ -17,7 +17,10 @@ export const documentDetailsSchema = z.object({
   tags: z
     .string()
     .min(1, { message: "At least one tag is required" })
-    .max(200, { message: "Tags must be less than 200 characters" }),
+    .max(200, { message: "Tags must be less than 200 characters" })
+    .refine((value) => value.split(",").some((tag) => tag.trim().length > 0), {
+      message: "At least one tag is required",
+    }),
 });
 
 export type TDocumentDetailsForm = z.infer<typeof documentDetailsSchema>;

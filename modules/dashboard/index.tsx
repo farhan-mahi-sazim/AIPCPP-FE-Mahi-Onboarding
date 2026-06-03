@@ -5,7 +5,6 @@ import { Pagination } from "@mantine/core";
 import DashboardFooter from "./components/DashboardFooter";
 import DocumentGrid from "./components/DocumentGrid/DocumentGrid";
 import SearchHeader from "./components/SearchHeader/SearchHeader";
-import { useUploadSection } from "./components/UploadSection";
 import UploadSection from "./components/UploadSection/UploadSection";
 import { useDashboard } from "./hooks/useDashboard";
 
@@ -33,12 +32,10 @@ const Dashboard: React.FC = () => {
     synthesisAnswer,
   } = useDashboard();
 
-  const { onUploadSuccess } = useUploadSection({
-    onUploadSuccess: () => {
-      refetch();
-      setShowUpload(false);
-    },
-  });
+  const handleUploadSuccess = () => {
+    refetch();
+    setShowUpload(false);
+  };
 
   React.useEffect(() => {
     if (showUpload && uploadRef.current) {
@@ -68,7 +65,7 @@ const Dashboard: React.FC = () => {
 
         {showUpload && (
           <div ref={uploadRef}>
-            <UploadSection onUploadSuccess={onUploadSuccess} />
+            <UploadSection onUploadSuccess={handleUploadSuccess} />
           </div>
         )}
 

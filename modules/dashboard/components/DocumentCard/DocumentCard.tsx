@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Menu } from "@mantine/core";
+import DOMPurify from "dompurify";
 import { MdMoreVert } from "react-icons/md";
 
 import { Card } from "@/shared/components/ui/card";
@@ -25,6 +26,12 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
     bestHighlight,
     highlightScore,
   } = useDocumentCard(document, onMenuClick);
+
+  const sanitizedHighlight = useMemo(() => {
+    if (!bestHighlight) return undefined;
+    if (typeof window === "undefined") return undefined;
+    return DOMPurify.sanitize(bestHighlight, { USE_PROFILES: { html: true } });
+  }, [bestHighlight]);
 
   const FileIcon = fileConfig.icon;
 
@@ -83,11 +90,11 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
               </div>
             )}
 
-            {bestHighlight && (
+            {sanitizedHighlight && (
               <div className="text-sm text-outline-variant mt-2 line-clamp-3 bg-white/5 p-2 rounded-lg">
                 <span
                   className="leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: bestHighlight }}
+                  dangerouslySetInnerHTML={{ __html: sanitizedHighlight }}
                 />
               </div>
             )}

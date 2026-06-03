@@ -74,11 +74,7 @@ export const useDocumentCard = (
     ? document.best_chunk.similarity_score
     : undefined;
 
-  const handleCardClick = () => {
-    router.push(`/document/${document_id}`);
-  };
-
-  const handleViewDetails = () => {
+  const handleNavigateToDetails = () => {
     router.push(`/document/${document_id}`);
   };
 
@@ -87,8 +83,8 @@ export const useDocumentCard = (
   };
 
   return {
-    handleCardClick,
-    handleViewDetails,
+    handleCardClick: handleNavigateToDetails,
+    handleViewDetails: handleNavigateToDetails,
     handleDelete,
     fileConfig,
     filename,
