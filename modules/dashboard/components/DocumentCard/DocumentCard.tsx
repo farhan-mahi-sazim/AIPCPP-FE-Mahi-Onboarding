@@ -1,37 +1,38 @@
 import React from "react";
 
-import { MdPictureAsPdf, MdDescription, MdMoreVert } from "react-icons/md";
+import { Menu } from "@mantine/core";
+import { MdMoreVert } from "react-icons/md";
 
 import { Card } from "@/shared/components/ui/card";
+import { STRINGS } from "@/shared/constants/strings.constants";
 import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
 
-const FILE_TYPE_STYLES: Record<string, { bg: string; text: string }> = {
-  PDF: { bg: "bg-red-500/10", text: "text-red-400" },
-  DOCX: { bg: "bg-blue-500/10", text: "text-blue-400" },
-  TXT: { bg: "bg-green-500/10", text: "text-green-400" },
-};
-
-const DEFAULT_FILE_STYLE = { bg: "bg-surface-container", text: "text-outline" };
+import { useDocumentCard } from "./useDocumentCard";
 
 const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) => {
-  const { document_id, filename, file_type, category, tags, created_at } = document;
-  const fileStyle = FILE_TYPE_STYLES[file_type] ?? DEFAULT_FILE_STYLE;
-  const FileIcon = file_type === "PDF" ? MdPictureAsPdf : MdDescription;
+  const { handleCardClick, handleViewDetails, handleDelete, fileConfig } = useDocumentCard(
+    document,
+    onMenuClick,
+  );
+
+  const { filename, category, tags, created_at, summary_title } = document;
+  const FileIcon = fileConfig.icon;
 
   return (
-    <Card className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4">
+    <Card
+      className="glass-card group hover:border-primary/40 transition-all cursor-pointer p-4"
+      onClick={handleCardClick}
+    >
       <div className="flex items-center gap-4">
-        {/* File Type Icon */}
         <div
-          className={`w-12 h-12 flex-shrink-0 ${fileStyle.bg} ${fileStyle.text} rounded-lg flex items-center justify-center`}
+          className={`w-12 h-12 flex-shrink-0 ${fileConfig.bg} ${fileConfig.text} rounded-lg flex items-center justify-center`}
         >
           <FileIcon className="text-[28px]" />
         </div>
 
-        {/* Document Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-body-md text-on-surface font-semibold truncate">{filename}</h3>
+            <h3 className="text-body-md text-on-surface font-semibold">{filename}</h3>
             {category && (
               <span className="text-[10px] font-bold text-tertiary bg-tertiary/10 border border-tertiary/20 px-2 py-0.5 rounded uppercase flex-shrink-0">
                 {category}
@@ -39,16 +40,17 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
             )}
           </div>
 
-          <div className="flex items-center gap-3 mt-1">
+          {summary_title && (
+            <p className="text-sm text-on-surface-variant mt-1 line-clamp-1">{summary_title}</p>
+          )}
+
+          <div className="flex flex-col gap-2 mt-1">
             <span className="text-label-sm text-on-surface-variant opacity-60 flex-shrink-0">
               {new Date(created_at).toLocaleDateString()}
             </span>
-            <div className="flex gap-1.5 overflow-hidden">
+            <div className="flex gap-1.5 flex-wrap">
               {(tags ?? []).map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[10px] text-outline bg-white/5 px-1.5 rounded truncate"
-                >
+                <span key={tag} className="text-xs text-outline bg-white/5 px-2 py-0.5 rounded">
                   #{tag}
                 </span>
               ))}
@@ -56,14 +58,39 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
           </div>
         </div>
 
-        {/* Menu Button */}
-        <button
-          className="text-outline hover:text-primary transition-colors flex-shrink-0"
-          onClick={() => onMenuClick?.(document_id)}
-          aria-label="Document options"
-        >
-          <MdMoreVert className="text-xl" />
-        </button>
+        <div className="relative flex-shrink-0">
+          <Menu shadow="md" width={150} withinPortal>
+            <Menu.Target>
+              <button
+                className="text-outline hover:text-primary transition-colors p-1"
+                onClick={(event) => event.stopPropagation()}
+                aria-label={STRINGS.dashboard.documentOptions}
+              >
+                <MdMoreVert className="text-xl" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown className="bg-surface-container border border-white/10">
+              <Menu.Item
+                className="text-on-surface hover:bg-white/5"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleViewDetails();
+                }}
+              >
+                {STRINGS.dashboard.viewDetails}
+              </Menu.Item>
+              <Menu.Item
+                className="text-red-500 hover:bg-red-500/10"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDelete();
+                }}
+              >
+                {STRINGS.dashboard.delete}
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
       </div>
     </Card>
   );

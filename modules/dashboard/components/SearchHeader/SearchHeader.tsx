@@ -1,14 +1,18 @@
 import React from "react";
 
+import { Menu } from "@mantine/core";
 import { MdSearch, MdFilterList, MdSort } from "react-icons/md";
 
+import { FILE_TYPE_OPTIONS } from "@/shared/constants/app.constants";
 import { ISearchHeaderProps } from "@/shared/typedefs/dashboard.types";
 
 const SearchHeader: React.FC<ISearchHeaderProps> = ({
   search,
   onSearchChange,
-  onFilter,
+  onFilterSelect,
   onSort,
+  filterType,
+  sortOrder,
 }) => (
   <section className="mb-8">
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-gutter">
@@ -28,21 +32,44 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
 
       {/* Action Buttons */}
       <div className="flex items-center gap-3">
-        <button
-          className="flex items-center gap-2 px-4 py-2.5 bg-surface-container border border-white/10 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors"
-          onClick={onFilter}
-          aria-label="Filter documents"
-        >
-          <MdFilterList className="text-[20px]" />
-          <span className="text-label-md">Filter</span>
-        </button>
+        {/* Filter Dropdown */}
+        <Menu shadow="md" width={150}>
+          <Menu.Target>
+            <button
+              className="flex items-center gap-2 px-4 py-2.5 bg-surface-container border border-white/10 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors"
+              aria-label="Filter documents"
+            >
+              <MdFilterList className="text-[20px]" />
+              <span className="text-label-md">{filterType ? `Type: ${filterType}` : "Filter"}</span>
+            </button>
+          </Menu.Target>
+
+          <Menu.Dropdown className="bg-surface-container border border-white/10">
+            <Menu.Item
+              onClick={() => onFilterSelect?.(null)}
+              className="text-on-surface hover:bg-white/5"
+            >
+              All
+            </Menu.Item>
+            {FILE_TYPE_OPTIONS.map((type) => (
+              <Menu.Item
+                key={type}
+                onClick={() => onFilterSelect?.(type)}
+                className="text-on-surface hover:bg-white/5"
+              >
+                {type}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
+        </Menu>
+
         <button
           className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border border-primary/20 rounded-xl text-primary hover:bg-primary/20 transition-colors"
           onClick={onSort}
           aria-label="Sort documents"
         >
           <MdSort className="text-[20px]" />
-          <span className="text-label-md">Sort</span>
+          <span className="text-label-md">{sortOrder === "desc" ? "Newest" : "Oldest"}</span>
         </button>
       </div>
     </div>

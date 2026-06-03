@@ -1,6 +1,6 @@
 import React from "react";
 
-import { screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent, act } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
 import { useGetSummariesQuery } from "@/shared/redux/rtk-apis/documents.api";
@@ -10,6 +10,15 @@ import Dashboard from "../index";
 
 jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
   useGetSummariesQuery: jest.fn(),
+  useDeleteDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
+  useUploadDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false, error: null }]),
+  useGetJobStatusQuery: jest.fn(() => ({ data: null })),
+}));
+
+jest.mock("next/router", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
 }));
 
 const MOCK_DOCUMENT = {
@@ -90,6 +99,7 @@ describe("Dashboard", () => {
   });
 
   it("passes search value to the query hook", () => {
+    jest.useFakeTimers();
     (useGetSummariesQuery as jest.Mock).mockReturnValue({
       data: { data: [], total: 0, page: 1, page_size: 20, total_pages: 0 },
       isLoading: false,
@@ -97,7 +107,23 @@ describe("Dashboard", () => {
     });
     renderWithProviders(<Dashboard />);
     const searchInput = screen.getByPlaceholderText("Search files by name, type, or tag...");
-    fireEvent.change(searchInput, { target: { value: "annual" } });
-    expect(useGetSummariesQuery).toHaveBeenLastCalledWith({ search: "annual" });
+
+    act(() => {
+      fireEvent.change(searchInput, { target: { value: "annual" } });
+    });
+
+    // Fast-forward time for debounce
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    expect(useGetSummariesQuery).toHaveBeenLastCalledWith({
+      search: "annual",
+      file_type: null,
+      sort_order: "desc",
+      limit: 10,
+      offset: 0,
+    });
+    jest.useRealTimers();
   });
 });

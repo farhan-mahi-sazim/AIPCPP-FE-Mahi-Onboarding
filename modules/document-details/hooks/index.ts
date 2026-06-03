@@ -1,0 +1,1 @@
+export { useDocumentDetails } from "./useDocumentDetails";

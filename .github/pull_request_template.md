@@ -13,8 +13,6 @@ Do it, in a, comma separated, manner, please
 
 ## Associated Ticket Link(s)
 
-- https://ensurily.atlassian.net/browse/ENS-
-
 ## Related Pull Request(s)
 
 -
@@ -23,4 +21,4 @@ Do it, in a, comma separated, manner, please
 
 ## Reviewers
 
-@SazimTech/ensurily @saad-anjum
+@ashikur-rahman-sazim
