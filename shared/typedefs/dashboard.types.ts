@@ -26,11 +26,6 @@ export interface TGetSummariesArg {
   sort_order?: "asc" | "desc";
 }
 
-export interface IDocumentCardProps {
-  document: TDocumentSummary;
-  onMenuClick?: (documentId: string) => void;
-}
-
 export interface ISearchHeaderProps {
   search: string;
   onSearchChange: (value: string) => void;
@@ -119,6 +114,7 @@ export interface IDocumentGridProps {
   error: unknown;
   onUploadClick?: () => void;
   onDocumentMenuClick?: (documentId: string) => void;
+  synthesisAnswer?: string | null;
 }
 
 export interface TUploadDocumentResponse {

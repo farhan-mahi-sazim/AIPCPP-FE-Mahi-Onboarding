@@ -8,7 +8,11 @@ import {
   MdInsertDriveFile,
 } from "react-icons/md";
 
-import { IDocumentCardProps, TVectorSearchResult } from "@/shared/typedefs/dashboard.types";
+import {
+  IDocumentCardProps,
+  TDashboardDocument,
+  TVectorSearchResult,
+} from "@/shared/typedefs/dashboard.types";
 
 export const FILE_TYPE_CONFIG: Record<
   string,
@@ -46,6 +50,9 @@ export interface IUseDocumentCardReturn {
   highlightScore?: number;
 }
 
+const isVectorSearchResult = (document: TDashboardDocument): document is TVectorSearchResult =>
+  "relevance" in document && "match_count" in document && "best_chunk" in document;
+
 export const useDocumentCard = (
   document: IDocumentCardProps["document"],
   onMenuClick?: (documentId: string) => void,
@@ -60,16 +67,12 @@ export const useDocumentCard = (
   const tags = "tags" in document ? document.tags : undefined;
   const summaryTitle = "summary_title" in document ? document.summary_title : undefined;
   const summaryText = "summary" in document ? document.summary : undefined;
-  const relevance =
-    "relevance" in document ? (document as TVectorSearchResult).relevance : undefined;
-  const matchCount =
-    "match_count" in document ? (document as TVectorSearchResult).match_count : undefined;
-  const bestHighlight =
-    "best_chunk" in document ? (document as TVectorSearchResult).best_chunk.highlight : undefined;
-  const highlightScore =
-    "best_chunk" in document
-      ? (document as TVectorSearchResult).best_chunk.similarity_score
-      : undefined;
+  const relevance = isVectorSearchResult(document) ? document.relevance : undefined;
+  const matchCount = isVectorSearchResult(document) ? document.match_count : undefined;
+  const bestHighlight = isVectorSearchResult(document) ? document.best_chunk.highlight : undefined;
+  const highlightScore = isVectorSearchResult(document)
+    ? document.best_chunk.similarity_score
+    : undefined;
 
   const handleCardClick = () => {
     router.push(`/document/${document_id}`);
