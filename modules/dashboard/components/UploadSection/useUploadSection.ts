@@ -184,11 +184,6 @@ export const useUploadSection = ({
         cleanupRetry();
         cleanupPolling();
         setIsUploading(false);
-        notifications.show({
-          title: STRINGS.upload.success,
-          message: STRINGS.upload.successMsg,
-          color: "teal",
-        });
         onUploadSuccess?.();
       } else if (payload.isFailed) {
         cleanupEventSource();

@@ -91,10 +91,11 @@ export const useDashboard = (): IUseDashboardReturn => {
 
   const documents = useMemo(() => {
     if (isSemantic) {
+      if (!showSemanticResults) return [];
       return vectorSearchResponse?.results ?? [];
     }
     return response?.data ?? [];
-  }, [isSemantic, response?.data, vectorSearchResponse?.results]);
+  }, [isSemantic, showSemanticResults, response?.data, vectorSearchResponse?.results]);
 
   const synthesisAnswer = useMemo(() => {
     if (!showSemanticResults) {

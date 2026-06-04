@@ -19,6 +19,8 @@ jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
 jest.mock("next/router", () => ({
   useRouter: () => ({
     push: jest.fn(),
+    replace: jest.fn(),
+    query: {},
   }),
 }));
 

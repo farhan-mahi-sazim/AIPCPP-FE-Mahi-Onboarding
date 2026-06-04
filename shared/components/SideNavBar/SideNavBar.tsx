@@ -10,9 +10,17 @@ import {
   MdAnalytics,
   MdChevronLeft,
   MdChevronRight,
+  MdAdd,
 } from "react-icons/md";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
+
+interface INavItem {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  href: string;
+  disabled: boolean;
+}
 
 interface ISideNavBarProps {
   isCollapsed: boolean;
@@ -22,11 +30,11 @@ interface ISideNavBarProps {
 const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
   const router = useRouter();
 
-  const menuItems = [
-    { icon: MdDashboard, label: STRINGS.sidebar.dashboard, href: "/dashboard" },
-    { icon: MdFolder, label: STRINGS.sidebar.documents, href: "/dashboard" }, // Fallback to dashboard for now
-    { icon: MdAnalytics, label: STRINGS.sidebar.analytics, href: "/dashboard" },
-    { icon: MdSettings, label: STRINGS.sidebar.settings, href: "/dashboard" },
+  const menuItems: INavItem[] = [
+    { icon: MdDashboard, label: STRINGS.sidebar.dashboard, href: "/dashboard", disabled: false },
+    { icon: MdFolder, label: STRINGS.sidebar.documents, href: "/dashboard", disabled: true },
+    { icon: MdAnalytics, label: STRINGS.sidebar.analytics, href: "/dashboard", disabled: true },
+    { icon: MdSettings, label: STRINGS.sidebar.settings, href: "/dashboard", disabled: true },
   ];
 
   return (
@@ -76,18 +84,23 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
       {/* Nav Items */}
       <nav className="flex-1 flex flex-col gap-2">
         {menuItems.map((item) => {
-          const isActive = router.pathname === item.href;
+          const isActive = router.pathname === item.href && !item.disabled;
           const Icon = item.icon;
 
           return (
             <button
               key={item.label}
-              onClick={() => router.push(item.href)}
+              disabled={item.disabled}
+              onClick={() => {
+                if (!item.disabled) router.push(item.href);
+              }}
               className={clsx(
                 "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-colors w-full text-left",
                 isActive
                   ? "bg-primary/10 text-primary"
-                  : "text-outline hover:bg-white/[0.02] hover:text-on-surface",
+                  : item.disabled
+                    ? "text-outline/40 cursor-not-allowed"
+                    : "text-outline hover:bg-white/[0.02] hover:text-on-surface",
               )}
               title={isCollapsed ? item.label : undefined}
             >
@@ -100,8 +113,26 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
         })}
       </nav>
 
+      {/* Upload Button */}
+      <button
+        onClick={() =>
+          router.push({ pathname: "/dashboard", query: { upload: "true" } }, undefined, {
+            shallow: true,
+          })
+        }
+        className={clsx(
+          "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-colors w-full text-left mb-4",
+          "bg-primary/10 text-primary hover:bg-primary/20",
+          isCollapsed && "justify-center px-0",
+        )}
+        title={isCollapsed ? "Upload Document" : undefined}
+      >
+        <MdAdd className="text-xl flex-shrink-0" />
+        {!isCollapsed && <span className="truncate">Upload Document</span>}
+      </button>
+
       {/* Footer */}
-      <div className="mt-auto border-t border-white/5 pt-4">
+      <div className="border-t border-white/5 pt-4">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-medium flex-shrink-0">
             FM
