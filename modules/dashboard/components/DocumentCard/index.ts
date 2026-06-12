@@ -1,1 +1,1 @@
-export { useDocumentCard } from "./useDocumentCard";
+export { useDocumentCard } from "@/modules/dashboard/hooks/useDocumentCard";

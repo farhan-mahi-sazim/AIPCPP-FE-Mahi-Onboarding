@@ -6,11 +6,10 @@ import { AppShell, Box, Burger, Flex, Header, Progress, Title } from "@mantine/c
 import { useMediaQuery } from "@mantine/hooks";
 
 import RentReceiptsBanner from "@/shared/components/RentReceiptsBanner/RentReceiptsBanner";
-import { ADDITIONAL_ROUTES } from "@/shared/constants/route.constants";
 
+import { getCurrentPageName } from "./AppLayout.helpers";
 import { useAppLayoutStyles } from "./AppLayout.styles";
 import SideBar from "./components/SideBar";
-import { NAV_LINKS } from "./components/SideBar/SideBar.constants";
 
 const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -32,13 +31,6 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
       router.events.off("beforeHistoryChange", () => setIsLoading(false));
     };
   }, [router.events]);
-
-  const getCurrentPageName = () => {
-    const currentLink =
-      NAV_LINKS.find(({ href }) => router.pathname.includes(href)) ||
-      ADDITIONAL_ROUTES.find(({ href }) => router.pathname.includes(href));
-    return currentLink ? currentLink.label : "Unknown Page";
-  };
 
   return (
     <Box pos="relative">
@@ -77,7 +69,7 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
                   </div>
                   <Flex justify="center" align="center">
                     <Title order={3} fw="lighter">
-                      {getCurrentPageName()}
+                      {getCurrentPageName(router.pathname)}
                     </Title>
                   </Flex>
                 </div>

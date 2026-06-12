@@ -17,6 +17,13 @@
 - [Environment Notes](#environment-notes)
 - [Safety Rules](#safety-rules)
 - [Pull Request Checklist](#pull-request-checklist)
+- [General Notes](#general-notes)
+- [Responsive Design Principles](#responsive-design-principles)
+- [Folder Structure](#folder-structure)
+- [Code Generation](#code-generation)
+- [RTK-Query and Shared Types](#rtk-query-and-shared-types)
+- [Filename Convention](#filename-convention)
+- [Variable Naming Convention](#variable-naming-convention)
 - [Code of Conduct](#code-of-conduct)
 
 ---
@@ -159,6 +166,215 @@ Asynchronous presentation blocks must explicitly design, implement, and style th
 - ✅ Use `apply_patch` for manual file edits
 - ✅ Write self-documenting code over excessive comments (e.g., `use documentPayload` instead of `docPl`)
 - ❌ If tests fail because of missing services or environment variables, report that clearly with the command that failed
+
+---
+
+## General Notes
+
+- No magic values in code. Always extract strings/numbers to constants.
+- Prefer enums over string literals.
+- Prefer ternary operators (`booleanValue ? doX() : doY()`) as opposed to boolean short-circuit evaluation (`booleanValue && doX()`).
+- Don't use `px` for sizing. Always use `rem`/`em` units.
+- If using Tailwind, use canonical Tailwind classes (e.g., `h-10`, `m-4`, `p-2`, `space-2`).
+- Try to use numbers divisible by 4 for padding/margin/sizes for consistency.
+- Before implementing something, check the `shared/` folder for existing utilities or components you can reuse or extend.
+- To refer to paths of pages within the application (e.g., for redirects), use the routes file. All such links should live in this file.
+- When calling RTK Query mutation functions from mutation hooks, always call `.unwrap()`. Without this, `try-catch` blocks will never work because the returned Promise will remain pending.
+- Always use `date-fns`/`dayjs` packages to parse dates. The native `Date` constructor is inconsistent and not recommended.
+
+```typescript
+const [someMutation] = useSomeMutation();
+
+try {
+  await someMutation().unwrap();
+} catch (error) {
+  // handle error
+}
+```
+
+---
+
+## Responsive Design Principles
+
+- Always build for the smallest viewports first using base Tailwind utilities. Progressively enhance the layout for tablets and desktops using breakpoint modifiers (e.g., `md:`, `lg:`, `xl:`).
+- Prioritize inherent responsiveness over rigid, fixed-width breakpoints. Rely heavily on CSS Grid (e.g., `grid-cols-1 md:grid-cols-3`) and Flexbox (`flex-wrap`, `gap-4`) so elements naturally flow, wrap, and scale.
+- Adapt UI per device. For example, a data-heavy desktop view might use a ShadCN Table, but on mobile it should adapt into a stacked Card list. Swap desktop Dialog components for bottom-anchored Drawer components on mobile screens.
+- Never hardcode layout dimensions in pixels. Rely entirely on Tailwind's default rem-based scale (divisible-by-4 spacing system like `p-4` or `gap-8`).
+- Ensure all images, illustrations, and videos scale fluidly within their containers and use lazy loading through NextImage. Use classes like `max-w-full`, `h-auto`, and `object-cover` to prevent media from breaking out of bounds.
+- Design with touch ergonomics in mind. On mobile breakpoints, ensure buttons, dropdowns, and form inputs maintain an adequate tap area (minimum `h-10` to `h-12`) with enough gap to prevent accidental misclicks.
+- Anticipate dynamic content lengths and narrow viewports. Use Tailwind utilities like `break-words`, `whitespace-normal`, or `line-clamp` to safely manage long strings.
+
+---
+
+## Folder Structure
+
+```
+modules
+├── dashboard
+│   ├── customers
+│   │   ├── [customer]
+│   │   │   ├── containers
+│   │   │   │   ├── CustomerContainer.tsx
+│   │   │   │   └── CustomerContainer.styles.tsx
+│   │   │   ├── components
+│   │   │   │   └── CustomerCard
+│   │   │   │       ├── CustomerCard.tsx
+│   │   │   │       ├── CustomerCard.styles.tsx
+│   │   │   │       └── index.ts
+│   │   │   └── hooks
+│   │   │       └── useCustomerType.tsx
+│   │   ├── components
+│   │   │   ├── CustomersTable
+│   │   │   │   ├── CustomersTable.tsx
+│   │   │   │   ├── CustomersTable.styles.tsx
+│   │   │   │   └── index.ts
+│   │   │   └── CustomersCard
+│   │   │       ├── CustomersCard.tsx
+│   │   │       ├── CustomersCard.styles.tsx
+│   │   │       └── index.ts
+│   │   └── containers
+│   │       ├── CustomersPageContainer.styles.tsx
+│   │       └── CustomersPageContainer.tsx
+│   └── resume-builder
+│       ├── components
+│       │   └── ResumePreview
+│       │       ├── index.ts
+│       │       ├── ResumePreview.styles.tsx
+│       │       └── ResumePreview.tsx
+│       └── containers
+│           ├── ResumeBuilderPageContainer.styles.tsx
+│           └── ResumeBuilderPageContainer.tsx
+├── components
+│   └── HomeComponent
+│       ├── HomeComponent.tsx
+│       ├── HomeComponent.styles.ts
+│       └── HomeComponent.types.ts
+└── containers
+    ├── HomePageContainer.styles.tsx
+    ├── HomePageContainer.tsx
+    └── HomePageContainer.types.tsx
+pages
+├── dashboard
+│   └── customers
+│       ├── index.page.tsx
+│       └── [customerId]
+│           └── index.page.tsx
+├── resume-builder
+│   └── index.page.tsx
+├── index.page.tsx
+├── _app.page.tsx
+└── _document.page.tsx
+shared
+├── components
+│   └── Button
+│       ├── Button.tsx
+│       ├── Button.styles.tsx
+│       └── index.ts
+├── hooks
+│   └── useWindowSize.tsx
+├── layouts
+│   ├── DashboardLayout
+│   │   ├── DashboardLayout.tsx
+│   │   ├── DashboardLayout.styles.tsx
+│   │   └── index.ts
+│   └── MainLayout
+│       ├── MainLayout.tsx
+│       ├── MainLayout.styles.tsx
+│       └── index.ts
+└── utils
+```
+
+### Reserved Route Names
+
+The following words are reserved and should not be used as route names:
+
+- `containers`, `components`, `hooks`, `utils`, `styles`, `types`
+
+### No Top-Level Barrel Files
+
+Do not create top-level barrel files. Only create `index.ts` within the same folder as the component it exports.
+
+```typescript
+// ✅ Good
+└── components/
+    ├── ComponentA/
+    │   ├── ComponentA.tsx
+    │   └── index.ts
+    └── ComponentB/
+        ├── ComponentB.tsx
+        └── index.ts
+
+// ❌ Bad - no top-level index.ts re-exporting ComponentA and ComponentB
+```
+
+---
+
+## Code Generation
+
+Use code generation capabilities in conjunction with Swagger in the backend to sync types between frontend and backend. The generated types live in `shared/typedefs/api.ts`.
+
+---
+
+## RTK-Query and Shared Types
+
+```
+.
+└── shared/
+    ├── redux/
+    │   ├── reducers
+    │   ├── rtk-apis/
+    │   │   ├── resourceOne/
+    │   │   │   ├── resourceOne.types.ts
+    │   │   │   └── resourceOne.api.ts
+    │   │   ├── resourceTwo
+    │   │   ├── ...
+    │   │   ├── api.config.ts
+    │   │   └── baseQuery.ts
+    │   ├── hooks.ts
+    │   └── store.ts
+    └── typedefs/
+        ├── api.ts
+        ├── enums.ts
+        ├── interfaces.ts
+        ├── types.ts
+        └── index.ts
+```
+
+For RTK-Query:
+
+- Separate the folders by resource types
+- Utilise [Code Splitting](https://redux-toolkit.js.org/rtk-query/usage/code-splitting)
+- For types, depend on code generation tools 99% of the time. When a type needs to be extended (e.g., a PATCH endpoint requires a `userId` in addition to body data), extend from the BE-generated type in the respective resource type file.
+
+---
+
+## Filename Convention
+
+| Type              | Convention           |
+| ----------------- | -------------------- |
+| React Components  | `ProductCard.tsx`    |
+| Styled Components | `Button.styles.ts`   |
+| React Hooks       | `useCustomHook.tsx`  |
+| NextJS Pages      | `_document.page.tsx` |
+| Generic TS Files  | `camelCase.ts`       |
+
+---
+
+## Variable Naming Convention
+
+| Construct        | Convention          | Example                            |
+| ---------------- | ------------------- | ---------------------------------- |
+| React Component  | PascalCase          | `export const MainLayout = () =>`  |
+| React Hooks      | Arrow function      | `export const useSomeHook = () =>` |
+| Constants        | SNAKE_CASE_CAPS     | `export const WINDOW_SIZE = 1024`  |
+| Interfaces       | `IPascalCase`       | `export interface IProduct`        |
+| Types            | `TPascalCase`       | `export type TProduct`             |
+| Enums            | `EPascalCase`       | `export enum ERoles { ADMIN }`     |
+| Component Props  | `IProps` / `TProps` | `interface IProps { size: ESize }` |
+| Helper functions | Regular function    | `export function helperFunction()` |
+| Barrel index.ts  | Named export        | `export { Foo } from './Foo'`      |
+
+> Helper functions should use regular `function` declarations to benefit from hoisting.
 
 ---
 

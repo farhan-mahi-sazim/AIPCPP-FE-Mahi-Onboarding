@@ -4,8 +4,8 @@ import { Menu } from "@mantine/core";
 import clsx from "clsx";
 import { MdSearch, MdFilterList, MdSort, MdPsychology } from "react-icons/md";
 
+import { ISearchHeaderProps } from "@/modules/dashboard/dashboard.types";
 import { FILE_TYPE_OPTIONS } from "@/shared/constants/app.constants";
-import { ISearchHeaderProps } from "@/shared/typedefs/dashboard.types";
 
 const SearchHeader: React.FC<ISearchHeaderProps> = ({
   search,

@@ -3,39 +3,15 @@ import React from "react";
 import { useRouter } from "next/router";
 
 import clsx from "clsx";
-import {
-  MdDashboard,
-  MdFolder,
-  MdSettings,
-  MdAnalytics,
-  MdChevronLeft,
-  MdChevronRight,
-  MdAdd,
-} from "react-icons/md";
+import { MdChevronLeft, MdChevronRight, MdAdd } from "react-icons/md";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 
-interface INavItem {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  href: string;
-  disabled: boolean;
-}
-
-interface ISideNavBarProps {
-  isCollapsed: boolean;
-  onToggle: () => void;
-}
+import { MENU_ITEMS } from "./SideNavBar.constants";
+import { ISideNavBarProps } from "./SideNavBar.types";
 
 const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
   const router = useRouter();
-
-  const menuItems: INavItem[] = [
-    { icon: MdDashboard, label: STRINGS.sidebar.dashboard, href: "/dashboard", disabled: false },
-    { icon: MdFolder, label: STRINGS.sidebar.documents, href: "/dashboard", disabled: true },
-    { icon: MdAnalytics, label: STRINGS.sidebar.analytics, href: "/dashboard", disabled: true },
-    { icon: MdSettings, label: STRINGS.sidebar.settings, href: "/dashboard", disabled: true },
-  ];
 
   return (
     <div
@@ -83,7 +59,7 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
 
       {/* Nav Items */}
       <nav className="flex-1 flex flex-col gap-2">
-        {menuItems.map((item) => {
+        {MENU_ITEMS.map((item) => {
           const isActive = router.pathname === item.href && !item.disabled;
           const Icon = item.icon;
 

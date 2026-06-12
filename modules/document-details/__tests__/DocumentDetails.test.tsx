@@ -10,7 +10,7 @@ import {
   useUpdateHumanVersionMutation,
   useDeleteVersionMutation,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
+import { ITimelineItem } from "@/shared/typedefs/common.types";
 import { renderWithProviders } from "@/shared/utils/test-utils";
 
 import DocumentDetails from "../index";
@@ -49,7 +49,7 @@ jest.mock("@mantine/notifications", () => ({
 // Fixtures
 // ──────────────────────────────────────────────
 
-const MOCK_AI_VERSION: TTimelineItem = {
+const MOCK_AI_VERSION: ITimelineItem = {
   id: "v1-ai",
   version_number: 1,
   source: "AI",
@@ -63,7 +63,7 @@ const MOCK_AI_VERSION: TTimelineItem = {
   created_at: "2024-06-01T10:00:00Z",
 };
 
-const MOCK_HUMAN_VERSION: TTimelineItem = {
+const MOCK_HUMAN_VERSION: ITimelineItem = {
   id: "v2-human",
   version_number: 2,
   source: "HUMAN",

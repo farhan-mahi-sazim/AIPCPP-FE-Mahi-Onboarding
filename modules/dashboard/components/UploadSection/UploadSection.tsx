@@ -4,13 +4,10 @@ import { useRouter } from "next/router";
 
 import { MdCloudUpload, MdCheck, MdArrowForward } from "react-icons/md";
 
+import { useUploadSection } from "@/modules/dashboard/hooks/useUploadSection";
 import { STRINGS } from "@/shared/constants/strings.constants";
 
-import { useUploadSection } from "./useUploadSection";
-
-export interface IUploadSectionProps {
-  onUploadSuccess?: () => void;
-}
+import { IUploadSectionProps } from "./UploadSection.types";
 
 const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
   const router = useRouter();

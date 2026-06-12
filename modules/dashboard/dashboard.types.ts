@@ -1,4 +1,4 @@
-export interface TDocumentSummary {
+export interface IDocumentSummary {
   document_id: string;
   filename: string;
   file_type: "PDF" | "DOCX" | "TXT" | string;
@@ -10,15 +10,15 @@ export interface TDocumentSummary {
   updated_at: string;
 }
 
-export interface TGetSummariesResponse {
-  data: TDocumentSummary[];
+export interface IGetSummariesResponse {
+  data: IDocumentSummary[];
   total: number;
   page: number;
   page_size: number;
   total_pages: number;
 }
 
-export interface TGetSummariesArg {
+export interface IGetSummariesArg {
   limit?: number;
   offset?: number;
   search?: string;
@@ -38,7 +38,7 @@ export interface ISearchHeaderProps {
   onToggleSemantic?: () => void;
 }
 
-export interface TUploadDocumentResponse {
+export interface IUploadDocumentResponse {
   document: {
     id: string;
     filename: string;
@@ -52,32 +52,18 @@ export interface TUploadDocumentResponse {
   message: string;
 }
 
-export interface TJobStatusResponse {
+export interface IJobStatusResponse {
   id: string;
   status: "PENDING" | "EXTRACTING" | "ANALYZING" | "PERSISTING" | "COMPLETED" | "FAILED";
 }
 
-export interface TTimelineItem {
-  id: string;
-  version_number: number;
-  source: "AI" | "HUMAN";
-  data: {
-    filename?: string;
-    summary?: string;
-    summary_title?: string;
-    tags?: string[];
-    category?: string;
-  };
-  created_at: string;
-}
-
-export interface TVectorSearchArg {
+export interface IVectorSearchArg {
   query: string;
   limit?: number;
   offset?: number;
 }
 
-export interface TVectorSearchResult {
+export interface IVectorSearchResult {
   document_id: string;
   filename: string;
   file_type: "PDF" | "DOC" | "DOCX" | "TXT" | string;
@@ -92,16 +78,16 @@ export interface TVectorSearchResult {
   };
 }
 
-export interface TVectorSearchResponse {
+export interface IVectorSearchResponse {
   query: string;
   synthesis_answer: string | null;
   total: number;
   limit: number;
   offset: number;
-  results: TVectorSearchResult[];
+  results: IVectorSearchResult[];
 }
 
-export type TDashboardDocument = TDocumentSummary | TVectorSearchResult;
+export type TDashboardDocument = IDocumentSummary | IVectorSearchResult;
 
 export interface IDocumentCardProps {
   document: TDashboardDocument;
@@ -115,37 +101,4 @@ export interface IDocumentGridProps {
   onUploadClick?: () => void;
   onDocumentMenuClick?: (documentId: string) => void;
   synthesisAnswer?: string | null;
-}
-
-export interface TUploadDocumentResponse {
-  document: {
-    id: string;
-    filename: string;
-    file_type: string;
-    created_at: string;
-  };
-  job: {
-    id: string;
-    status: "PENDING" | "EXTRACTING" | "ANALYZING" | "PERSISTING" | "COMPLETED" | "FAILED";
-  };
-  message: string;
-}
-
-export interface TJobStatusResponse {
-  id: string;
-  status: "PENDING" | "EXTRACTING" | "ANALYZING" | "PERSISTING" | "COMPLETED" | "FAILED";
-}
-
-export interface TTimelineItem {
-  id: string;
-  version_number: number;
-  source: "AI" | "HUMAN";
-  data: {
-    filename?: string;
-    summary?: string;
-    summary_title?: string;
-    tags?: string[];
-    category?: string;
-  };
-  created_at: string;
 }

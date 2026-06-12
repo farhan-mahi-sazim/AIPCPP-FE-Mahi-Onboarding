@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 import {
@@ -14,43 +14,9 @@ import {
   useUpdateHumanVersionMutation,
   useDeleteVersionMutation,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
 
 import { documentDetailsZodResolver, TDocumentDetailsForm } from "../document-details.schema";
-
-export interface IDocumentData {
-  filename?: string;
-  summary?: string;
-  summary_title?: string;
-  tags?: string[];
-  category?: string;
-}
-
-export interface IUseDocumentDetailsReturn {
-  id: string;
-  documentData: IDocumentData | undefined;
-  timelineItems: TTimelineItem[] | undefined;
-  isLoading: boolean;
-  error: unknown;
-  isDeleting: boolean;
-  handleDelete: () => void;
-  handleBack: () => void;
-  selectedVersionId: string | null;
-  selectedVersion: TTimelineItem | undefined;
-  onSelectVersion: (versionId: string) => void;
-  onDeleteVersion: (versionId: string) => Promise<void>;
-  isSelectedVersionAI: boolean;
-  isEditing: boolean;
-  setIsEditing: (val: boolean) => void;
-  startEditCurrent: () => void;
-  startOverride: () => void;
-  isCreateNewVersion: boolean;
-  setIsCreateNewVersion: (val: boolean) => void;
-  showCreateNewOption: boolean;
-  form: UseFormReturn<TDocumentDetailsForm>;
-  isSubmitting: boolean;
-  onSubmit: (values: TDocumentDetailsForm) => Promise<void>;
-}
+import { IUseDocumentDetailsReturn } from "../document-details.types";
 
 export const useDocumentDetails = (): IUseDocumentDetailsReturn => {
   const router = useRouter();

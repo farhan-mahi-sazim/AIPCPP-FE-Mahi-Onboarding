@@ -7,6 +7,6 @@ export enum EContractType {
   STANDARD = "STANDARD",
 }
 
-export interface TBaseContract {
+export interface IBaseContract {
   id: string;
 }

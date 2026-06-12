@@ -4,52 +4,28 @@ import { notifications } from "@mantine/notifications";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 
-export interface IUploadSectionCallbacks {
-  onUploadSuccess?: () => void;
-}
+import {
+  UPLOAD_STEPS,
+  MAX_SSE_RETRIES,
+  INITIAL_RETRY_MS,
+  MAX_RETRY_MS,
+  POLL_INTERVAL_MS,
+} from "../components/UploadSection/UploadSection.constants";
+import {
+  clampProgress,
+  formatStageLabel,
+  mapBackendStageToUI,
+} from "../components/UploadSection/UploadSection.helpers";
+import {
+  IUploadSectionCallbacks,
+  IUseUploadSectionReturn,
+  IProgressData,
+} from "../components/UploadSection/UploadSection.types";
 
-type UploadStage = "idle" | "uploading" | "pending" | "processing" | "completed" | "failed";
-
-interface IProgressData {
-  type?: string;
-  document_id?: string;
-  progress?: number;
-  stage?: string;
-  status?: string;
-}
-
-export interface IUseUploadSectionReturn {
-  file: File | null;
-  isDragging: boolean;
-  isUploading: boolean;
-  uploadError: Error | null;
-  progress: number;
-  uploadProgress: number;
-  stage: string;
-  stageLabel: string;
-  uploadedDocId: string | null;
-  uploadedDocData: { filename: string; file_type: string } | null;
-  handleDragOver: (e: React.DragEvent) => void;
-  handleDragLeave: () => void;
-  handleDrop: (e: React.DragEvent) => void;
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  getStepStatus: (stepKey: string) => "idle" | "completed" | "active" | "failed";
-  steps: { key: string; label: string }[];
-  onUploadSuccess: (() => void) | undefined;
-  resetUpload: () => void;
-}
-
-const UPLOAD_STEPS = [
-  { key: "UPLOADING", label: STRINGS.upload.steps.UPLOADING },
-  { key: "PENDING", label: STRINGS.upload.steps.PENDING },
-  { key: "PROCESSING", label: STRINGS.upload.steps.PROCESSING },
-  { key: "COMPLETED", label: STRINGS.upload.steps.COMPLETED },
-];
-
-const MAX_SSE_RETRIES = 4;
-const INITIAL_RETRY_MS = 1000;
-const MAX_RETRY_MS = 8000;
-const POLL_INTERVAL_MS = 3000;
+export type {
+  IUploadSectionCallbacks,
+  IUseUploadSectionReturn,
+} from "../components/UploadSection/UploadSection.types";
 
 export const useUploadSection = ({
   onUploadSuccess,
@@ -65,7 +41,7 @@ export const useUploadSection = ({
   } | null>(null);
   const [progress, setProgress] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [stage, setStage] = useState<UploadStage>("idle");
+  const [stage, setStage] = useState<string>("idle");
   const [stageLabel, setStageLabel] = useState("idle");
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
 
@@ -117,35 +93,6 @@ export const useUploadSection = ({
     documentIdRef.current = null;
   }, [cleanupEventSource, cleanupPolling, cleanupRetry]);
 
-  const clampProgress = (value: number) => Math.min(100, Math.max(0, Math.round(value)));
-
-  const formatStageLabel = (value: string | undefined) => {
-    if (!value) return "processing";
-    return value.toLowerCase().replace(/_/g, " ");
-  };
-
-  const mapBackendStageToUI = (
-    rawStage: string | undefined,
-    progress: number,
-  ): { uiStage: UploadStage; stepIndex: number } => {
-    const stage = (rawStage ?? "").toLowerCase();
-    if (stage === "failed") return { uiStage: "failed", stepIndex: -1 };
-    if (stage === "completed" || progress >= 100) return { uiStage: "completed", stepIndex: 3 };
-    if (stage === "uploading") return { uiStage: "uploading", stepIndex: 0 };
-    if (stage === "pending" || stage === "queued") return { uiStage: "pending", stepIndex: 1 };
-    if (
-      stage === "extraction" ||
-      stage === "ai_task" ||
-      stage === "embedding" ||
-      stage === "persistence" ||
-      stage === "processing"
-    ) {
-      return { uiStage: "processing", stepIndex: 2 };
-    }
-    if (progress > 0) return { uiStage: "processing", stepIndex: 2 };
-    return { uiStage: "pending", stepIndex: 1 };
-  };
-
   const parseProgressPayload = useCallback((payload: unknown) => {
     if (typeof payload !== "object" || payload === null) return null;
     const record = payload as Record<string, unknown>;
@@ -155,13 +102,13 @@ export const useUploadSection = ({
     const rawType = typeof record["type"] === "string" ? record["type"] : undefined;
     const rawStatus = typeof record["status"] === "string" ? record["status"] : undefined;
     const stageToUse = rawStage ?? rawType ?? rawStatus;
-    const { uiStage, stepIndex } = mapBackendStageToUI(stageToUse, progress);
+    const { uiStage, stepIndex } = mapBackendStageToUI(stageToUse ?? "", progress);
     const isFailed = uiStage === "failed";
     const isCompleted = uiStage === "completed";
 
     return {
       progress,
-      stepStage: uiStage,
+      stepStage: uiStage as string,
       stepIndex,
       stageLabel: formatStageLabel(stageToUse),
       isCompleted,
@@ -367,7 +314,7 @@ export const useUploadSection = ({
     [cleanupEventSource, cleanupPolling, cleanupRetry],
   );
 
-  const getStepStatus = (stepKey: string): "idle" | "completed" | "active" | "failed" => {
+  const getStepStatus = (stepKey: string) => {
     if (stage === "idle") return "idle";
     if (stage === "failed") return "failed";
 

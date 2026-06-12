@@ -6,6 +6,15 @@ import { TbBuildingCommunity } from "react-icons/tb";
 import { TbGraph } from "react-icons/tb";
 import { VscTools } from "react-icons/vsc";
 
+export const BUTTON_STYLE = {
+  display: "flex",
+  fontSize: "1em",
+  fontWeight: 400,
+  height: "3.2em",
+  borderRadius: "0.7em",
+  marginBottom: "0.7em",
+};
+
 export const NAV_LINKS = [
   {
     label: "Properties",

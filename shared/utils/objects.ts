@@ -1,17 +1,17 @@
-import { SelectItem } from "@mantine/core";
+import { ComboboxItem } from "@mantine/core";
 
-import { RecursiveKeyOf } from "../typedefs/RecursiveKeyOf.types";
+import { TRecursiveKeyOf } from "../typedefs/RecursiveKeyOf.types";
 
 export function convertDataToMantineSelectData<
   T extends Record<string, unknown>,
-  L extends RecursiveKeyOf<T>,
+  L extends TRecursiveKeyOf<T>,
 >(
   inputData: T[],
   attributeAsLabel: L,
-  attributeAsValue: RecursiveKeyOf<T>,
+  attributeAsValue: TRecursiveKeyOf<T>,
   formatLabel?: (label: T[L]) => string,
-): SelectItem[] {
-  const convertedData: SelectItem[] = [];
+): ComboboxItem[] {
+  const convertedData: ComboboxItem[] = [];
   inputData.forEach((data) => {
     const label = getNestedObjectValue(data, attributeAsLabel as string);
     const formattedLabel = formatLabel

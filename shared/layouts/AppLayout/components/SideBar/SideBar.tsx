@@ -9,6 +9,7 @@ import UserCard from "@/shared/components/UserCard";
 import { APP_NAME } from "@/shared/constants/app.constants";
 
 import { NAV_LINKS } from "./SideBar.constants";
+import { getClassName } from "./SideBar.helpers";
 import { useSideBarStyles } from "./SideBar.styles";
 import { ISideBarProps } from "./SideBar.types";
 
@@ -29,9 +30,6 @@ const SideBar: React.FC<ISideBarProps> = ({ isOpen, setIsOpen }) => {
     };
   }, [isOpen, router.events, setIsOpen]);
 
-  const getClassName = (href: string) =>
-    router.pathname.includes(href) ? classes.activeButton : classes.inactiveButton;
-
   return (
     <Sidebar p="md" hidden={!isOpen} width={{ sm: 250, lg: 300 }}>
       <Sidebar.Section mt="md">
@@ -48,7 +46,7 @@ const SideBar: React.FC<ISideBarProps> = ({ isOpen, setIsOpen }) => {
               router.push(href);
             }}
             fullWidth
-            className={getClassName(href)}
+            className={getClassName(router.pathname, href, classes)}
           >
             <div className={classes.icon}>{Icon}</div>
             {label}

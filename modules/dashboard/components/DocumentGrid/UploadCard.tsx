@@ -4,11 +4,9 @@ import { MdAdd } from "react-icons/md";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 
-interface UploadCardProps {
-  onClick?: () => void;
-}
+import { IUploadCardProps } from "./UploadCard.types";
 
-const UploadCard: React.FC<UploadCardProps> = ({ onClick }) => (
+const UploadCard: React.FC<IUploadCardProps> = ({ onClick }) => (
   <button
     className="border-2 border-dashed border-white/10 p-4 rounded-xl flex items-center gap-4 group hover:border-primary/50 transition-all cursor-pointer bg-white/[0.02] w-full text-left"
     onClick={onClick}

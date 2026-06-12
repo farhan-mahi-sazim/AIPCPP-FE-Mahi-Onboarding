@@ -4,11 +4,10 @@ import { Menu } from "@mantine/core";
 import DOMPurify from "dompurify";
 import { MdMoreVert } from "react-icons/md";
 
+import { IDocumentCardProps } from "@/modules/dashboard/dashboard.types";
+import { useDocumentCard } from "@/modules/dashboard/hooks/useDocumentCard";
 import { Card } from "@/shared/components/ui/card";
 import { STRINGS } from "@/shared/constants/strings.constants";
-import { IDocumentCardProps } from "@/shared/typedefs/dashboard.types";
-
-import { useDocumentCard } from "./useDocumentCard";
 
 const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) => {
   const {

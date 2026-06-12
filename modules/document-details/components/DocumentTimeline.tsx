@@ -3,10 +3,10 @@ import React from "react";
 import { MdDelete } from "react-icons/md";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
-import { TTimelineItem } from "@/shared/typedefs/dashboard.types";
+import { ITimelineItem } from "@/shared/typedefs/common.types";
 
 interface IDocumentTimelineProps {
-  timelineItems?: TTimelineItem[];
+  timelineItems?: ITimelineItem[];
   selectedVersionId?: string;
   onSelectVersion: (id: string) => void;
   onDeleteVersion?: (id: string) => void;
@@ -22,7 +22,7 @@ const DocumentTimeline: React.FC<IDocumentTimelineProps> = ({
     <h2 className="text-lg font-semibold mb-4 text-on-surface">{STRINGS.details.timeline}</h2>
     <div className="flex flex-col gap-4">
       {timelineItems && timelineItems.length > 0 ? (
-        timelineItems.map((item: TTimelineItem) => {
+        timelineItems.map((item: ITimelineItem) => {
           const isSelected = selectedVersionId ? item.id === selectedVersionId : false;
           const isHuman = item.source === "HUMAN";
           return (
