@@ -1,14 +1,8 @@
 import { useRouter } from "next/router";
 
-import {
-  FILE_TYPE_CONFIG,
-  DEFAULT_FILE_CONFIG,
-} from "../components/DocumentCard/DocumentCard.constants";
-import { isVectorSearchResult } from "../components/DocumentCard/DocumentCard.helpers";
-import {
-  IUseDocumentCardReturn,
-  TDocumentCardInput,
-} from "../components/DocumentCard/DocumentCard.types";
+import { FILE_TYPE_CONFIG, DEFAULT_FILE_CONFIG } from "./documentCard.constants";
+import { isVectorSearchResult } from "./documentCard.helpers";
+import { IUseDocumentCardReturn, TDocumentCardInput } from "./documentCard.types";
 
 export const useDocumentCard = (
   document: TDocumentCardInput,

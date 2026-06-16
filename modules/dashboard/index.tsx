@@ -11,7 +11,7 @@ import DashboardFooter from "./components/DashboardFooter";
 import DocumentGrid from "./components/DocumentGrid/DocumentGrid";
 import SearchHeader from "./components/SearchHeader/SearchHeader";
 import UploadSection from "./components/UploadSection/UploadSection";
-import { useDashboard } from "./hooks/useDashboard";
+import { useDashboard } from "./hooks/useDashboard/useDashboard";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();

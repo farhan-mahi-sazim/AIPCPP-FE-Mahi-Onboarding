@@ -1,3 +1,3 @@
-export { useDashboard } from "./useDashboard";
+export { useDashboard } from "./useDashboard/useDashboard";
 export { useUploadSection } from "./useUploadSection";
-export { useDocumentCard } from "./useDocumentCard";
+export { useDocumentCard } from "./useDocumentCard/useDocumentCard";

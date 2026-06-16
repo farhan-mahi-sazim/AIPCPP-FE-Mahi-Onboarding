@@ -22,11 +22,6 @@ import {
   IProgressData,
 } from "../components/UploadSection/UploadSection.types";
 
-export type {
-  IUploadSectionCallbacks,
-  IUseUploadSectionReturn,
-} from "../components/UploadSection/UploadSection.types";
-
 export const useUploadSection = ({
   onUploadSuccess,
 }: IUploadSectionCallbacks): IUseUploadSectionReturn => {

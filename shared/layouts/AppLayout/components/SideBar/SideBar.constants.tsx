@@ -6,6 +6,8 @@ import { TbBuildingCommunity } from "react-icons/tb";
 import { TbGraph } from "react-icons/tb";
 import { VscTools } from "react-icons/vsc";
 
+import { STRINGS } from "@/shared/constants/strings.constants";
+
 export const BUTTON_STYLE = {
   display: "flex",
   fontSize: "1em",
@@ -17,37 +19,37 @@ export const BUTTON_STYLE = {
 
 export const NAV_LINKS = [
   {
-    label: "Properties",
+    label: STRINGS.nav.properties,
     href: "/properties",
     icon: <TbBuildingCommunity />,
   },
   {
-    label: "Applications",
+    label: STRINGS.nav.applications,
     href: "/applications",
     icon: <RiFilePaper2Line />,
   },
   {
-    label: "People",
+    label: STRINGS.nav.people,
     href: "/people",
     icon: <MdGroups2 />,
   },
   {
-    label: "Leases",
+    label: STRINGS.nav.leases,
     href: "/leases",
     icon: <MdOutlineListAlt />,
   },
   {
-    label: "Payments",
+    label: STRINGS.nav.payments,
     href: "/payments",
     icon: <AiOutlineDollar />,
   },
   {
-    label: "Tasks",
+    label: STRINGS.nav.tasks,
     href: "/tasks",
     icon: <VscTools />,
   },
   {
-    label: "Rent Receipts",
+    label: STRINGS.nav.rentReceipts,
     href: "/rent-receipts",
     icon: <TbGraph />,
   },

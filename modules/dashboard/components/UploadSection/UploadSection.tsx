@@ -57,7 +57,7 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
                   <MdCheck className="text-primary text-2xl" />
                 </div>
                 <div>
-                  <p className="text-on-surface font-medium">Upload Complete!</p>
+                  <p className="text-on-surface font-medium">{STRINGS.upload.completeTitle}</p>
                   <p className="text-sm text-on-surface-variant">{uploadedDocData.filename}</p>
                 </div>
               </div>
@@ -65,19 +65,17 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
                 onClick={resetUpload}
                 className="text-sm text-outline hover:text-on-surface transition-colors"
               >
-                Upload another
+                {STRINGS.upload.uploadAnother}
               </button>
             </div>
 
-            <p className="text-sm text-on-surface-variant mb-4">
-              Your document is ready. Click below to view the AI-generated summary and details.
-            </p>
+            <p className="text-sm text-on-surface-variant mb-4">{STRINGS.upload.readyMessage}</p>
 
             <button
               onClick={() => router.push(`/document/${uploadedDocId}`)}
               className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
             >
-              View Document
+              {STRINGS.upload.viewDocument}
               <MdArrowForward className="text-lg" />
             </button>
           </div>
@@ -120,7 +118,7 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
             )}
             {uploadError ? (
               <div className="mt-4 text-red-500 text-sm font-medium">
-                Upload failed. Please try again.
+                {STRINGS.upload.failedRetry}
               </div>
             ) : null}
           </div>

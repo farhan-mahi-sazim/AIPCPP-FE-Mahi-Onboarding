@@ -1,3 +1,3 @@
 export interface IErrorStateProps {
-  error: unknown;
+  message: string;
 }

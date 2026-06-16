@@ -5,7 +5,7 @@ import DOMPurify from "dompurify";
 import { MdMoreVert } from "react-icons/md";
 
 import { IDocumentCardProps } from "@/modules/dashboard/dashboard.types";
-import { useDocumentCard } from "@/modules/dashboard/hooks/useDocumentCard";
+import { useDocumentCard } from "@/modules/dashboard/hooks/useDocumentCard/useDocumentCard";
 import { Card } from "@/shared/components/ui/card";
 import { STRINGS } from "@/shared/constants/strings.constants";
 

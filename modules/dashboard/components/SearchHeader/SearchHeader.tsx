@@ -6,6 +6,7 @@ import { MdSearch, MdFilterList, MdSort, MdPsychology } from "react-icons/md";
 
 import { ISearchHeaderProps } from "@/modules/dashboard/dashboard.types";
 import { FILE_TYPE_OPTIONS } from "@/shared/constants/app.constants";
+import { STRINGS } from "@/shared/constants/strings.constants";
 
 const SearchHeader: React.FC<ISearchHeaderProps> = ({
   search,
@@ -26,14 +27,12 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
           id="document-search"
           className="w-full bg-surface-container border border-white/10 rounded-xl py-3 pl-12 pr-4 text-on-surface focus:border-primary focus:ring-0 transition-all"
           placeholder={
-            isSemantic
-              ? "Ask a question about your documents..."
-              : "Search files by name, type, or tag..."
+            isSemantic ? STRINGS.search.semanticPlaceholder : STRINGS.search.defaultPlaceholder
           }
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          aria-label="Search documents"
+          aria-label={STRINGS.search.searchAria}
         />
       </div>
 
@@ -48,10 +47,10 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
               : "bg-surface-container border-white/10 text-on-surface-variant hover:bg-surface-container-high",
           )}
           onClick={onToggleSemantic}
-          aria-label="Toggle semantic search"
+          aria-label={STRINGS.search.toggleSemanticAria}
         >
           <MdPsychology className="text-[20px]" />
-          <span className="text-label-md">Semantic</span>
+          <span className="text-label-md">{STRINGS.search.semantic}</span>
         </button>
 
         {/* Filter Dropdown */}
@@ -59,10 +58,14 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
           <Menu.Target>
             <button
               className="flex items-center gap-2 px-4 py-2.5 bg-surface-container border border-white/10 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors"
-              aria-label="Filter documents"
+              aria-label={STRINGS.search.filterAria}
             >
               <MdFilterList className="text-[20px]" />
-              <span className="text-label-md">{filterType ? `Type: ${filterType}` : "Filter"}</span>
+              <span className="text-label-md">
+                {filterType
+                  ? `${STRINGS.search.filterTypeLabel} ${filterType}`
+                  : STRINGS.search.filter}
+              </span>
             </button>
           </Menu.Target>
 
@@ -71,7 +74,7 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
               onClick={() => onFilterSelect?.(null)}
               className="text-on-surface hover:bg-white/5"
             >
-              All
+              {STRINGS.search.all}
             </Menu.Item>
             {FILE_TYPE_OPTIONS.map((type) => (
               <Menu.Item
@@ -88,10 +91,12 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
         <button
           className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border border-primary/20 rounded-xl text-primary hover:bg-primary/20 transition-colors"
           onClick={onSort}
-          aria-label="Sort documents"
+          aria-label={STRINGS.search.sortAria}
         >
           <MdSort className="text-[20px]" />
-          <span className="text-label-md">{sortOrder === "desc" ? "Newest" : "Oldest"}</span>
+          <span className="text-label-md">
+            {sortOrder === "desc" ? STRINGS.search.newest : STRINGS.search.oldest}
+          </span>
         </button>
       </div>
     </div>
