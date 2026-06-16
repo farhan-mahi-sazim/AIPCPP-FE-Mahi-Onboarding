@@ -10,17 +10,18 @@ import {
   INITIAL_RETRY_MS,
   MAX_RETRY_MS,
   POLL_INTERVAL_MS,
-} from "../components/UploadSection/UploadSection.constants";
+} from "../../components/UploadSection/UploadSection.constants";
 import {
   clampProgress,
   formatStageLabel,
   mapBackendStageToUI,
-} from "../components/UploadSection/UploadSection.helpers";
+} from "../../components/UploadSection/UploadSection.helpers";
 import {
   IUploadSectionCallbacks,
   IUseUploadSectionReturn,
   IProgressData,
-} from "../components/UploadSection/UploadSection.types";
+} from "../../components/UploadSection/UploadSection.types";
+import { PROGRESS_BASELINE_PROCESSING } from "./uploadSection.constant";
 
 export const useUploadSection = ({
   onUploadSuccess,
@@ -98,11 +99,13 @@ export const useUploadSection = ({
     const rawStatus = typeof record["status"] === "string" ? record["status"] : undefined;
     const stageToUse = rawStage ?? rawType ?? rawStatus;
     const { uiStage, stepIndex } = mapBackendStageToUI(stageToUse ?? "", progress);
+    const adjustedProgress =
+      uiStage === "processing" && progress === 0 ? PROGRESS_BASELINE_PROCESSING : progress;
     const isFailed = uiStage === "failed";
     const isCompleted = uiStage === "completed";
 
     return {
-      progress,
+      progress: adjustedProgress,
       stepStage: uiStage as string,
       stepIndex,
       stageLabel: formatStageLabel(stageToUse),

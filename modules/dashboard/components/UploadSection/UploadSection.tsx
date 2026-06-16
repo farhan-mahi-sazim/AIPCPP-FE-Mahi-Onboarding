@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { MdCloudUpload, MdCheck, MdArrowForward } from "react-icons/md";
 
-import { useUploadSection } from "@/modules/dashboard/hooks/useUploadSection";
+import { useUploadSection } from "@/modules/dashboard/hooks/useUploadSection/useUploadSection";
 import { STRINGS } from "@/shared/constants/strings.constants";
 
 import { IUploadSectionProps } from "./UploadSection.types";

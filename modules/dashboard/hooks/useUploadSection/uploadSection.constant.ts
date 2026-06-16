@@ -1,0 +1,1 @@
+export const PROGRESS_BASELINE_PROCESSING = 30;

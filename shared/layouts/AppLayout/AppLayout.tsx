@@ -1,11 +1,9 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { AppShell, Box, Burger, Flex, Header, Progress, Title } from "@mantine/core";
+import { AppShell, Box, Burger, Flex, Progress, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-
-import RentReceiptsBanner from "@/shared/components/RentReceiptsBanner/RentReceiptsBanner";
 
 import { getCurrentPageName } from "./AppLayout.helpers";
 import { useAppLayoutStyles } from "./AppLayout.styles";
@@ -57,7 +55,7 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
         {...(isPotrait && {
           header: (
             <>
-              <Header height={60} p="xs">
+              <header className="h-[60px] p-2">
                 <div className={classes.header}>
                   <div className={classes.burgerMenu}>
                     <Burger
@@ -73,12 +71,11 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
                     </Title>
                   </Flex>
                 </div>
-              </Header>
+              </header>
             </>
           ),
         })}
       >
-        <RentReceiptsBanner />
         {children}
       </AppShell>
     </Box>

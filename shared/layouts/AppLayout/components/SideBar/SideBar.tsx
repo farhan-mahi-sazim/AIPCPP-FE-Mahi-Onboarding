@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { Button, Flex, Divider } from "@mantine/core";
 
 import UserCard from "@/shared/components/UserCard";
-import { APP_NAME } from "@/shared/constants/app.constants";
+import { STRINGS } from "@/shared/constants/strings.constants";
 
 import { NAV_LINKS } from "./SideBar.constants";
 import { getClassName } from "./SideBar.helpers";
@@ -34,7 +34,7 @@ const SideBar: React.FC<ISideBarProps> = ({ isOpen, setIsOpen }) => {
     <aside className={`p-4 ${isOpen ? "" : "hidden"} w-full sm:w-[250px] lg:w-[300px]`}>
       <div className="mt-4">
         <Flex justify="center">
-          <Image src="/logo.svg" width={200} height={30} alt={APP_NAME} />
+          <Image src="/logo.svg" width={200} height={30} alt={STRINGS.sidebar.brand} />
         </Flex>
       </div>
       <Divider mt="md" color="gray.3" />

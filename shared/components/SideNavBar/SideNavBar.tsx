@@ -24,7 +24,7 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
       <button
         onClick={onToggle}
         className="absolute -right-3 top-6 w-6 h-6 bg-surface-container border border-white/10 rounded-full flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors shadow-lg z-50"
-        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        aria-label={isCollapsed ? STRINGS.sidebar.expandSidebar : STRINGS.sidebar.collapseSidebar}
       >
         {isCollapsed ? (
           <MdChevronRight className="text-sm" />
@@ -42,7 +42,7 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
       >
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-on-primary font-bold text-xl flex-shrink-0">
-            A
+            {STRINGS.sidebar.brandInitial}
           </div>
           {!isCollapsed && (
             <div className="transition-opacity duration-300">
@@ -101,21 +101,23 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
           "bg-primary/10 text-primary hover:bg-primary/20",
           isCollapsed && "justify-center px-0",
         )}
-        title={isCollapsed ? "Upload Document" : undefined}
+        title={isCollapsed ? STRINGS.sidebar.uploadDocument : undefined}
       >
         <MdAdd className="text-xl flex-shrink-0" />
-        {!isCollapsed && <span className="truncate">Upload Document</span>}
+        {!isCollapsed && <span className="truncate">{STRINGS.sidebar.uploadDocument}</span>}
       </button>
 
       {/* Footer */}
       <div className="border-t border-white/5 pt-4">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-medium flex-shrink-0">
-            FM
+            {STRINGS.sidebar.userInitials}
           </div>
           {!isCollapsed && (
             <div className="transition-opacity duration-300">
-              <p className="text-sm font-medium text-on-surface truncate">Farhan Mahi</p>
+              <p className="text-sm font-medium text-on-surface truncate">
+                {STRINGS.sidebar.userName}
+              </p>
               <p className="text-xs text-outline truncate">{STRINGS.sidebar.mode}</p>
             </div>
           )}

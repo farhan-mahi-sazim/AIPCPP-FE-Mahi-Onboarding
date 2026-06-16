@@ -47,6 +47,12 @@ export const STRINGS = {
     brand: "AIPCPP",
     brandSub: "Neural Core",
     mode: "Onboarding Mode",
+    expandSidebar: "Expand sidebar",
+    collapseSidebar: "Collapse sidebar",
+    brandInitial: "A",
+    uploadDocument: "Upload Document",
+    userName: "Farhan Mahi",
+    userInitials: "FM",
   },
   details: {
     title: "Document Details",
