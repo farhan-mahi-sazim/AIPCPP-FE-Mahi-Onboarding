@@ -39,7 +39,7 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
           radius="xs"
           value={100}
           striped
-          animate
+          animated
           pos="absolute"
           top={0}
           w="100%"
@@ -50,33 +50,29 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
       <AppShell
         className={classes.appShell}
         opacity={isLoading ? 0.4 : 1.0}
-        navbarOffsetBreakpoint="md"
-        navbar={<SideBar isOpen={isOpen} setIsOpen={setIsOpen} />}
-        {...(isPotrait && {
-          header: (
-            <>
-              <header className="h-[60px] p-2">
-                <div className={classes.header}>
-                  <div className={classes.burgerMenu}>
-                    <Burger
-                      opened={isOpen}
-                      onClick={() => setIsOpen((o) => !o)}
-                      size="sm"
-                      mr="xl"
-                    />
-                  </div>
-                  <Flex justify="center" align="center">
-                    <Title order={3} fw="lighter">
-                      {getCurrentPageName(router.pathname)}
-                    </Title>
-                  </Flex>
-                </div>
-              </header>
-            </>
-          ),
-        })}
+        navbar={{ width: 300, breakpoint: "md" }}
+        header={isPotrait ? { height: 60 } : undefined}
       >
-        {children}
+        <AppShell.Navbar>
+          <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
+        </AppShell.Navbar>
+        {isPotrait && (
+          <AppShell.Header>
+            <header className="h-[60px] p-2">
+              <div className={classes.header}>
+                <div className={classes.burgerMenu}>
+                  <Burger opened={isOpen} onClick={() => setIsOpen((o) => !o)} size="sm" mr="xl" />
+                </div>
+                <Flex justify="center" align="center">
+                  <Title order={3} fw="lighter">
+                    {getCurrentPageName(router.pathname)}
+                  </Title>
+                </Flex>
+              </div>
+            </header>
+          </AppShell.Header>
+        )}
+        <AppShell.Main>{children}</AppShell.Main>
       </AppShell>
     </Box>
   );

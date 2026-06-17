@@ -33,7 +33,9 @@
     "pages/**/*.ts",
     "pages/**/*.tsx",
     "modules/**/*.ts",
-    "modules/**/*.tsx"
+    "modules/**/*.tsx",
+    "shared/**/*.ts",
+    "shared/**/*.tsx"
   ],
   "exclude": ["node_modules", "**/__tests__/**", "**/*.test.ts", "**/*.test.tsx", "e2e-tests/**"]
 }

@@ -17,7 +17,6 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
     isUploading,
     uploadError,
     progress,
-    uploadProgress,
     stage,
     stageLabel,
     uploadedDocId,
@@ -32,9 +31,6 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
   } = useUploadSection({ onUploadSuccess });
 
   const isCompleted = stage === "completed";
-  const showUploadProgress = isUploading && stage === "uploading";
-  const liveProgress = showUploadProgress ? uploadProgress : progress;
-  const liveStageLabel = showUploadProgress ? "uploading" : stageLabel;
 
   return (
     <div className="bg-surface-container/50 rounded-2xl p-6 border border-white/5 backdrop-blur-md mb-8">
@@ -42,8 +38,8 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
         <h2 className="text-xl font-semibold text-on-surface">{STRINGS.upload.title}</h2>
         {isUploading && (
           <div className="text-sm text-outline flex items-center gap-2">
-            <span className="text-on-surface font-medium capitalize">{liveStageLabel}</span>
-            <span className="text-primary">{liveProgress}%</span>
+            <span className="text-on-surface font-medium capitalize">{stageLabel}</span>
+            <span className="text-primary">{progress}%</span>
           </div>
         )}
       </div>
@@ -108,11 +104,11 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-primary transition-all duration-300 rounded-full"
-                    style={{ width: `${liveProgress}%` }}
+                    style={{ width: `${progress}%` }}
                   />
                 </div>
                 <p className="text-center text-primary text-sm font-medium mt-2">
-                  {liveProgress}% - {liveStageLabel}
+                  {progress}% - {stageLabel}
                 </p>
               </div>
             )}

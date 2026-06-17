@@ -36,7 +36,6 @@ export const useUploadSection = ({
     file_type: string;
   } | null>(null);
   const [progress, setProgress] = useState(0);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [stage, setStage] = useState<string>("idle");
   const [stageLabel, setStageLabel] = useState("idle");
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
@@ -80,7 +79,6 @@ export const useUploadSection = ({
     setUploadedDocId(null);
     setUploadedDocData(null);
     setProgress(0);
-    setUploadProgress(0);
     setStage("idle");
     setStageLabel("idle");
     setCurrentStepIndex(-1);
@@ -238,7 +236,7 @@ export const useUploadSection = ({
       request.upload.onprogress = (event) => {
         if (!event.lengthComputable) return;
         const percent = clampProgress((event.loaded / event.total) * 100);
-        setUploadProgress(percent);
+        setProgress(percent);
       };
 
       request.onload = () => {
@@ -265,9 +263,7 @@ export const useUploadSection = ({
     setIsUploading(true);
     setUploadError(null);
     setProgress(0);
-    setUploadProgress(0);
     setStage("uploading");
-    setStageLabel("uploading");
     setCurrentStepIndex(0);
 
     try {
@@ -356,7 +352,6 @@ export const useUploadSection = ({
     isUploading,
     uploadError,
     progress,
-    uploadProgress,
     stage,
     stageLabel,
     uploadedDocId,

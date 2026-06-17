@@ -22,7 +22,6 @@ export interface IUseUploadSectionReturn {
   isUploading: boolean;
   uploadError: Error | null;
   progress: number;
-  uploadProgress: number;
   stage: string;
   stageLabel: string;
   uploadedDocId: string | null;
