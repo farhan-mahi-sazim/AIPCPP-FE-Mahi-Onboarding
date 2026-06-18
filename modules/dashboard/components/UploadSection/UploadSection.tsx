@@ -114,7 +114,9 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
             )}
             {uploadError ? (
               <div className="mt-4 text-red-500 text-sm font-medium">
-                {STRINGS.upload.failedRetry}
+                {/too large|maximum size/i.test(uploadError.message)
+                  ? STRINGS.upload.fileTooLargeMsg
+                  : STRINGS.upload.failedRetry}
               </div>
             ) : null}
           </div>

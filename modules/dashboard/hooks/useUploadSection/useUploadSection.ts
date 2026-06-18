@@ -23,6 +23,25 @@ import {
 } from "../../components/UploadSection/UploadSection.types";
 import { PROGRESS_BASELINE_PROCESSING } from "./uploadSection.constant";
 
+const UPLOAD_ERROR_PATTERNS = [
+  {
+    pattern: /too large|maximum size/i,
+    titleKey: "fileTooLarge" as const,
+    messageKey: "fileTooLargeMsg" as const,
+  },
+] as const;
+
+function getUploadErrorNotification(message: string) {
+  const match = UPLOAD_ERROR_PATTERNS.find((entry) => entry.pattern.test(message));
+  if (match) {
+    return {
+      title: STRINGS.upload[match.titleKey],
+      message: STRINGS.upload[match.messageKey],
+    };
+  }
+  return { title: STRINGS.upload.failed, message: STRINGS.upload.failedMsg };
+}
+
 export const useUploadSection = ({
   onUploadSuccess,
 }: IUploadSectionCallbacks): IUseUploadSectionReturn => {
@@ -150,6 +169,10 @@ export const useUploadSection = ({
       const poll = async () => {
         try {
           const response = await fetch(`/api/v1/content/jobs/${documentId}/progress`);
+          if (response.status === 410 || response.status === 404) {
+            cleanupPolling();
+            return;
+          }
           if (!response.ok) return;
           const data: unknown = await response.json();
           applyProgressUpdate(parseProgressPayload(data));
@@ -160,7 +183,7 @@ export const useUploadSection = ({
       poll();
       pollingIntervalRef.current = setInterval(poll, POLL_INTERVAL_MS);
     },
-    [applyProgressUpdate, parseProgressPayload],
+    [applyProgressUpdate, cleanupPolling, parseProgressPayload],
   );
 
   const scheduleRetry = useCallback(() => {
@@ -185,8 +208,6 @@ export const useUploadSection = ({
       documentIdRef.current = documentId;
       cleanupEventSource();
       cleanupPolling();
-
-      startPolling(documentId);
 
       const eventSource = new EventSource(`/api/v1/content/jobs/${documentId}/progress/stream`);
       eventSourceRef.current = eventSource;
@@ -216,7 +237,6 @@ export const useUploadSection = ({
       cleanupPolling,
       parseProgressPayload,
       scheduleRetry,
-      startPolling,
     ],
   );
 
@@ -241,7 +261,13 @@ export const useUploadSection = ({
 
       request.onload = () => {
         if (request.status < 200 || request.status >= 300) {
-          reject(new Error("Upload failed"));
+          let errorMessage = "Upload failed";
+          const errorBody = request.response as Record<string, unknown> | null;
+          const detail = errorBody?.["detail"];
+          if (typeof detail === "string") {
+            errorMessage = detail;
+          }
+          reject(new Error(errorMessage));
           return;
         }
         const response = request.response ?? null;
@@ -289,13 +315,12 @@ export const useUploadSection = ({
       subscribeToProgress(document.id);
     } catch (err) {
       console.error("Upload failed", err);
-      setUploadError(err instanceof Error ? err : new Error(String(err)));
+      const error = err instanceof Error ? err : new Error(String(err));
+      setUploadError(error);
       setIsUploading(false);
-      notifications.show({
-        title: STRINGS.upload.failed,
-        message: STRINGS.upload.failedMsg,
-        color: "red",
-      });
+
+      const { title, message } = getUploadErrorNotification(error.message);
+      notifications.show({ title, message, color: "red" });
     }
   };
 

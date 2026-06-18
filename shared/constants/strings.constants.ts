@@ -5,6 +5,8 @@ export const STRINGS = {
     supportText: "Supports PDF, DOCX, TXT, and Images",
     started: "Upload Started",
     startedMsg: "File uploaded successfully. Processing started.",
+    fileTooLarge: "File Too Large",
+    fileTooLargeMsg: "File size exceeds the 50MB limit. Please upload a smaller file.",
     failed: "Upload Failed",
     failedMsg: "Failed to upload the file.",
     success: "Processing Successful",
