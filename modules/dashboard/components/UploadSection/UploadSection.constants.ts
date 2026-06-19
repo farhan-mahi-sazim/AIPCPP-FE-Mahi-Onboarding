@@ -7,7 +7,5 @@ export const UPLOAD_STEPS = [
   { key: "COMPLETED", label: STRINGS.upload.steps.COMPLETED },
 ];
 
-export const MAX_SSE_RETRIES = 4;
-export const INITIAL_RETRY_MS = 1000;
-export const MAX_RETRY_MS = 8000;
 export const POLL_INTERVAL_MS = 3000;
+export const SSE_FALLBACK_TIMEOUT_MS = 15000;

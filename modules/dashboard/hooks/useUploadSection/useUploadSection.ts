@@ -6,10 +6,8 @@ import { STRINGS } from "@/shared/constants/strings.constants";
 
 import {
   UPLOAD_STEPS,
-  MAX_SSE_RETRIES,
-  INITIAL_RETRY_MS,
-  MAX_RETRY_MS,
   POLL_INTERVAL_MS,
+  SSE_FALLBACK_TIMEOUT_MS,
 } from "../../components/UploadSection/UploadSection.constants";
 import {
   clampProgress,
@@ -60,24 +58,15 @@ export const useUploadSection = ({
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
 
   const eventSourceRef = useRef<EventSource | null>(null);
-  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const retryCountRef = useRef(0);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastProgressRef = useRef(0);
   const documentIdRef = useRef<string | null>(null);
-  const subscribeRef = useRef<((documentId: string) => void) | null>(null);
+  const sseFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const cleanupEventSource = useCallback(() => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
-    }
-  }, []);
-
-  const cleanupRetry = useCallback(() => {
-    if (retryTimeoutRef.current) {
-      clearTimeout(retryTimeoutRef.current);
-      retryTimeoutRef.current = null;
     }
   }, []);
 
@@ -88,10 +77,17 @@ export const useUploadSection = ({
     }
   }, []);
 
+  const cleanupSseFallbackTimer = useCallback(() => {
+    if (sseFallbackTimerRef.current) {
+      clearTimeout(sseFallbackTimerRef.current);
+      sseFallbackTimerRef.current = null;
+    }
+  }, []);
+
   const resetUpload = useCallback(() => {
     cleanupEventSource();
-    cleanupRetry();
     cleanupPolling();
+    cleanupSseFallbackTimer();
     setFile(null);
     setIsUploading(false);
     setUploadError(null);
@@ -101,10 +97,9 @@ export const useUploadSection = ({
     setStage("idle");
     setStageLabel("idle");
     setCurrentStepIndex(-1);
-    retryCountRef.current = 0;
     lastProgressRef.current = 0;
     documentIdRef.current = null;
-  }, [cleanupEventSource, cleanupPolling, cleanupRetry]);
+  }, [cleanupEventSource, cleanupPolling, cleanupSseFallbackTimer]);
 
   const parseProgressPayload = useCallback((payload: unknown) => {
     if (typeof payload !== "object" || payload === null) return null;
@@ -143,14 +138,14 @@ export const useUploadSection = ({
 
       if (payload.isCompleted) {
         cleanupEventSource();
-        cleanupRetry();
         cleanupPolling();
+        cleanupSseFallbackTimer();
         setIsUploading(false);
         onUploadSuccess?.();
       } else if (payload.isFailed) {
         cleanupEventSource();
-        cleanupRetry();
         cleanupPolling();
+        cleanupSseFallbackTimer();
         setIsUploading(false);
         notifications.show({
           title: STRINGS.upload.procFailed,
@@ -160,7 +155,7 @@ export const useUploadSection = ({
         resetUpload();
       }
     },
-    [cleanupEventSource, cleanupPolling, cleanupRetry, onUploadSuccess, resetUpload],
+    [cleanupEventSource, cleanupPolling, cleanupSseFallbackTimer, onUploadSuccess, resetUpload],
   );
 
   const startPolling = useCallback(
@@ -186,61 +181,59 @@ export const useUploadSection = ({
     [applyProgressUpdate, cleanupPolling, parseProgressPayload],
   );
 
-  const scheduleRetry = useCallback(() => {
-    if (!documentIdRef.current) return;
-    if (retryCountRef.current >= MAX_SSE_RETRIES) {
+  const startFallbackTimer = useCallback(() => {
+    cleanupSseFallbackTimer();
+    sseFallbackTimerRef.current = setTimeout(() => {
       cleanupEventSource();
-      startPolling(documentIdRef.current);
-      return;
-    }
-    const retryDelay = Math.min(INITIAL_RETRY_MS * 2 ** retryCountRef.current, MAX_RETRY_MS);
-    retryCountRef.current += 1;
-    cleanupRetry();
-    retryTimeoutRef.current = setTimeout(() => {
-      if (documentIdRef.current && subscribeRef.current) {
-        subscribeRef.current(documentIdRef.current);
+      if (documentIdRef.current) {
+        startPolling(documentIdRef.current);
       }
-    }, retryDelay);
-  }, [cleanupEventSource, cleanupRetry, startPolling]);
+    }, SSE_FALLBACK_TIMEOUT_MS);
+  }, [cleanupEventSource, cleanupSseFallbackTimer, startPolling]);
 
   const subscribeToProgress = useCallback(
     (documentId: string) => {
       documentIdRef.current = documentId;
       cleanupEventSource();
       cleanupPolling();
+      cleanupSseFallbackTimer();
 
       const eventSource = new EventSource(`/api/v1/content/jobs/${documentId}/progress/stream`);
       eventSourceRef.current = eventSource;
 
-      eventSource.onopen = () => {
-        retryCountRef.current = 0;
-      };
+      startFallbackTimer();
 
       eventSource.onmessage = (event) => {
+        cleanupSseFallbackTimer();
         try {
           const data: IProgressData = JSON.parse(event.data);
           applyProgressUpdate(parseProgressPayload(data));
         } catch (err) {
           console.error("Failed to parse SSE data:", err);
         }
+        if (eventSourceRef.current) {
+          startFallbackTimer();
+        }
       };
 
-      eventSource.onerror = (error) => {
-        console.error("SSE error:", error);
+      eventSource.onerror = () => {
         cleanupEventSource();
-        scheduleRetry();
+        cleanupSseFallbackTimer();
+        if (documentIdRef.current) {
+          startPolling(documentIdRef.current);
+        }
       };
     },
     [
       applyProgressUpdate,
       cleanupEventSource,
       cleanupPolling,
+      cleanupSseFallbackTimer,
       parseProgressPayload,
-      scheduleRetry,
+      startFallbackTimer,
+      startPolling,
     ],
   );
-
-  subscribeRef.current = subscribeToProgress;
 
   const uploadDocument = (fileToUpload: File) =>
     new Promise<{
@@ -327,10 +320,10 @@ export const useUploadSection = ({
   useEffect(
     () => () => {
       cleanupEventSource();
-      cleanupRetry();
       cleanupPolling();
+      cleanupSseFallbackTimer();
     },
-    [cleanupEventSource, cleanupPolling, cleanupRetry],
+    [cleanupEventSource, cleanupPolling, cleanupSseFallbackTimer],
   );
 
   const getStepStatus = (stepKey: string) => {
