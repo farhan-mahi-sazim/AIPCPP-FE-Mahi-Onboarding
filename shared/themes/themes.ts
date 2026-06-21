@@ -1,4 +1,6 @@
-export const blcTheme = {
+import { MantineThemeOverride } from "@mantine/core";
+
+export const blcTheme: MantineThemeOverride = {
   primaryColor: "blue",
   colors: {
     indigo: [

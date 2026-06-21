@@ -1,1 +1,1 @@
-export { useUploadSection } from "./useUploadSection";
+export { default } from "./UploadSection";

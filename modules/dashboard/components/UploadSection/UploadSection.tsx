@@ -4,13 +4,10 @@ import { useRouter } from "next/router";
 
 import { MdCloudUpload, MdCheck, MdArrowForward } from "react-icons/md";
 
+import { useUploadSection } from "@/modules/dashboard/hooks/useUploadSection/useUploadSection";
 import { STRINGS } from "@/shared/constants/strings.constants";
 
-import { useUploadSection } from "./useUploadSection";
-
-export interface IUploadSectionProps {
-  onUploadSuccess?: () => void;
-}
+import { IUploadSectionProps } from "./UploadSection.types";
 
 const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
   const router = useRouter();
@@ -20,7 +17,6 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
     isUploading,
     uploadError,
     progress,
-    uploadProgress,
     stage,
     stageLabel,
     uploadedDocId,
@@ -35,9 +31,6 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
   } = useUploadSection({ onUploadSuccess });
 
   const isCompleted = stage === "completed";
-  const showUploadProgress = isUploading && stage === "uploading";
-  const liveProgress = showUploadProgress ? uploadProgress : progress;
-  const liveStageLabel = showUploadProgress ? "uploading" : stageLabel;
 
   return (
     <div className="bg-surface-container/50 rounded-2xl p-6 border border-white/5 backdrop-blur-md mb-8">
@@ -45,8 +38,8 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
         <h2 className="text-xl font-semibold text-on-surface">{STRINGS.upload.title}</h2>
         {isUploading && (
           <div className="text-sm text-outline flex items-center gap-2">
-            <span className="text-on-surface font-medium capitalize">{liveStageLabel}</span>
-            <span className="text-primary">{liveProgress}%</span>
+            <span className="text-on-surface font-medium capitalize">{stageLabel}</span>
+            <span className="text-primary">{progress}%</span>
           </div>
         )}
       </div>
@@ -60,7 +53,7 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
                   <MdCheck className="text-primary text-2xl" />
                 </div>
                 <div>
-                  <p className="text-on-surface font-medium">Upload Complete!</p>
+                  <p className="text-on-surface font-medium">{STRINGS.upload.completeTitle}</p>
                   <p className="text-sm text-on-surface-variant">{uploadedDocData.filename}</p>
                 </div>
               </div>
@@ -68,19 +61,17 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
                 onClick={resetUpload}
                 className="text-sm text-outline hover:text-on-surface transition-colors"
               >
-                Upload another
+                {STRINGS.upload.uploadAnother}
               </button>
             </div>
 
-            <p className="text-sm text-on-surface-variant mb-4">
-              Your document is ready. Click below to view the AI-generated summary and details.
-            </p>
+            <p className="text-sm text-on-surface-variant mb-4">{STRINGS.upload.readyMessage}</p>
 
             <button
               onClick={() => router.push(`/document/${uploadedDocId}`)}
               className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
             >
-              View Document
+              {STRINGS.upload.viewDocument}
               <MdArrowForward className="text-lg" />
             </button>
           </div>
@@ -113,17 +104,19 @@ const UploadSection: React.FC<IUploadSectionProps> = ({ onUploadSuccess }) => {
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-primary transition-all duration-300 rounded-full"
-                    style={{ width: `${liveProgress}%` }}
+                    style={{ width: `${progress}%` }}
                   />
                 </div>
                 <p className="text-center text-primary text-sm font-medium mt-2">
-                  {liveProgress}% - {liveStageLabel}
+                  {progress}% - {stageLabel}
                 </p>
               </div>
             )}
             {uploadError ? (
               <div className="mt-4 text-red-500 text-sm font-medium">
-                Upload failed. Please try again.
+                {/too large|maximum size/i.test(uploadError.message)
+                  ? STRINGS.upload.fileTooLargeMsg
+                  : STRINGS.upload.failedRetry}
               </div>
             ) : null}
           </div>

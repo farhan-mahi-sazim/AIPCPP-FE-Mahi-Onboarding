@@ -1,14 +1,20 @@
 import React from "react";
 
+import { useRouter } from "next/router";
+
 import { Pagination } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+
+import { STRINGS } from "@/shared/constants/strings.constants";
 
 import DashboardFooter from "./components/DashboardFooter";
 import DocumentGrid from "./components/DocumentGrid/DocumentGrid";
 import SearchHeader from "./components/SearchHeader/SearchHeader";
 import UploadSection from "./components/UploadSection/UploadSection";
-import { useDashboard } from "./hooks/useDashboard";
+import { useDashboard } from "./hooks/useDashboard/useDashboard";
 
 const Dashboard: React.FC = () => {
+  const router = useRouter();
   const [showUpload, setShowUpload] = React.useState(false);
   const uploadRef = React.useRef<HTMLDivElement>(null);
 
@@ -35,6 +41,11 @@ const Dashboard: React.FC = () => {
   const handleUploadSuccess = () => {
     refetch();
     setShowUpload(false);
+    notifications.show({
+      title: STRINGS.upload.success,
+      message: STRINGS.upload.successMsg,
+      color: "teal",
+    });
   };
 
   React.useEffect(() => {
@@ -42,6 +53,15 @@ const Dashboard: React.FC = () => {
       uploadRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [showUpload]);
+
+  const uploadParam = router.query["upload"];
+
+  React.useEffect(() => {
+    if (uploadParam === "true") {
+      setShowUpload(true);
+      router.replace("/dashboard", undefined, { shallow: true });
+    }
+  }, [uploadParam, router]);
 
   return (
     <div className="min-h-screen bg-background text-on-surface">

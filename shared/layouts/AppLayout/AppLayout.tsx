@@ -1,16 +1,13 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { AppShell, Box, Burger, Flex, Header, Progress, Title } from "@mantine/core";
+import { AppShell, Box, Burger, Flex, Progress, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import RentReceiptsBanner from "@/shared/components/RentReceiptsBanner/RentReceiptsBanner";
-import { ADDITIONAL_ROUTES } from "@/shared/constants/route.constants";
-
+import { getCurrentPageName } from "./AppLayout.helpers";
 import { useAppLayoutStyles } from "./AppLayout.styles";
 import SideBar from "./components/SideBar";
-import { NAV_LINKS } from "./components/SideBar/SideBar.constants";
 
 const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -33,13 +30,6 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
     };
   }, [router.events]);
 
-  const getCurrentPageName = () => {
-    const currentLink =
-      NAV_LINKS.find(({ href }) => router.pathname.includes(href)) ||
-      ADDITIONAL_ROUTES.find(({ href }) => router.pathname.includes(href));
-    return currentLink ? currentLink.label : "Unknown Page";
-  };
-
   return (
     <Box pos="relative">
       {isLoading && (
@@ -49,7 +39,7 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
           radius="xs"
           value={100}
           striped
-          animate
+          animated
           pos="absolute"
           top={0}
           w="100%"
@@ -60,34 +50,29 @@ const AppLayout = ({ children }: PropsWithChildren<Record<string, unknown>>) => 
       <AppShell
         className={classes.appShell}
         opacity={isLoading ? 0.4 : 1.0}
-        navbarOffsetBreakpoint="md"
-        navbar={<SideBar isOpen={isOpen} setIsOpen={setIsOpen} />}
-        {...(isPotrait && {
-          header: (
-            <>
-              <Header height={60} p="xs">
-                <div className={classes.header}>
-                  <div className={classes.burgerMenu}>
-                    <Burger
-                      opened={isOpen}
-                      onClick={() => setIsOpen((o) => !o)}
-                      size="sm"
-                      mr="xl"
-                    />
-                  </div>
-                  <Flex justify="center" align="center">
-                    <Title order={3} fw="lighter">
-                      {getCurrentPageName()}
-                    </Title>
-                  </Flex>
-                </div>
-              </Header>
-            </>
-          ),
-        })}
+        navbar={{ width: 300, breakpoint: "md" }}
+        header={isPotrait ? { height: 60 } : undefined}
       >
-        <RentReceiptsBanner />
-        {children}
+        <AppShell.Navbar>
+          <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
+        </AppShell.Navbar>
+        {isPotrait && (
+          <AppShell.Header>
+            <header className="h-[60px] p-2">
+              <div className={classes.header}>
+                <div className={classes.burgerMenu}>
+                  <Burger opened={isOpen} onClick={() => setIsOpen((o) => !o)} size="sm" mr="xl" />
+                </div>
+                <Flex justify="center" align="center">
+                  <Title order={3} fw="lighter">
+                    {getCurrentPageName(router.pathname)}
+                  </Title>
+                </Flex>
+              </div>
+            </header>
+          </AppShell.Header>
+        )}
+        <AppShell.Main>{children}</AppShell.Main>
       </AppShell>
     </Box>
   );

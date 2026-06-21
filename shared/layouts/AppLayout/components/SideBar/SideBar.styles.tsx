@@ -1,13 +1,6 @@
 import { createStyles } from "@/shared/utils/createStyles";
 
-const button = {
-  display: "flex",
-  fontSize: "1em",
-  fontWeight: 400,
-  height: "3.2em",
-  borderRadius: "0.7em",
-  marginBottom: "0.7em",
-};
+import { BUTTON_STYLE } from "./SideBar.constants";
 
 export const useSideBarStyles = createStyles((theme) => ({
   icon: {
@@ -17,7 +10,7 @@ export const useSideBarStyles = createStyles((theme) => ({
   },
 
   activeButton: {
-    ...button,
+    ...BUTTON_STYLE,
     backgroundColor: theme.colors.green[9],
 
     "&:hover": {
@@ -26,7 +19,7 @@ export const useSideBarStyles = createStyles((theme) => ({
   },
 
   inactiveButton: {
-    ...button,
+    ...BUTTON_STYLE,
     color: theme.colors.gray[4],
 
     backgroundColor: theme.colors.gray[1],

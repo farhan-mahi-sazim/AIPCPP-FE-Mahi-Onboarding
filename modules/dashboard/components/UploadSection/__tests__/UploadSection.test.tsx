@@ -8,14 +8,12 @@ import { renderWithProviders } from "@/shared/utils/test-utils";
 
 import UploadSection from "../UploadSection";
 
-// Mock notifications
 jest.mock("@mantine/notifications", () => ({
   notifications: {
     show: jest.fn(),
   },
 }));
 
-// Mock next/router
 jest.mock("next/router", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -33,8 +31,10 @@ describe("UploadSection", () => {
   it("renders all pipeline steps", () => {
     renderWithProviders(<UploadSection />);
     expect(screen.getByText(STRINGS.upload.steps.UPLOADING)).toBeInTheDocument();
-    expect(screen.getByText(STRINGS.upload.steps.PENDING)).toBeInTheDocument();
-    expect(screen.getByText(STRINGS.upload.steps.PROCESSING)).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.EXTRACTION)).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.AI_TASK)).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.EMBEDDING)).toBeInTheDocument();
+    expect(screen.getByText(STRINGS.upload.steps.PERSISTENCE)).toBeInTheDocument();
     expect(screen.getByText(STRINGS.upload.steps.COMPLETED)).toBeInTheDocument();
   });
 

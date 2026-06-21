@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from "react";
 
-import { MantineProvider, createTheme } from "@mantine/core";
+import { MantineProvider, MantineThemeOverride, createTheme } from "@mantine/core";
 import { configureStore } from "@reduxjs/toolkit";
 import { render, RenderOptions } from "@testing-library/react";
 import { Provider as ReduxProvider } from "react-redux";
@@ -16,8 +16,7 @@ const { documentsApi } = jest.requireActual<typeof import("@/shared/redux/rtk-ap
   "@/shared/redux/rtk-apis/documents.api",
 );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const theme = createTheme(blcTheme as any);
+const theme = createTheme(blcTheme as MantineThemeOverride);
 
 export const createTestStore = () =>
   configureStore({

@@ -9,29 +9,8 @@ import {
   useDeleteDocumentMutation,
   useVectorSearchQuery,
 } from "@/shared/redux/rtk-apis/documents.api";
-import { TDashboardDocument } from "@/shared/typedefs/dashboard.types";
 
-export interface IUseDashboardReturn {
-  search: string;
-  debouncedSearch: string;
-  sortOrder: "asc" | "desc";
-  filterType: string | null;
-  page: number;
-  totalPages: number;
-  documents: TDashboardDocument[];
-  isLoading: boolean;
-  error: unknown;
-  processedDocuments: TDashboardDocument[];
-  setSearch: (value: string) => void;
-  setSortOrder: (order: "asc" | "desc") => void;
-  setFilterType: (type: string | null) => void;
-  setPage: (page: number) => void;
-  handleDelete: (id: string) => void;
-  refetch: () => void;
-  isSemantic: boolean;
-  setIsSemantic: (value: boolean) => void;
-  synthesisAnswer: string | null;
-}
+import { IUseDashboardReturn } from "./useDashboard.types";
 
 export const useDashboard = (): IUseDashboardReturn => {
   const [search, setSearch] = useState("");
@@ -91,10 +70,11 @@ export const useDashboard = (): IUseDashboardReturn => {
 
   const documents = useMemo(() => {
     if (isSemantic) {
+      if (!showSemanticResults) return [];
       return vectorSearchResponse?.results ?? [];
     }
     return response?.data ?? [];
-  }, [isSemantic, response?.data, vectorSearchResponse?.results]);
+  }, [isSemantic, showSemanticResults, response?.data, vectorSearchResponse?.results]);
 
   const synthesisAnswer = useMemo(() => {
     if (!showSemanticResults) {

@@ -4,52 +4,41 @@ import { notifications } from "@mantine/notifications";
 
 import { STRINGS } from "@/shared/constants/strings.constants";
 
-export interface IUploadSectionCallbacks {
-  onUploadSuccess?: () => void;
+import {
+  UPLOAD_STEPS,
+  POLL_INTERVAL_MS,
+  SSE_FALLBACK_TIMEOUT_MS,
+} from "../../components/UploadSection/UploadSection.constants";
+import {
+  clampProgress,
+  formatStageLabel,
+  mapBackendStageToUI,
+} from "../../components/UploadSection/UploadSection.helpers";
+import {
+  IUploadSectionCallbacks,
+  IUseUploadSectionReturn,
+  IProgressData,
+} from "../../components/UploadSection/UploadSection.types";
+import { PROGRESS_BASELINES } from "./uploadSection.constant";
+
+const UPLOAD_ERROR_PATTERNS = [
+  {
+    pattern: /too large|maximum size/i,
+    titleKey: "fileTooLarge" as const,
+    messageKey: "fileTooLargeMsg" as const,
+  },
+] as const;
+
+function getUploadErrorNotification(message: string) {
+  const match = UPLOAD_ERROR_PATTERNS.find((entry) => entry.pattern.test(message));
+  if (match) {
+    return {
+      title: STRINGS.upload[match.titleKey],
+      message: STRINGS.upload[match.messageKey],
+    };
+  }
+  return { title: STRINGS.upload.failed, message: STRINGS.upload.failedMsg };
 }
-
-type UploadStage = "idle" | "uploading" | "pending" | "processing" | "completed" | "failed";
-
-interface IProgressData {
-  type?: string;
-  document_id?: string;
-  progress?: number;
-  stage?: string;
-  status?: string;
-}
-
-export interface IUseUploadSectionReturn {
-  file: File | null;
-  isDragging: boolean;
-  isUploading: boolean;
-  uploadError: Error | null;
-  progress: number;
-  uploadProgress: number;
-  stage: string;
-  stageLabel: string;
-  uploadedDocId: string | null;
-  uploadedDocData: { filename: string; file_type: string } | null;
-  handleDragOver: (e: React.DragEvent) => void;
-  handleDragLeave: () => void;
-  handleDrop: (e: React.DragEvent) => void;
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  getStepStatus: (stepKey: string) => "idle" | "completed" | "active" | "failed";
-  steps: { key: string; label: string }[];
-  onUploadSuccess: (() => void) | undefined;
-  resetUpload: () => void;
-}
-
-const UPLOAD_STEPS = [
-  { key: "UPLOADING", label: STRINGS.upload.steps.UPLOADING },
-  { key: "PENDING", label: STRINGS.upload.steps.PENDING },
-  { key: "PROCESSING", label: STRINGS.upload.steps.PROCESSING },
-  { key: "COMPLETED", label: STRINGS.upload.steps.COMPLETED },
-];
-
-const MAX_SSE_RETRIES = 4;
-const INITIAL_RETRY_MS = 1000;
-const MAX_RETRY_MS = 8000;
-const POLL_INTERVAL_MS = 3000;
 
 export const useUploadSection = ({
   onUploadSuccess,
@@ -64,30 +53,20 @@ export const useUploadSection = ({
     file_type: string;
   } | null>(null);
   const [progress, setProgress] = useState(0);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [stage, setStage] = useState<UploadStage>("idle");
+  const [stage, setStage] = useState<string>("idle");
   const [stageLabel, setStageLabel] = useState("idle");
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
 
   const eventSourceRef = useRef<EventSource | null>(null);
-  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const retryCountRef = useRef(0);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastProgressRef = useRef(0);
   const documentIdRef = useRef<string | null>(null);
-  const subscribeRef = useRef<((documentId: string) => void) | null>(null);
+  const sseFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const cleanupEventSource = useCallback(() => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
-    }
-  }, []);
-
-  const cleanupRetry = useCallback(() => {
-    if (retryTimeoutRef.current) {
-      clearTimeout(retryTimeoutRef.current);
-      retryTimeoutRef.current = null;
     }
   }, []);
 
@@ -98,53 +77,29 @@ export const useUploadSection = ({
     }
   }, []);
 
+  const cleanupSseFallbackTimer = useCallback(() => {
+    if (sseFallbackTimerRef.current) {
+      clearTimeout(sseFallbackTimerRef.current);
+      sseFallbackTimerRef.current = null;
+    }
+  }, []);
+
   const resetUpload = useCallback(() => {
     cleanupEventSource();
-    cleanupRetry();
     cleanupPolling();
+    cleanupSseFallbackTimer();
     setFile(null);
     setIsUploading(false);
     setUploadError(null);
     setUploadedDocId(null);
     setUploadedDocData(null);
     setProgress(0);
-    setUploadProgress(0);
     setStage("idle");
     setStageLabel("idle");
     setCurrentStepIndex(-1);
-    retryCountRef.current = 0;
     lastProgressRef.current = 0;
     documentIdRef.current = null;
-  }, [cleanupEventSource, cleanupPolling, cleanupRetry]);
-
-  const clampProgress = (value: number) => Math.min(100, Math.max(0, Math.round(value)));
-
-  const formatStageLabel = (value: string | undefined) => {
-    if (!value) return "processing";
-    return value.toLowerCase().replace(/_/g, " ");
-  };
-
-  const mapBackendStageToUI = (
-    rawStage: string | undefined,
-    progress: number,
-  ): { uiStage: UploadStage; stepIndex: number } => {
-    const stage = (rawStage ?? "").toLowerCase();
-    if (stage === "failed") return { uiStage: "failed", stepIndex: -1 };
-    if (stage === "completed" || progress >= 100) return { uiStage: "completed", stepIndex: 3 };
-    if (stage === "uploading") return { uiStage: "uploading", stepIndex: 0 };
-    if (stage === "pending" || stage === "queued") return { uiStage: "pending", stepIndex: 1 };
-    if (
-      stage === "extraction" ||
-      stage === "ai_task" ||
-      stage === "embedding" ||
-      stage === "persistence" ||
-      stage === "processing"
-    ) {
-      return { uiStage: "processing", stepIndex: 2 };
-    }
-    if (progress > 0) return { uiStage: "processing", stepIndex: 2 };
-    return { uiStage: "pending", stepIndex: 1 };
-  };
+  }, [cleanupEventSource, cleanupPolling, cleanupSseFallbackTimer]);
 
   const parseProgressPayload = useCallback((payload: unknown) => {
     if (typeof payload !== "object" || payload === null) return null;
@@ -154,18 +109,33 @@ export const useUploadSection = ({
     const rawStage = typeof record["stage"] === "string" ? record["stage"] : undefined;
     const rawType = typeof record["type"] === "string" ? record["type"] : undefined;
     const rawStatus = typeof record["status"] === "string" ? record["status"] : undefined;
+
+    const statusFailed =
+      rawStatus?.toLowerCase() === "failed" || rawStage?.toLowerCase() === "failed";
+    if (statusFailed) {
+      return {
+        progress: 0,
+        stepStage: "failed" as string,
+        stepIndex: -1,
+        stageLabel: "failed",
+        isCompleted: false,
+        isFailed: true,
+      };
+    }
+
     const stageToUse = rawStage ?? rawType ?? rawStatus;
-    const { uiStage, stepIndex } = mapBackendStageToUI(stageToUse, progress);
-    const isFailed = uiStage === "failed";
+    const { uiStage, stepIndex } = mapBackendStageToUI(stageToUse ?? "", progress);
+    const adjustedProgress =
+      progress === 0 && stepIndex >= 1 ? (PROGRESS_BASELINES[stepIndex] ?? progress) : progress;
     const isCompleted = uiStage === "completed";
 
     return {
-      progress,
-      stepStage: uiStage,
+      progress: adjustedProgress,
+      stepStage: uiStage as string,
       stepIndex,
       stageLabel: formatStageLabel(stageToUse),
       isCompleted,
-      isFailed,
+      isFailed: false,
     };
   }, []);
 
@@ -181,19 +151,14 @@ export const useUploadSection = ({
 
       if (payload.isCompleted) {
         cleanupEventSource();
-        cleanupRetry();
         cleanupPolling();
+        cleanupSseFallbackTimer();
         setIsUploading(false);
-        notifications.show({
-          title: STRINGS.upload.success,
-          message: STRINGS.upload.successMsg,
-          color: "teal",
-        });
         onUploadSuccess?.();
       } else if (payload.isFailed) {
         cleanupEventSource();
-        cleanupRetry();
         cleanupPolling();
+        cleanupSseFallbackTimer();
         setIsUploading(false);
         notifications.show({
           title: STRINGS.upload.procFailed,
@@ -203,7 +168,7 @@ export const useUploadSection = ({
         resetUpload();
       }
     },
-    [cleanupEventSource, cleanupPolling, cleanupRetry, onUploadSuccess, resetUpload],
+    [cleanupEventSource, cleanupPolling, cleanupSseFallbackTimer, onUploadSuccess, resetUpload],
   );
 
   const startPolling = useCallback(
@@ -212,6 +177,10 @@ export const useUploadSection = ({
       const poll = async () => {
         try {
           const response = await fetch(`/api/v1/content/jobs/${documentId}/progress`);
+          if (response.status === 410 || response.status === 404) {
+            cleanupPolling();
+            return;
+          }
           if (!response.ok) return;
           const data: unknown = await response.json();
           applyProgressUpdate(parseProgressPayload(data));
@@ -222,67 +191,62 @@ export const useUploadSection = ({
       poll();
       pollingIntervalRef.current = setInterval(poll, POLL_INTERVAL_MS);
     },
-    [applyProgressUpdate, parseProgressPayload],
+    [applyProgressUpdate, cleanupPolling, parseProgressPayload],
   );
 
-  const scheduleRetry = useCallback(() => {
-    if (!documentIdRef.current) return;
-    if (retryCountRef.current >= MAX_SSE_RETRIES) {
+  const startFallbackTimer = useCallback(() => {
+    cleanupSseFallbackTimer();
+    sseFallbackTimerRef.current = setTimeout(() => {
       cleanupEventSource();
-      startPolling(documentIdRef.current);
-      return;
-    }
-    const retryDelay = Math.min(INITIAL_RETRY_MS * 2 ** retryCountRef.current, MAX_RETRY_MS);
-    retryCountRef.current += 1;
-    cleanupRetry();
-    retryTimeoutRef.current = setTimeout(() => {
-      if (documentIdRef.current && subscribeRef.current) {
-        subscribeRef.current(documentIdRef.current);
+      if (documentIdRef.current) {
+        startPolling(documentIdRef.current);
       }
-    }, retryDelay);
-  }, [cleanupEventSource, cleanupRetry, startPolling]);
+    }, SSE_FALLBACK_TIMEOUT_MS);
+  }, [cleanupEventSource, cleanupSseFallbackTimer, startPolling]);
 
   const subscribeToProgress = useCallback(
     (documentId: string) => {
       documentIdRef.current = documentId;
       cleanupEventSource();
       cleanupPolling();
-
-      startPolling(documentId);
+      cleanupSseFallbackTimer();
 
       const eventSource = new EventSource(`/api/v1/content/jobs/${documentId}/progress/stream`);
       eventSourceRef.current = eventSource;
 
-      eventSource.onopen = () => {
-        retryCountRef.current = 0;
-      };
+      startFallbackTimer();
 
       eventSource.onmessage = (event) => {
+        cleanupSseFallbackTimer();
         try {
           const data: IProgressData = JSON.parse(event.data);
           applyProgressUpdate(parseProgressPayload(data));
         } catch (err) {
           console.error("Failed to parse SSE data:", err);
         }
+        if (eventSourceRef.current) {
+          startFallbackTimer();
+        }
       };
 
-      eventSource.onerror = (error) => {
-        console.error("SSE error:", error);
+      eventSource.onerror = () => {
         cleanupEventSource();
-        scheduleRetry();
+        cleanupSseFallbackTimer();
+        if (documentIdRef.current) {
+          startPolling(documentIdRef.current);
+        }
       };
     },
     [
       applyProgressUpdate,
       cleanupEventSource,
       cleanupPolling,
+      cleanupSseFallbackTimer,
       parseProgressPayload,
-      scheduleRetry,
+      startFallbackTimer,
       startPolling,
     ],
   );
-
-  subscribeRef.current = subscribeToProgress;
 
   const uploadDocument = (fileToUpload: File) =>
     new Promise<{
@@ -297,13 +261,19 @@ export const useUploadSection = ({
 
       request.upload.onprogress = (event) => {
         if (!event.lengthComputable) return;
-        const percent = clampProgress((event.loaded / event.total) * 100);
-        setUploadProgress(percent);
+        const percent = clampProgress((event.loaded / event.total) * 100 * 0.4);
+        setProgress(percent);
       };
 
       request.onload = () => {
         if (request.status < 200 || request.status >= 300) {
-          reject(new Error("Upload failed"));
+          let errorMessage = "Upload failed";
+          const errorBody = request.response as Record<string, unknown> | null;
+          const detail = errorBody?.["detail"];
+          if (typeof detail === "string") {
+            errorMessage = detail;
+          }
+          reject(new Error(errorMessage));
           return;
         }
         const response = request.response ?? null;
@@ -325,9 +295,7 @@ export const useUploadSection = ({
     setIsUploading(true);
     setUploadError(null);
     setProgress(0);
-    setUploadProgress(0);
     setStage("uploading");
-    setStageLabel("uploading");
     setCurrentStepIndex(0);
 
     try {
@@ -338,11 +306,11 @@ export const useUploadSection = ({
         filename: document.filename,
         file_type: document.file_type,
       });
-      setProgress(0);
+      setProgress(40);
       setStage("pending");
       setStageLabel("queued");
       setCurrentStepIndex(1);
-      lastProgressRef.current = 0;
+      lastProgressRef.current = 40;
 
       notifications.show({
         title: STRINGS.upload.started,
@@ -353,26 +321,25 @@ export const useUploadSection = ({
       subscribeToProgress(document.id);
     } catch (err) {
       console.error("Upload failed", err);
-      setUploadError(err instanceof Error ? err : new Error(String(err)));
+      const error = err instanceof Error ? err : new Error(String(err));
+      setUploadError(error);
       setIsUploading(false);
-      notifications.show({
-        title: STRINGS.upload.failed,
-        message: STRINGS.upload.failedMsg,
-        color: "red",
-      });
+
+      const { title, message } = getUploadErrorNotification(error.message);
+      notifications.show({ title, message, color: "red" });
     }
   };
 
   useEffect(
     () => () => {
       cleanupEventSource();
-      cleanupRetry();
       cleanupPolling();
+      cleanupSseFallbackTimer();
     },
-    [cleanupEventSource, cleanupPolling, cleanupRetry],
+    [cleanupEventSource, cleanupPolling, cleanupSseFallbackTimer],
   );
 
-  const getStepStatus = (stepKey: string): "idle" | "completed" | "active" | "failed" => {
+  const getStepStatus = (stepKey: string) => {
     if (stage === "idle") return "idle";
     if (stage === "failed") return "failed";
 
@@ -416,7 +383,6 @@ export const useUploadSection = ({
     isUploading,
     uploadError,
     progress,
-    uploadProgress,
     stage,
     stageLabel,
     uploadedDocId,

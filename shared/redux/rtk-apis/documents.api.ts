@@ -1,14 +1,14 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import {
-  TGetSummariesArg,
-  TGetSummariesResponse,
-  TUploadDocumentResponse,
-  TJobStatusResponse,
-  TTimelineItem,
-  TVectorSearchArg,
-  TVectorSearchResponse,
-} from "@/shared/typedefs/dashboard.types";
+  IGetSummariesArg,
+  IGetSummariesResponse,
+  IUploadDocumentResponse,
+  IJobStatusResponse,
+  IVectorSearchArg,
+  IVectorSearchResponse,
+} from "@/modules/dashboard/dashboard.types";
+import { ITimelineItem } from "@/shared/typedefs/common.types";
 
 import { baseQuery } from "./baseQuery";
 
@@ -17,7 +17,7 @@ export const documentsApi = createApi({
   baseQuery,
   tagTypes: ["Documents"],
   endpoints: (builder) => ({
-    getSummaries: builder.query<TGetSummariesResponse, TGetSummariesArg>({
+    getSummaries: builder.query<IGetSummariesResponse, IGetSummariesArg>({
       query: ({ limit = 10, offset = 0, search, file_type, sort_order }) => ({
         url: "content/summaries",
         params: {
@@ -30,7 +30,7 @@ export const documentsApi = createApi({
       }),
       providesTags: ["Documents"],
     }),
-    uploadDocument: builder.mutation<TUploadDocumentResponse, File>({
+    uploadDocument: builder.mutation<IUploadDocumentResponse, File>({
       query: (file) => {
         const formData = new FormData();
         formData.append("file", file);
@@ -44,12 +44,10 @@ export const documentsApi = createApi({
         try {
           await queryFulfilled;
           dispatch(documentsApi.util.invalidateTags(["Documents"]));
-        } catch {
-          // Upload failed, no invalidation needed
-        }
+        } catch { /* invalidates on success */ }
       },
     }),
-    getJobStatus: builder.query<TJobStatusResponse, string>({
+    getJobStatus: builder.query<IJobStatusResponse, string>({
       query: (id) => ({
         url: `content/debug/job/${id}`,
       }),
@@ -61,13 +59,13 @@ export const documentsApi = createApi({
       }),
       invalidatesTags: ["Documents"],
     }),
-    getDocumentTimeline: builder.query<{ items: TTimelineItem[]; total: number }, string>({
+    getDocumentTimeline: builder.query<{ items: ITimelineItem[]; total: number }, string>({
       query: (id) => ({
         url: `versions/${id}/timeline`,
       }),
       providesTags: (_result, _error, id) => [{ type: "Documents", id }],
     }),
-    vectorSearch: builder.query<TVectorSearchResponse, TVectorSearchArg>({
+    vectorSearch: builder.query<IVectorSearchResponse, IVectorSearchArg>({
       query: (body) => ({
         url: "search",
         method: "POST",
@@ -75,8 +73,8 @@ export const documentsApi = createApi({
       }),
     }),
     createVersionOverride: builder.mutation<
-      TTimelineItem,
-      { documentId: string; data: Partial<TTimelineItem["data"]> }
+      ITimelineItem,
+      { documentId: string; data: Partial<ITimelineItem["data"]> }
     >({
       query: ({ documentId, data }) => ({
         url: `versions/${documentId}/override`,
@@ -89,8 +87,8 @@ export const documentsApi = createApi({
       ],
     }),
     updateHumanVersion: builder.mutation<
-      TTimelineItem,
-      { versionId: string; documentId: string; data: Partial<TTimelineItem["data"]> }
+      ITimelineItem,
+      { versionId: string; documentId: string; data: Partial<ITimelineItem["data"]> }
     >({
       query: ({ versionId, data }) => ({
         url: `versions/version/${versionId}`,

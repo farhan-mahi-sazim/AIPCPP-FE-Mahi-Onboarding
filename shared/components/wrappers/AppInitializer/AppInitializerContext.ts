@@ -1,11 +1,6 @@
 import { createContext, useContext } from "react";
 
-type TSessionContext = {
-  isLoading: boolean;
-  error: unknown;
-  user: unknown | null;
-  getMe: () => void;
-};
+import { TSessionContext } from "./AppInitializer.types";
 
 export const AppInitializerContext = createContext<TSessionContext>({
   user: null,

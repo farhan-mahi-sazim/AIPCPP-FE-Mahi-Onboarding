@@ -11,7 +11,7 @@ const getConnectSrcCSPConfig = () => {
     "https://blc.sfo3.cdn.digitaloceanspaces.com https://blc.sfo3.digitaloceanspaces.com https://prod-blc-bucket-75ed5bb46.sfo3.cdn.digitaloceanspaces.com https://prod-blc-bucket-75ed5bb46.sfo3.digitaloceanspaces.com/";
 
   if (env === "local") {
-    return `${defaultConnectSrc} http://localhost:*`;
+    return `${defaultConnectSrc} http://localhost:* ws://127.0.0.1:* ws://localhost:*`;
   }
 
   return defaultConnectSrc;
