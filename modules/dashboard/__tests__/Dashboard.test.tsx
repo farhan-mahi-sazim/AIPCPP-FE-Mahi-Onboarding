@@ -122,7 +122,6 @@ describe("Dashboard", () => {
       fireEvent.change(searchInput, { target: { value: "annual" } });
     });
 
-    // Fast-forward time for debounce
     act(() => {
       jest.advanceTimersByTime(500);
     });
@@ -175,7 +174,6 @@ describe("Dashboard", () => {
 
     renderWithProviders(<Dashboard />);
 
-    // Toggle Semantic Search
     const semanticButton = screen.getByRole("button", { name: "Toggle semantic search" });
     fireEvent.click(semanticButton);
 
@@ -185,7 +183,6 @@ describe("Dashboard", () => {
       fireEvent.change(searchInput, { target: { value: "annual" } });
     });
 
-    // Fast-forward time for debounce
     act(() => {
       jest.advanceTimersByTime(500);
     });
@@ -195,7 +192,6 @@ describe("Dashboard", () => {
       expect.anything(),
     );
 
-    // Check if the semantic result is rendered
     expect(screen.getByText("semantic_match.pdf")).toBeInTheDocument();
     expect(screen.getByText("Score 95%")).toBeInTheDocument();
     expect(screen.getByText(/This is a semantic chunk\./)).toBeInTheDocument();

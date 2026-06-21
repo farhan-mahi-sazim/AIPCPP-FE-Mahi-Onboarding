@@ -20,7 +20,6 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
         isCollapsed ? "w-20" : "w-64",
       )}
     >
-      {/* Floating Collapse Button */}
       <button
         onClick={onToggle}
         className="absolute -right-3 top-6 w-6 h-6 bg-surface-container border border-white/10 rounded-full flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors shadow-lg z-50"
@@ -33,7 +32,6 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
         )}
       </button>
 
-      {/* Header */}
       <div
         className={clsx(
           "flex items-center mb-10",
@@ -57,7 +55,6 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
         </div>
       </div>
 
-      {/* Nav Items */}
       <nav className="flex-1 flex flex-col gap-2">
         {MENU_ITEMS.map((item) => {
           const isActive = router.pathname === item.href && !item.disabled;
@@ -89,7 +86,6 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
         })}
       </nav>
 
-      {/* Upload Button */}
       <button
         onClick={() =>
           router.push({ pathname: "/dashboard", query: { upload: "true" } }, undefined, {
@@ -107,7 +103,6 @@ const SideNavBar: React.FC<ISideNavBarProps> = ({ isCollapsed, onToggle }) => {
         {!isCollapsed && <span className="truncate">{STRINGS.sidebar.uploadDocument}</span>}
       </button>
 
-      {/* Footer */}
       <div className="border-t border-white/5 pt-4">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-medium flex-shrink-0">

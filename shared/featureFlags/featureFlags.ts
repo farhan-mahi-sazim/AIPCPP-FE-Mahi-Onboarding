@@ -10,7 +10,7 @@ export const FLAGS = {
   },
 
   local: {
-    "BLC-275": false, // BLC-275: hides 'FAILED' payments
-    "BLC-420": true, // BLC-420: Enables the lease type selection section
+    "BLC-275": false,
+    "BLC-420": true,
   },
 };

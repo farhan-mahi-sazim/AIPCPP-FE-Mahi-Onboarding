@@ -20,7 +20,6 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
 }) => (
   <section className="mb-8">
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-gutter">
-      {/* Search Input */}
       <div className="flex-1 relative max-w-2xl">
         <MdSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-outline text-xl" />
         <input
@@ -36,9 +35,7 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
         />
       </div>
 
-      {/* Action Buttons */}
       <div className="flex items-center gap-3">
-        {/* Semantic Toggle */}
         <button
           className={clsx(
             "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-colors border",
@@ -53,7 +50,6 @@ const SearchHeader: React.FC<ISearchHeaderProps> = ({
           <span className="text-label-md">{STRINGS.search.semantic}</span>
         </button>
 
-        {/* Filter Dropdown */}
         <Menu shadow="md" width={150}>
           <Menu.Target>
             <button

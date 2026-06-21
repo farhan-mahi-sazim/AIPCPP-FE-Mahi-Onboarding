@@ -35,7 +35,6 @@ const DocumentTimeline: React.FC<IDocumentTimelineProps> = ({
                   : "border-white/10 hover:border-white/30 hover:bg-white/5"
               }`}
             >
-              {/* Timeline Bullet */}
               <div
                 className={`absolute w-3 h-3 rounded-full -left-[7px] top-[14px] transition-colors duration-200 ${
                   isSelected ? "bg-indigo-500" : "bg-outline group-hover:bg-on-surface"

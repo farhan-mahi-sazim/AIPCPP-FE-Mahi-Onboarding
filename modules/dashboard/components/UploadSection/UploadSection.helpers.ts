@@ -15,18 +15,13 @@ export function mapBackendStageToUI(
 ): { uiStage: TUploadStage; stepIndex: number } {
   const stage = (rawStage ?? "").toLowerCase();
   if (stage === "failed") return { uiStage: "failed", stepIndex: -1 };
-  if (stage === "completed" || progress >= 100) return { uiStage: "completed", stepIndex: 3 };
+  if (stage === "completed" || progress >= 100) return { uiStage: "completed", stepIndex: 5 };
   if (stage === "uploading") return { uiStage: "uploading", stepIndex: 0 };
-  if (stage === "pending" || stage === "queued") return { uiStage: "pending", stepIndex: 1 };
-  if (
-    stage === "extraction" ||
-    stage === "ai_task" ||
-    stage === "embedding" ||
-    stage === "persistence" ||
-    stage === "processing"
-  ) {
-    return { uiStage: "processing", stepIndex: 2 };
-  }
-  if (progress > 0) return { uiStage: "processing", stepIndex: 2 };
+  if (stage === "extraction" || stage === "pending" || stage === "queued")
+    return { uiStage: "processing", stepIndex: 1 };
+  if (stage === "ai_task") return { uiStage: "processing", stepIndex: 2 };
+  if (stage === "embedding") return { uiStage: "processing", stepIndex: 3 };
+  if (stage === "persistence") return { uiStage: "processing", stepIndex: 4 };
+  if (progress > 0) return { uiStage: "processing", stepIndex: 1 };
   return { uiStage: "pending", stepIndex: 1 };
 }

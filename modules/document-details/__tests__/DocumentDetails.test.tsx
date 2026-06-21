@@ -15,17 +15,13 @@ import { renderWithProviders } from "@/shared/utils/test-utils";
 
 import DocumentDetails from "../index";
 
-// ──────────────────────────────────────────────
-// Mocks
-// ──────────────────────────────────────────────
-
 jest.mock("@/shared/redux/rtk-apis/documents.api", () => ({
   useGetDocumentTimelineQuery: jest.fn(),
   useDeleteDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
   useCreateVersionOverrideMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
   useUpdateHumanVersionMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
   useDeleteVersionMutation: jest.fn(() => [jest.fn(), { isLoading: false }]),
-  // Keep other hooks that may be imported elsewhere in the provider tree
+
   useGetSummariesQuery: jest.fn(() => ({ data: null, isLoading: false, error: null })),
   useUploadDocumentMutation: jest.fn(() => [jest.fn(), { isLoading: false, error: null }]),
   useGetJobStatusQuery: jest.fn(() => ({ data: null })),
@@ -44,10 +40,6 @@ jest.mock("@mantine/notifications", () => ({
     show: jest.fn(),
   },
 }));
-
-// ──────────────────────────────────────────────
-// Fixtures
-// ──────────────────────────────────────────────
 
 const MOCK_AI_VERSION: ITimelineItem = {
   id: "v1-ai",
@@ -82,10 +74,6 @@ const MOCK_TIMELINE_DATA = {
   total: 2,
 };
 
-// ──────────────────────────────────────────────
-// Helpers
-// ──────────────────────────────────────────────
-
 const mockTimelineQuery = (
   overrides: Partial<ReturnType<typeof useGetDocumentTimelineQuery>> = {},
 ) => {
@@ -96,10 +84,6 @@ const mockTimelineQuery = (
     ...overrides,
   });
 };
-
-// ──────────────────────────────────────────────
-// Tests
-// ──────────────────────────────────────────────
 
 describe("DocumentDetails", () => {
   const mockDeleteDocument = jest.fn(() => ({ unwrap: () => Promise.resolve({ message: "ok" }) }));
@@ -130,17 +114,11 @@ describe("DocumentDetails", () => {
     ]);
   });
 
-  // ──────────────────────────────────────────
-  // Three-State Mandate
-  // ──────────────────────────────────────────
-
   it("renders loading skeletons while data is being fetched", () => {
     mockTimelineQuery({ isLoading: true });
 
     renderWithProviders(<DocumentDetails />);
 
-    // The loading state uses Mantine Skeletons which render as generic elements.
-    // The back button and main content should NOT be visible.
     expect(screen.queryByText("Back to Dashboard")).not.toBeInTheDocument();
   });
 
@@ -158,19 +136,14 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    // The latest version (HUMAN v2) should be displayed by default
     expect(screen.getByText("annual_report.pdf")).toBeInTheDocument();
     expect(screen.getByText("Finance")).toBeInTheDocument();
-    // Summary text appears in both the info card and the timeline preview
+
     const summaryElements = screen.getAllByText(
       "Human-edited version of the annual report with corrections.",
     );
     expect(summaryElements.length).toBeGreaterThanOrEqual(1);
   });
-
-  // ──────────────────────────────────────────
-  // Version Selection
-  // ──────────────────────────────────────────
 
   it("renders timeline with all versions", () => {
     mockTimelineQuery({ data: MOCK_TIMELINE_DATA });
@@ -187,7 +160,6 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    // The timeline renders source badges for each version
     const humanBadges = screen.getAllByText("HUMAN");
     const aiBadges = screen.getAllByText("AI");
 
@@ -200,25 +172,18 @@ describe("DocumentDetails", () => {
 
     renderWithProviders(<DocumentDetails />);
 
-    // Initially shows HUMAN v2 data (summary appears in both info card and timeline)
     const initialSummaries = screen.getAllByText(
       "Human-edited version of the annual report with corrections.",
     );
     expect(initialSummaries.length).toBeGreaterThanOrEqual(1);
 
-    // Click on AI v1 in the timeline
     fireEvent.click(screen.getByText("Version 1"));
 
-    // Now the info card should show AI v1 data (appears in both info card and timeline)
     const updatedSummaries = screen.getAllByText(
       "A detailed annual report covering fiscal year 2024.",
     );
     expect(updatedSummaries.length).toBeGreaterThanOrEqual(1);
   });
-
-  // ──────────────────────────────────────────
-  // Edit Mode
-  // ──────────────────────────────────────────
 
   it("shows the Edit Details button when not in edit mode", () => {
     mockTimelineQuery({ data: MOCK_TIMELINE_DATA });
@@ -235,7 +200,6 @@ describe("DocumentDetails", () => {
 
     fireEvent.click(screen.getByLabelText("Edit Details"));
 
-    // The form inputs should now be visible
     expect(screen.getByLabelText("Document Title")).toBeInTheDocument();
     expect(screen.getByLabelText("Category")).toBeInTheDocument();
     expect(screen.getByLabelText("Summary")).toBeInTheDocument();
@@ -249,7 +213,6 @@ describe("DocumentDetails", () => {
 
     fireEvent.click(screen.getByLabelText("Edit Details"));
 
-    // HUMAN v2 is selected by default
     expect(screen.getByLabelText("Document Title")).toHaveValue("Annual Report – Updated");
     expect(screen.getByLabelText("Category")).toHaveValue("Finance");
     expect(screen.getByLabelText("Summary")).toHaveValue(
@@ -278,21 +241,15 @@ describe("DocumentDetails", () => {
 
     fireEvent.click(screen.getByText("Cancel"));
 
-    // Should be back to view mode
     expect(screen.queryByLabelText("Document Title")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Edit Details")).toBeInTheDocument();
   });
-
-  // ──────────────────────────────────────────
-  // Create New Version Override
-  // ──────────────────────────────────────────
 
   it("shows the 'Save as new version' checkbox for HUMAN versions", () => {
     mockTimelineQuery({ data: MOCK_TIMELINE_DATA });
 
     renderWithProviders(<DocumentDetails />);
 
-    // Default selected version is HUMAN v2 → showCreateNewOption = !isAI = true
     fireEvent.click(screen.getByLabelText("Edit Details"));
 
     expect(
@@ -307,7 +264,6 @@ describe("DocumentDetails", () => {
 
     fireEvent.click(screen.getByLabelText("Create Override"));
 
-    // The checkbox is checked by default (isCreateNewVersion = true)
     const submitButton = screen.getByText("Create Override");
     expect(submitButton).toBeInTheDocument();
 
@@ -327,10 +283,6 @@ describe("DocumentDetails", () => {
       });
     });
   });
-
-  // ──────────────────────────────────────────
-  // Update Existing Human Version
-  // ──────────────────────────────────────────
 
   it("calls updateHumanVersion when submitting with 'Save Changes' (checkbox unchecked)", async () => {
     mockTimelineQuery({ data: MOCK_TIMELINE_DATA });
@@ -360,18 +312,13 @@ describe("DocumentDetails", () => {
     });
   });
 
-  // ──────────────────────────────────────────
-  // Delete Version
-  // ──────────────────────────────────────────
-
   it("shows the delete button only for HUMAN versions in the timeline", () => {
     mockTimelineQuery({ data: MOCK_TIMELINE_DATA });
 
     renderWithProviders(<DocumentDetails />);
 
-    // The delete button (trash icon) should be rendered for HUMAN versions only
     const deleteButtons = screen.getAllByTitle("Delete version override");
-    expect(deleteButtons).toHaveLength(1); // Only for HUMAN v2
+    expect(deleteButtons).toHaveLength(1);
   });
 
   it("calls deleteVersion when the timeline delete button is clicked", async () => {
@@ -393,12 +340,7 @@ describe("DocumentDetails", () => {
     });
   });
 
-  // ──────────────────────────────────────────
-  // AI Version Restrictions
-  // ──────────────────────────────────────────
-
   it("does not show the 'Save as new version' checkbox when AI version is selected", () => {
-    // Only AI version in the timeline → forces isCreateNewVersion = true, hides checkbox
     mockTimelineQuery({
       data: { items: [MOCK_AI_VERSION], total: 1 },
     });
@@ -407,15 +349,10 @@ describe("DocumentDetails", () => {
 
     fireEvent.click(screen.getByLabelText("Create Override"));
 
-    // showCreateNewOption = !isSelectedVersionAI → false for AI, so checkbox is hidden
     expect(
       screen.queryByLabelText("Save as new version (retains historical version)"),
     ).not.toBeInTheDocument();
   });
-
-  // ──────────────────────────────────────────
-  // Form Validation (Zod)
-  // ──────────────────────────────────────────
 
   it("shows validation errors when form fields are cleared and submitted", async () => {
     mockTimelineQuery({ data: MOCK_TIMELINE_DATA });
@@ -424,7 +361,6 @@ describe("DocumentDetails", () => {
 
     fireEvent.click(screen.getByLabelText("Edit Details"));
 
-    // Clear all fields
     const titleInput = screen.getByLabelText("Document Title");
     const categoryInput = screen.getByLabelText("Category");
     const summaryInput = screen.getByLabelText("Summary");
@@ -444,13 +380,8 @@ describe("DocumentDetails", () => {
       expect(screen.getByText("Category is required")).toBeInTheDocument();
     });
 
-    // The mutation should NOT have been called
     expect(mockCreateOverride).not.toHaveBeenCalled();
   });
-
-  // ──────────────────────────────────────────
-  // Navigation
-  // ──────────────────────────────────────────
 
   it("renders the back button on the success page", () => {
     mockTimelineQuery({ data: MOCK_TIMELINE_DATA });
@@ -459,10 +390,6 @@ describe("DocumentDetails", () => {
 
     expect(screen.getByText("Back to Dashboard")).toBeInTheDocument();
   });
-
-  // ──────────────────────────────────────────
-  // Empty Timeline
-  // ──────────────────────────────────────────
 
   it("renders the no-timeline fallback when items array is empty", () => {
     mockTimelineQuery({ data: { items: [], total: 0 } });

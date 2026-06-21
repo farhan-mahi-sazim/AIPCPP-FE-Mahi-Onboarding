@@ -61,7 +61,6 @@ export const useDocumentDetails = (): IUseDocumentDetailsReturn => {
 
   const { reset } = form;
 
-  // Reset form values when selectedVersion changes
   useEffect(() => {
     if (selectedVersion?.data) {
       reset({
@@ -73,7 +72,6 @@ export const useDocumentDetails = (): IUseDocumentDetailsReturn => {
     }
   }, [selectedVersion, reset]);
 
-  // Force isCreateNewVersion to true if selected version is AI
   useEffect(() => {
     if (isSelectedVersionAI) {
       setIsCreateNewVersion(true);

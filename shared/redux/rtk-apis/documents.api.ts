@@ -44,9 +44,7 @@ export const documentsApi = createApi({
         try {
           await queryFulfilled;
           dispatch(documentsApi.util.invalidateTags(["Documents"]));
-        } catch {
-          // Upload failed, no invalidation needed
-        }
+        } catch { /* invalidates on success */ }
       },
     }),
     getJobStatus: builder.query<IJobStatusResponse, string>({

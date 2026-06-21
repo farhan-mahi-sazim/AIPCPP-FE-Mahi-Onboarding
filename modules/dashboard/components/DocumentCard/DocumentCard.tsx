@@ -90,7 +90,7 @@ const DocumentCard: React.FC<IDocumentCardProps> = ({ document, onMenuClick }) =
             )}
 
             {sanitizedHighlight && (
-              <div className="text-sm text-outline-variant mt-2 line-clamp-3 bg-white/5 p-2 rounded-lg">
+              <div className="text-sm text-on-surface mt-2 line-clamp-3 hover:line-clamp-none bg-primary/5 border border-primary/10 p-3 rounded-lg transition-all duration-200">
                 <span
                   className="leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: sanitizedHighlight }}

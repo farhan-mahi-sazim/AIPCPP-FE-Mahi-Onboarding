@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
 
-import { MantineProvider, createTheme } from "@mantine/core";
+import { MantineProvider, MantineThemeOverride, createTheme } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import { Provider as ReduxProvider } from "react-redux";
@@ -29,8 +29,7 @@ type TCustomAppProps<P = unknown> = AppProps & {
   pageProps: P;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const theme = createTheme(blcTheme as any);
+const theme = createTheme(blcTheme as MantineThemeOverride);
 
 export default function App(props: TCustomAppProps) {
   const { Component, pageProps } = props;

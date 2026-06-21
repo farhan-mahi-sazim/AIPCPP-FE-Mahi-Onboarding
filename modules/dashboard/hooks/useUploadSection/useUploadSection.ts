@@ -19,7 +19,7 @@ import {
   IUseUploadSectionReturn,
   IProgressData,
 } from "../../components/UploadSection/UploadSection.types";
-import { PROGRESS_BASELINE_PROCESSING } from "./uploadSection.constant";
+import { PROGRESS_BASELINES } from "./uploadSection.constant";
 
 const UPLOAD_ERROR_PATTERNS = [
   {
@@ -109,11 +109,24 @@ export const useUploadSection = ({
     const rawStage = typeof record["stage"] === "string" ? record["stage"] : undefined;
     const rawType = typeof record["type"] === "string" ? record["type"] : undefined;
     const rawStatus = typeof record["status"] === "string" ? record["status"] : undefined;
+
+    const statusFailed =
+      rawStatus?.toLowerCase() === "failed" || rawStage?.toLowerCase() === "failed";
+    if (statusFailed) {
+      return {
+        progress: 0,
+        stepStage: "failed" as string,
+        stepIndex: -1,
+        stageLabel: "failed",
+        isCompleted: false,
+        isFailed: true,
+      };
+    }
+
     const stageToUse = rawStage ?? rawType ?? rawStatus;
     const { uiStage, stepIndex } = mapBackendStageToUI(stageToUse ?? "", progress);
     const adjustedProgress =
-      uiStage === "processing" && progress === 0 ? PROGRESS_BASELINE_PROCESSING : progress;
-    const isFailed = uiStage === "failed";
+      progress === 0 && stepIndex >= 1 ? (PROGRESS_BASELINES[stepIndex] ?? progress) : progress;
     const isCompleted = uiStage === "completed";
 
     return {
@@ -122,7 +135,7 @@ export const useUploadSection = ({
       stepIndex,
       stageLabel: formatStageLabel(stageToUse),
       isCompleted,
-      isFailed,
+      isFailed: false,
     };
   }, []);
 
@@ -248,7 +261,7 @@ export const useUploadSection = ({
 
       request.upload.onprogress = (event) => {
         if (!event.lengthComputable) return;
-        const percent = clampProgress((event.loaded / event.total) * 100);
+        const percent = clampProgress((event.loaded / event.total) * 100 * 0.4);
         setProgress(percent);
       };
 
@@ -293,11 +306,11 @@ export const useUploadSection = ({
         filename: document.filename,
         file_type: document.file_type,
       });
-      setProgress(0);
+      setProgress(40);
       setStage("pending");
       setStageLabel("queued");
       setCurrentStepIndex(1);
-      lastProgressRef.current = 0;
+      lastProgressRef.current = 40;
 
       notifications.show({
         title: STRINGS.upload.started,
